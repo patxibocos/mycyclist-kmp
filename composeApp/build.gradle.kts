@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -7,13 +6,14 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
     
@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
+            implementation("dev.gitlive:firebase-config:2.1.0")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -60,7 +61,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "compose.project.demo"
+        applicationId = "io.github.patxibocos.mycyclist"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -77,12 +78,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        // For AGP 4.1+
+        isCoreLibraryDesugaringEnabled = true
+
+        // Sets Java compatibility to Java 8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 }
 

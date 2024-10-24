@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1091271745671",
+    "project_id": "pcs-scraper",
+    "storage_bucket": "pcs-scraper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091271745671:android:dc7be3b7ebb254d5f89822",
+        "android_client_info": {
+          "package_name": "io.github.patxibocos.mycyclist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1091271745671-scl1efkg8ku1fvhavj2inhqsd3inhitb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgMJXTTxk0iZ185fTCF1UeHTJ9wxrYz6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091271745671-scl1efkg8ku1fvhavj2inhqsd3inhitb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

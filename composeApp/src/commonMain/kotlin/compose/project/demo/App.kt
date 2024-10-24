@@ -24,6 +24,8 @@ import coil3.request.crossfade
 import coil3.util.DebugLogger
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.remoteconfig.remoteConfig
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -35,6 +37,8 @@ fun getAsyncImageLoader(context: PlatformContext) =
 fun App(
     viewModel: TestViewModel = viewModel { TestViewModel() },
 ) {
+    val valueAsString = Firebase.remoteConfig.getValue("cycling_data").asString()
+
     MaterialTheme {
         setSingletonImageLoaderFactory { context ->
             getAsyncImageLoader(context)
@@ -56,7 +60,7 @@ fun App(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+                    Text(valueAsString)
                 }
             }
             AsyncImage(
