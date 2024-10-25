@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,16 +6,16 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.cocoapods)
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -27,9 +26,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -48,11 +47,33 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
+            implementation("dev.gitlive:firebase-common:2.1.0")
             implementation("dev.gitlive:firebase-config:2.1.0")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+    }
+
+    cocoapods {
+        version = "1.0"
+        summary = "Some description for a Kotlin/Native module"
+        homepage = "Link to a Kotlin/Native module homepage"
+
+        framework {
+            baseName = "composeApp"
+
+            // Optional properties
+            // Specify the framework linking type. It's dynamic by default.
+            isStatic = false
+        }
+
+        ios.deploymentTarget = "18.0"
+
+        pod("FirebaseCore")
+        pod("FirebaseRemoteConfig")
+
+        podfile = project.file("../iosApp/Podfile")
     }
 }
 
