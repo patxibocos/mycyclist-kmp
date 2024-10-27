@@ -4,9 +4,17 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,28 +48,53 @@ fun App(
             getAsyncImageLoader(context)
         }
 
-        var showContent by remember { mutableStateOf(false) }
-        val uiState = viewModel.uiState.collectAsState()
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = {
-                showContent = !showContent
-                viewModel.clicked()
-            }) {
-                Text(uiState.value.counter.toString())
-            }
-            AnimatedVisibility(showContent) {
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(uiState.value.text)
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Outlined.Email, null) },
+                        label = { Text("Races") },
+                        selected = true,
+                        onClick = {},
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Outlined.Face, null) },
+                        label = { Text("Riders") },
+                        selected = false,
+                        onClick = {},
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Outlined.Person, null) },
+                        label = { Text("Teams") },
+                        selected = false,
+                        onClick = {},
+                    )
                 }
             }
-            Image(painterResource(Res.drawable.compose_multiplatform), null)
-            AsyncImage(
-                model = "https://freepngimg.com/thumb/emoji/3-2-love-hearts-eyes-emoji-png.png",
-                contentDescription = null,
-            )
+        ) {
+            var showContent by remember { mutableStateOf(false) }
+            val uiState = viewModel.uiState.collectAsState()
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Button(onClick = {
+                    showContent = !showContent
+                    viewModel.clicked()
+                }) {
+                    Text(uiState.value.counter.toString())
+                }
+                AnimatedVisibility(showContent) {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(uiState.value.text)
+                    }
+                }
+                Image(painterResource(Res.drawable.compose_multiplatform), null)
+                AsyncImage(
+                    model = "https://freepngimg.com/thumb/emoji/3-2-love-hearts-eyes-emoji-png.png",
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
