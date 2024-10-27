@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.cocoapods)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -49,6 +50,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation("dev.gitlive:firebase-common:2.1.0")
             implementation("dev.gitlive:firebase-config:2.1.0")
+            implementation(libs.kotlin.serialization.protobuf)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -112,4 +114,3 @@ dependencies {
     debugImplementation(compose.uiTooling)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 }
-
