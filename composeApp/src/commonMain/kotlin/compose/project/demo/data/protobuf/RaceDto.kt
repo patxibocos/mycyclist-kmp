@@ -6,24 +6,24 @@ import kotlinx.serialization.protobuf.ProtoNumber
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Race(
+data class RaceDto(
     @ProtoNumber(1)
-    val id: String = "",
+    val id: String,
     @ProtoNumber(2)
-    val name: String = "",
+    val name: String,
     @ProtoNumber(3)
-    val country: String = "",
+    val country: String,
     @ProtoNumber(4)
-    val stages: List<Stage> = emptyList(),
+    val stages: List<StageDto> = emptyList(),
     @ProtoNumber(5)
     val teamParticipations: List<TeamParticipation> = emptyList(),
     @ProtoNumber(6)
-    val website: String = "",
+    val website: String?,
 )
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Stage(
+data class StageDto(
     @ProtoNumber(1)
     val id: String = "",
     @ProtoNumber(2)
@@ -82,7 +82,7 @@ data class Stage(
 @Serializable
 data class TeamParticipation(
     @ProtoNumber(1)
-    val teamId: String = "",
+    val teamId: String,
     @ProtoNumber(2)
     val riderParticipations: List<RiderParticipation> = emptyList(),
 )
@@ -91,7 +91,7 @@ data class TeamParticipation(
 @Serializable
 data class RiderParticipation(
     @ProtoNumber(1)
-    val riderId: String = "",
+    val riderId: String,
     @ProtoNumber(2)
     val number: Int? = null,
 )
@@ -130,22 +130,22 @@ data class GeneralResults(
 @Serializable
 data class ParticipantResultTime(
     @ProtoNumber(1)
-    val position: Int = 0,
+    val position: Int,
     @ProtoNumber(2)
-    val participantId: String = "",
+    val participantId: String,
     @ProtoNumber(3)
-    val time: Int = 0,
+    val time: Int,
 )
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class ParticipantResultPoints(
     @ProtoNumber(1)
-    val position: Int = 0,
+    val position: Int,
     @ProtoNumber(2)
-    val participantId: String = "",
+    val participantId: String,
     @ProtoNumber(3)
-    val points: Int = 0,
+    val points: Int,
 )
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -161,7 +161,7 @@ data class PlacePoints(
 @Serializable
 data class Place(
     @ProtoNumber(1)
-    val name: String = "",
+    val name: String,
     @ProtoNumber(2)
-    val distance: Float = 0f,
+    val distance: Float,
 )

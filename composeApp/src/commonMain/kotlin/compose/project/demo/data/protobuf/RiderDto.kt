@@ -7,15 +7,15 @@ import kotlinx.serialization.protobuf.ProtoNumber
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Rider(
+data class RiderDto(
     @ProtoNumber(1)
-    val id: String = "",
+    val id: String,
     @ProtoNumber(2)
-    val firstName: String = "",
+    val firstName: String,
     @ProtoNumber(3)
-    val lastName: String = "",
+    val lastName: String,
     @ProtoNumber(4)
-    val country: String = "",
+    val country: String,
     @ProtoNumber(5)
     val birthDate: Timestamp? = null,
     @ProtoNumber(6)

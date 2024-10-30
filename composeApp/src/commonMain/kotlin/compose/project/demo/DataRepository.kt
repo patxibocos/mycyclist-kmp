@@ -1,8 +1,8 @@
 package compose.project.demo
 
-import compose.project.demo.data.protobuf.Race
-import compose.project.demo.data.protobuf.Rider
-import compose.project.demo.data.protobuf.Team
+import compose.project.demo.domain.Race
+import compose.project.demo.domain.Rider
+import compose.project.demo.domain.Team
 import kotlinx.coroutines.flow.Flow
 
 interface DataRepository {

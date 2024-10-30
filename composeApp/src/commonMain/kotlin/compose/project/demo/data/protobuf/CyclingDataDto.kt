@@ -6,11 +6,11 @@ import kotlinx.serialization.protobuf.ProtoNumber
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class CyclingData(
+data class CyclingDataDto(
     @ProtoNumber(1)
-    val teams: List<Team> = emptyList(),
+    val teams: List<TeamDto> = emptyList(),
     @ProtoNumber(2)
-    val riders: List<Rider> = emptyList(),
+    val riders: List<RiderDto> = emptyList(),
     @ProtoNumber(3)
-    val races: List<Race> = emptyList()
+    val races: List<RaceDto> = emptyList()
 )

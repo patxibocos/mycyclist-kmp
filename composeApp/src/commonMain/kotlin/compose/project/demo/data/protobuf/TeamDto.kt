@@ -6,27 +6,27 @@ import kotlinx.serialization.protobuf.ProtoNumber
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Team(
+data class TeamDto(
     @ProtoNumber(1)
-    val id: String = "",
+    val id: String,
     @ProtoNumber(2)
-    val name: String = "",
+    val name: String,
     @ProtoNumber(3)
     val status: Status = Status.Unspecified,
     @ProtoNumber(4)
-    val abbreviation: String = "",
+    val abbreviation: String? = null,
     @ProtoNumber(5)
-    val country: String = "",
+    val country: String,
     @ProtoNumber(6)
-    val bike: String = "",
+    val bike: String,
     @ProtoNumber(7)
-    val jersey: String = "",
+    val jersey: String,
     @ProtoNumber(8)
-    val year: Int = 0,
+    val year: Int,
     @ProtoNumber(9)
     val riderIds: List<String> = emptyList(),
     @ProtoNumber(10)
-    val website: String = "",
+    val website: String? = null,
 ) {
     enum class Status {
         @ProtoNumber(0)
