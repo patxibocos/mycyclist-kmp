@@ -1,8 +1,6 @@
-package compose.project.demo
+package compose.project.demo.domain
 
-import compose.project.demo.domain.Race
-import compose.project.demo.domain.Rider
-import compose.project.demo.domain.Team
+import compose.project.demo.data.firebase.FirebaseDataRepository
 import kotlinx.coroutines.flow.Flow
 
 interface DataRepository {

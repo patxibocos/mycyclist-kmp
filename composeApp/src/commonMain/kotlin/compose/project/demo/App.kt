@@ -1,7 +1,10 @@
 package compose.project.demo
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,12 +47,20 @@ import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
 import coil3.util.DebugLogger
-import compose.project.demo.CodePointUtil.Companion.buildStringFromCodePoints
+import compose.project.demo.util.CodePointUtil.Companion.buildStringFromCodePoints
 import compose.project.demo.domain.Race
+import compose.project.demo.domain.Stage
 import compose.project.demo.domain.startDate
+import compose.project.demo.ui.races_list.RacesListViewModel
+import compose.project.demo.util.CodePointUtil
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -97,11 +108,19 @@ fun App() {
                 startDestination = NavigationRoutes.RacesList,
                 modifier = Modifier.padding(it)
             ) {
-                composable<NavigationRoutes.RacesList>(deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavigationRoutes.RacesList.deepLinkRoute()
+                composable<NavigationRoutes.RacesList>(
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = NavigationRoutes.RacesList.deepLinkRoute()
+                        }
+                    ),
+                    enterTransition = {
+                        EnterTransition.None
+                    },
+                    exitTransition = {
+                        ExitTransition.None
                     }
-                )) {
+                ) {
                     RacesListScreen(
                         onRaceClick = { race ->
                             navController.navigate(
@@ -113,25 +132,49 @@ fun App() {
                         }
                     )
                 }
-                composable<NavigationRoutes.RidersList>(deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavigationRoutes.RidersList.deepLinkRoute()
+                composable<NavigationRoutes.RidersList>(
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = NavigationRoutes.RidersList.deepLinkRoute()
+                        }
+                    ),
+                    enterTransition = {
+                        EnterTransition.None
+                    },
+                    exitTransition = {
+                        ExitTransition.None
                     }
-                )) {
+                ) {
                     Text("Riders")
                 }
-                composable<NavigationRoutes.TeamsList>(deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavigationRoutes.TeamsList.deepLinkRoute()
+                composable<NavigationRoutes.TeamsList>(
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = NavigationRoutes.TeamsList.deepLinkRoute()
+                        }
+                    ),
+                    enterTransition = {
+                        EnterTransition.None
+                    },
+                    exitTransition = {
+                        ExitTransition.None
                     }
-                )) {
+                ) {
                     Text("Teams")
                 }
-                composable<NavigationRoutes.RaceDetails>(deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = NavigationRoutes.RaceDetails.deepLinkRoute()
+                composable<NavigationRoutes.RaceDetails>(
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = NavigationRoutes.RaceDetails.deepLinkRoute()
+                        }
+                    ),
+                    enterTransition = {
+                        EnterTransition.None
+                    },
+                    exitTransition = {
+                        ExitTransition.None
                     }
-                )) { backStackEntry ->
+                ) { backStackEntry ->
                     val raceDetails: NavigationRoutes.RaceDetails = backStackEntry.toRoute()
                     RaceDetailsScreen(raceDetails.raceId, raceDetails.stageId)
                 }
@@ -199,13 +242,13 @@ fun RacesListScreen(
             }
 
             is RacesListViewModel.UiState.SeasonInProgressViewState -> {
-//                seasonInProgress(
-//                    racesViewState.pastRaces,
-//                    racesViewState.todayStages,
-//                    racesViewState.futureRaces,
-//                    onRaceSelected,
-//                    onStageSelected,
-//                )
+                seasonInProgress(
+                    racesViewState.pastRaces,
+                    racesViewState.todayStages,
+                    racesViewState.futureRaces,
+                    {},
+                    { _, _ -> },
+                )
             }
 
             is RacesListViewModel.UiState.SeasonNotStartedViewState -> {
@@ -224,7 +267,7 @@ private fun LazyListScope.seasonEnded(pastRaces: List<Race>, onRaceSelected: (Ra
         Text(text = "Past races")
     }
     items(pastRaces) { pastRace ->
-        Text(pastRace.name)
+        RaceRow(race = pastRace, onRaceSelected = onRaceSelected)
     }
 }
 
@@ -249,6 +292,169 @@ private fun LazyListScope.seasonNotStarted(
     }
     items(futureRaces) { pastRace ->
         RaceRow(race = pastRace, onRaceSelected = onRaceSelected)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+private fun LazyListScope.seasonInProgress(
+    pastRaces: List<Race>,
+    todayStages: List<RacesListViewModel.TodayStage>,
+    futureRaces: List<Race>,
+    onRaceSelected: (Race) -> Unit,
+    onStageSelected: (Race, Stage) -> Unit,
+) {
+    item {
+        Text(
+            text = "Today",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(10.dp)
+                .fillMaxWidth(),
+        )
+    }
+    if (todayStages.isEmpty()) {
+        item {
+            Text("No races today, see next races below")
+        }
+    }
+    items(todayStages) { todayStage ->
+        when (todayStage) {
+            is RacesListViewModel.TodayStage.MultiStageRace -> TodayMultiStageRaceStage(
+                todayStage.race,
+                todayStage.stage,
+                todayStage.stageNumber,
+                todayStage.results,
+                onStageSelected,
+            )
+
+            is RacesListViewModel.TodayStage.SingleDayRace -> TodaySingleDayRaceStage(
+                todayStage.race,
+                todayStage.stage,
+                todayStage.results,
+                onRaceSelected,
+            )
+
+            is RacesListViewModel.TodayStage.RestDay -> TodayRestDayStage(
+                todayStage.race,
+                onRaceSelected
+            )
+        }
+    }
+    if (futureRaces.isNotEmpty()) {
+        stickyHeader {
+            Text(
+                text = "Future races",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+            )
+        }
+        items(
+            items = futureRaces,
+            key = Race::id,
+            itemContent = { race ->
+                RaceRow(race, onRaceSelected)
+            },
+        )
+    }
+    if (pastRaces.isNotEmpty()) {
+        stickyHeader {
+            Text(
+                text = "Past races",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+            )
+        }
+        items(
+            items = pastRaces,
+            key = Race::id,
+            itemContent = { race ->
+                RaceRow(race, onRaceSelected)
+            },
+        )
+    }
+}
+
+@Composable
+private fun TodayMultiStageRaceStage(
+    race: Race,
+    stage: Stage,
+    stageNumber: Int,
+    results: RacesListViewModel.TodayResults,
+    onStageSelected: (Race, Stage) -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onStageSelected(race, stage)
+            },
+    ) {
+        Text("${race.name} - Stage $stageNumber")
+        Text("🏳 ${stage.departure} - ${stage.arrival} 🏁")
+        Text(formatTime(stage.startDateTime))
+        Results(results)
+    }
+}
+
+@Composable
+private fun TodaySingleDayRaceStage(
+    race: Race,
+    stage: Stage,
+    results: RacesListViewModel.TodayResults,
+    onRaceSelected: (Race) -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onRaceSelected(race) },
+    ) {
+        Text(text = race.name)
+        Text("🏳 ${stage.departure} - ${stage.arrival} 🏁")
+        Text(formatTime(stage.startDateTime))
+        Results(results)
+    }
+}
+
+private fun formatTime(instant: Instant): String {
+    return LocalDateTime.Format {
+        hour()
+        char(':')
+        minute()
+    }.format(instant.toLocalDateTime(TimeZone.currentSystemDefault()))
+}
+
+@Composable
+private fun Results(results: RacesListViewModel.TodayResults) {
+    when (results) {
+        is RacesListViewModel.TodayResults.Riders -> {
+            results.riders.forEachIndexed { index, rider ->
+                Text("${index + 1}. ${rider.rider.fullName()}")
+            }
+        }
+
+        is RacesListViewModel.TodayResults.Teams -> {
+            results.teams.forEachIndexed { index, team ->
+                Text("${index + 1}. ${team.team.name}")
+            }
+        }
+    }
+}
+
+@Composable
+private fun TodayRestDayStage(race: Race, onRaceSelected: (Race) -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onRaceSelected(race) },
+    ) {
+        Text("Rest day - ${race.name}")
     }
 }
 
@@ -301,3 +507,10 @@ fun getCountryEmoji(countryCode: String): String {
         .toIntArray()
     return buildStringFromCodePoints(codePoints)
 }
+
+private val SPANISH_ABBREVIATED: MonthNames = MonthNames(
+    listOf(
+        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+    )
+)

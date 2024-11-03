@@ -1,6 +1,5 @@
 package compose.project.demo.domain
 
-import androidx.compose.runtime.Immutable
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -8,7 +7,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
-@Immutable
 data class Race(
     val id: String,
     val name: String,
@@ -18,22 +16,16 @@ data class Race(
     val teamParticipations: List<TeamParticipation>,
 )
 
-@Immutable
 data class ParticipantResultTime(val position: Int, val participantId: String, val time: Long)
 
-@Immutable
 data class ParticipantResultPoints(val position: Int, val participant: String, val points: Int)
 
-@Immutable
 data class PlaceResult(val place: Place, val points: List<ParticipantResultPoints>)
 
-@Immutable
 data class Place(val name: String, val distance: Float)
 
-@Immutable
 data class TeamParticipation(val teamId: String, val riderParticipations: List<RiderParticipation>)
 
-@Immutable
 data class RiderParticipation(val riderId: String, val number: Int)
 
 fun Race.isSingleDay(): Boolean = this.stages.size == 1
@@ -62,7 +54,6 @@ fun Race.indexOfLastStageWithResults(): Int =
 fun Race.result(): List<ParticipantResultTime>? =
     this.stages.last().generalResults.time.takeIf { it.isAvailable() }
 
-@Immutable
 data class Stage(
     val id: String,
     val distance: Float,
@@ -75,7 +66,6 @@ data class Stage(
     val generalResults: GeneralResults,
 )
 
-@Immutable
 data class StageResults(
     val time: List<ParticipantResultTime>,
     val youth: List<ParticipantResultTime>,
@@ -84,7 +74,6 @@ data class StageResults(
     val points: List<PlaceResult>,
 )
 
-@Immutable
 data class GeneralResults(
     val time: List<ParticipantResultTime>,
     val youth: List<ParticipantResultTime>,

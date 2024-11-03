@@ -1,10 +1,11 @@
-package compose.project.demo
+package compose.project.demo.data.firebase
 
 import compose.project.demo.data.protobuf.CyclingDataDto
 import compose.project.demo.data.protobuf.RaceDto
 import compose.project.demo.data.protobuf.RiderDto
 import compose.project.demo.data.protobuf.StageDto
 import compose.project.demo.data.protobuf.TeamDto
+import compose.project.demo.domain.DataRepository
 import compose.project.demo.domain.GeneralResults
 import compose.project.demo.domain.ProfileType
 import compose.project.demo.domain.Race
@@ -14,6 +15,7 @@ import compose.project.demo.domain.StageResults
 import compose.project.demo.domain.StageType
 import compose.project.demo.domain.Team
 import compose.project.demo.domain.TeamStatus
+import compose.project.demo.expect.unGZip
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.remoteconfig.FirebaseRemoteConfig
 import dev.gitlive.firebase.remoteconfig.FirebaseRemoteConfigException

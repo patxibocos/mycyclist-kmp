@@ -1,4 +1,4 @@
-package compose.project.demo
+package compose.project.demo.util
 
 class CodePointUtil {
 
@@ -10,7 +10,7 @@ class CodePointUtil {
         private const val MIN_SUPPLEMENTARY_CODE_POINT = 0x010000
 
         fun buildStringFromCodePoints(codePoints: IntArray): String = buildString {
-            for (codePoint in codePoints) {
+            codePoints.forEach { codePoint ->
                 if (codePoint in 0x0000..0xFFFF) {
                     append(codePoint.toChar())
                 } else {

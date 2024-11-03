@@ -17,7 +17,7 @@ data class RiderDto(
     @ProtoNumber(4)
     val country: String,
     @ProtoNumber(5)
-    val birthDate: Timestamp? = null,
+    val birthDate: TimestampDto? = null,
     @ProtoNumber(6)
     val photo: String,
     @ProtoNumber(7)

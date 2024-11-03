@@ -27,7 +27,7 @@ data class StageDto(
     @ProtoNumber(1)
     val id: String = "",
     @ProtoNumber(2)
-    val startDateTime: Timestamp? = null,
+    val startDateTime: TimestampDto? = null,
     @ProtoNumber(3)
     val distance: Float = 0f,
     @ProtoNumber(4)

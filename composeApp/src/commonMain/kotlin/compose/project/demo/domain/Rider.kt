@@ -1,9 +1,7 @@
 package compose.project.demo.domain
 
-import androidx.compose.runtime.Immutable
 import kotlinx.datetime.LocalDate
 
-@Immutable
 data class Rider(
     val id: String,
     val firstName: String,

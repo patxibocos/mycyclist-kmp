@@ -1,4 +1,4 @@
-package compose.project.demo
+package compose.project.demo.expect
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.UByteVar

@@ -1,9 +1,13 @@
-package compose.project.demo
+package compose.project.demo.ui.races_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import compose.project.demo.domain.DataRepository
 import compose.project.demo.domain.Race
+import compose.project.demo.domain.Rider
 import compose.project.demo.domain.Stage
+import compose.project.demo.domain.StageType
+import compose.project.demo.domain.Team
 import compose.project.demo.domain.endDate
 import compose.project.demo.domain.firstStage
 import compose.project.demo.domain.isActive
@@ -20,22 +24,31 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.dataRepository) :
+class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.domain.dataRepository) :
     ViewModel() {
+
+    sealed interface TodayResults {
+        data class Teams(val teams: List<TeamTimeResult>) : TodayResults
+        data class Riders(val riders: List<RiderTimeResult>) : TodayResults
+    }
+
+    data class RiderTimeResult(val rider: Rider, val time: Long)
+
+    data class TeamTimeResult(val team: Team, val time: Long)
 
     sealed class TodayStage(open val race: Race) {
         data class RestDay(override val race: Race) : TodayStage(race)
         data class SingleDayRace(
             override val race: Race,
             val stage: Stage,
-//            val results: TodayResults,
+            val results: TodayResults,
         ) : TodayStage(race)
 
         data class MultiStageRace(
             override val race: Race,
             val stage: Stage,
             val stageNumber: Int,
-//            val results: TodayResults,
+            val results: TodayResults,
         ) :
             TodayStage(race)
     }
@@ -81,14 +94,14 @@ class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.d
                             race.isSingleDay() -> TodayStage.SingleDayRace(
                                 race = race,
                                 stage = race.firstStage(),
-//                                results = stageResults(race.firstStage(), riders, teams),
+                                results = stageResults(race.firstStage(), riders, teams),
                             )
 
                             todayStage != null -> TodayStage.MultiStageRace(
                                 race = race,
                                 stage = todayStage.first,
                                 stageNumber = todayStage.second + 1,
-//                                results = stageResults(todayStage.first, riders, teams),
+                                results = stageResults(todayStage.first, riders, teams),
                             )
 
                             else -> TodayStage.RestDay(race)
@@ -106,5 +119,28 @@ class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.d
             started = SharingStarted.WhileSubscribed(),
             initialValue = UiState.Empty,
         )
+
+    private fun stageResults(stage: Stage, riders: List<Rider>, teams: List<Team>): TodayResults {
+        return when (stage.stageType) {
+            StageType.REGULAR, StageType.INDIVIDUAL_TIME_TRIAL -> TodayResults.Riders(
+                stage.stageResults.time.take(3).map { participantResult ->
+                    RiderTimeResult(
+                        riders.find { it.id == participantResult.participantId }!!,
+                        participantResult.time,
+                    )
+                },
+            )
+
+            StageType.TEAM_TIME_TRIAL -> TodayResults.Teams(
+                stage.stageResults.time.take(3).map { participantResult ->
+                    TeamTimeResult(
+                        teams.find { it.id == participantResult.participantId }!!,
+                        participantResult.time,
+                    )
+                },
+            )
+        }
+    }
+
 
 }

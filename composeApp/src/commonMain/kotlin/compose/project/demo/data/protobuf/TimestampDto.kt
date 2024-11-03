@@ -7,7 +7,7 @@ import kotlinx.serialization.protobuf.ProtoNumber
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Timestamp(
+data class TimestampDto(
     @ProtoNumber(1)
     val seconds: Long = 0,
     @ProtoNumber(2)
