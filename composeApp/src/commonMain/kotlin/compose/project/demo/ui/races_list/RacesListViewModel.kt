@@ -79,7 +79,7 @@ class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.d
         combine(
             dataRepository.races,
             dataRepository.teams,
-            dataRepository.riders
+            dataRepository.riders,
         ) { races, teams, riders ->
             val minStartDate = races.first().startDate()
             val maxEndDate = races.last().endDate()

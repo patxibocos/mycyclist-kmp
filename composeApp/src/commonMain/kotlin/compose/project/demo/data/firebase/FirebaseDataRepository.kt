@@ -44,6 +44,10 @@ class FirebaseDataRepository(
 
     init {
         CoroutineScope(defaultDispatcher).launch {
+            emitData(
+                firebaseRemoteConfig.getValue(FIREBASE_REMOTE_CONFIG_CYCLING_DATA_KEY)
+                    .asString()
+            )
             firebaseRemoteConfig.settings {
                 minimumFetchInterval = 1.hours
             }
@@ -61,6 +65,9 @@ class FirebaseDataRepository(
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalSerializationApi::class)
     private suspend fun emitData(serializedContent: String) {
+        if (serializedContent.isEmpty()) {
+            return
+        }
         val unzipped = unGZip(Base64.decode(serializedContent))
         val cyclingData = ProtoBuf.decodeFromByteArray<CyclingDataDto>(unzipped)
         _teams.emit(cyclingData.teams.map(TeamDto::toDomain))

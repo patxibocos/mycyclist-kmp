@@ -47,12 +47,12 @@ import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
 import coil3.util.DebugLogger
-import compose.project.demo.util.CodePointUtil.Companion.buildStringFromCodePoints
 import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.startDate
 import compose.project.demo.ui.races_list.RacesListViewModel
 import compose.project.demo.util.CodePointUtil
+import compose.project.demo.util.CodePointUtil.Companion.buildStringFromCodePoints
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -236,7 +236,10 @@ fun RacesListScreen(
     val racesViewState = viewState
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         when (racesViewState) {
-            RacesListViewModel.UiState.EmptyViewState -> {}
+            RacesListViewModel.UiState.EmptyViewState -> {
+                item { Text(text = "Empty") }
+            }
+
             is RacesListViewModel.UiState.SeasonEndedViewState -> {
                 seasonEnded(racesViewState.pastRaces, {})
             }
