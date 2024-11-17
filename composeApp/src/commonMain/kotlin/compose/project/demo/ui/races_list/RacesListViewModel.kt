@@ -9,6 +9,7 @@ import compose.project.demo.domain.Stage
 import compose.project.demo.domain.StageType
 import compose.project.demo.domain.Team
 import compose.project.demo.domain.endDate
+import compose.project.demo.domain.firebaseDataRepository
 import compose.project.demo.domain.firstStage
 import compose.project.demo.domain.isActive
 import compose.project.demo.domain.isFuture
@@ -24,7 +25,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.domain.dataRepository) :
+class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository) :
     ViewModel() {
 
     sealed interface TodayResults {
@@ -69,13 +70,9 @@ class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.d
         ) : UiState()
 
         data object EmptyViewState : UiState()
-
-        companion object {
-            val Empty = EmptyViewState
-        }
     }
 
-    val uiState: StateFlow<UiState> =
+    val uiState: StateFlow<UiState?> =
         combine(
             dataRepository.races,
             dataRepository.teams,
@@ -117,7 +114,7 @@ class RacesListViewModel(dataRepository: DataRepository = compose.project.demo.d
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = UiState.Empty,
+            initialValue = null,
         )
 
     private fun stageResults(stage: Stage, riders: List<Rider>, teams: List<Team>): TodayResults {

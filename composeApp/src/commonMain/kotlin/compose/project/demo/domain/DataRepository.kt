@@ -11,6 +11,4 @@ interface DataRepository {
     suspend fun refresh(): Boolean
 }
 
-val dataRepository by lazy {
-    FirebaseDataRepository()
-}
+val firebaseDataRepository: DataRepository = FirebaseDataRepository()
