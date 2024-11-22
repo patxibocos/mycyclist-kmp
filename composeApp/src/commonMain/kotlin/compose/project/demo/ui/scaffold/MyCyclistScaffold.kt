@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import compose.project.demo.ui.navigation.NavigationRoutes
-import compose.project.demo.ui.race_details.RaceDetailsScreen
+import compose.project.demo.ui.race_details.RaceDetailsRoute
 import compose.project.demo.ui.races_list.RacesListScreen
 
 @Composable
@@ -100,10 +100,13 @@ fun MyCyclistScaffold() {
                 }
             ) { backStackEntry ->
                 val raceDetails: NavigationRoutes.RaceDetails = backStackEntry.toRoute()
-                RaceDetailsScreen(
+                RaceDetailsRoute(
                     raceId = raceDetails.raceId,
                     stageId = raceDetails.stageId,
                     onBackPressed = { navController.navigateUp() },
+                    onRiderSelected = {},
+                    onTeamSelected = {},
+                    onParticipationsClicked = {},
                 )
             }
         }

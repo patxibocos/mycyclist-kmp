@@ -26,7 +26,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.startDate
-import compose.project.demo.getCountryEmoji
+import compose.project.demo.util.CodePointUtil
+import compose.project.demo.util.CodePointUtil.Companion.buildStringFromCodePoints
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -43,10 +44,7 @@ fun RacesListScreen(
 ) {
     val viewState by viewModel.uiState.collectAsState()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        val state = viewState
-        if (state == null) {
-            return@LazyColumn
-        }
+        val state = viewState ?: return@LazyColumn
         when (state) {
             RacesListViewModel.UiState.EmptyViewState -> {
                 item { Text(text = "Empty") }
@@ -306,4 +304,11 @@ private fun RaceRow(
             }
         }
     }
+}
+
+private fun getCountryEmoji(countryCode: String): String {
+    val codePoints = countryCode.uppercase()
+        .map { char -> 127397 + CodePointUtil.codePointAt(char.toString(), 0) }
+        .toIntArray()
+    return buildStringFromCodePoints(codePoints)
 }
