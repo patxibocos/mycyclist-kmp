@@ -17,6 +17,7 @@ import androidx.navigation.toRoute
 import compose.project.demo.ui.navigation.NavigationRoutes
 import compose.project.demo.ui.race_details.RaceDetailsRoute
 import compose.project.demo.ui.races_list.RacesListScreen
+import compose.project.demo.ui.riders_list.RidersListScreen
 
 @Composable
 fun MyCyclistScaffold() {
@@ -69,7 +70,15 @@ fun MyCyclistScaffold() {
                     fadeOut()
                 }
             ) {
-                Text("Riders")
+                RidersListScreen(
+                    onRiderClick = { rider ->
+                        navController.navigate(
+                            NavigationRoutes.RiderDetails(
+                                rider.id
+                            )
+                        )
+                    }
+                )
             }
             composable<NavigationRoutes.TeamsList>(
                 deepLinks = listOf(

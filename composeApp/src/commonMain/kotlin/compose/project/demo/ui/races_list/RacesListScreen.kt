@@ -16,18 +16,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.startDate
-import compose.project.demo.util.CodePointUtil
-import compose.project.demo.util.CodePointUtil.Companion.buildStringFromCodePoints
+import compose.project.demo.ui.emoji.getCountryEmoji
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -42,7 +41,7 @@ fun RacesListScreen(
     onRaceClick: (Race) -> Unit,
     viewModel: RacesListViewModel = viewModel { RacesListViewModel() }
 ) {
-    val viewState by viewModel.uiState.collectAsState()
+    val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         val state = viewState ?: return@LazyColumn
         when (state) {
@@ -304,11 +303,4 @@ private fun RaceRow(
             }
         }
     }
-}
-
-private fun getCountryEmoji(countryCode: String): String {
-    val codePoints = countryCode.uppercase()
-        .map { char -> 127397 + CodePointUtil.codePointAt(char.toString(), 0) }
-        .toIntArray()
-    return buildStringFromCodePoints(codePoints)
 }
