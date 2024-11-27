@@ -49,8 +49,8 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
-            implementation("dev.gitlive:firebase-common:2.1.0")
-            implementation("dev.gitlive:firebase-config:2.1.0")
+            implementation(libs.firebase.common)
+            implementation(libs.firebase.config)
             implementation(libs.kotlin.serialization.protobuf)
         }
         iosMain.dependencies {
