@@ -1,5 +1,8 @@
 package compose.project.demo.ui.riders_list
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,19 +32,26 @@ import coil3.compose.AsyncImage
 import compose.project.demo.domain.Rider
 import compose.project.demo.ui.emoji.getCountryEmoji
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun RidersListScreen(
-    onRiderClick: (Rider) -> Unit,
+fun SharedTransitionScope.RidersListScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: RidersListViewModel = viewModel { RidersListViewModel() },
+    onRiderClick: (Rider) -> Unit,
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     val state = viewState ?: return
-    RidersList(state.riders, onRiderClick)
+    RidersList(
+        animatedVisibilityScope = animatedVisibilityScope,
+        riders = state.riders,
+        onRiderSelected = onRiderClick,
+    )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-private fun RidersList(
+private fun SharedTransitionScope.RidersList(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     riders: List<Rider>,
     onRiderSelected: (Rider) -> Unit,
 ) {
@@ -51,14 +61,20 @@ private fun RidersList(
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         items(riders, key = Rider::id) { rider ->
-            RiderRow(rider, onRiderSelected)
+            RiderRow(
+                animatedVisibilityScope = animatedVisibilityScope,
+                rider = rider,
+                onRiderSelected = onRiderSelected
+            )
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun RiderRow(
+private fun SharedTransitionScope.RiderRow(
     rider: Rider,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onRiderSelected: (Rider) -> Unit,
 ) {
     Column(modifier = Modifier.clickable { onRiderSelected(rider) }) {
@@ -66,6 +82,10 @@ private fun RiderRow(
             AsyncImage(
                 model = rider.photo,
                 modifier = Modifier
+                    .sharedElement(
+                        state = rememberSharedContentState(key = rider.id),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                     .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                     .padding(2.dp)
                     .size(75.dp)
