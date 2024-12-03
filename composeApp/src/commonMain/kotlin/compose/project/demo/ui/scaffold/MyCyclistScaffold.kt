@@ -142,6 +142,27 @@ fun MyCyclistScaffold() {
                         riderId = riderDetails.riderId,
                         animatedVisibilityScope = this@composable,
                         onBackPressed = { navController.navigateUp() },
+                        onRaceSelected = { race ->
+                            navController.navigate(
+                                NavigationRoutes.RaceDetails(
+                                    race.id
+                                )
+                            )
+                        },
+                        onTeamSelected = { team ->
+                            navController.navigate(
+                                NavigationRoutes.TeamDetails(
+                                    team.id
+                                )
+                            )
+                        },
+                        onStageSelected = { race, stage ->
+                            navController.navigate(
+                                NavigationRoutes.RaceDetails(
+                                    race.id, stage.id,
+                                )
+                            )
+                        },
                     )
                 }
             }

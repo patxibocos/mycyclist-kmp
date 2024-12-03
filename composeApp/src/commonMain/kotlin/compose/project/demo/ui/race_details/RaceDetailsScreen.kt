@@ -60,8 +60,8 @@ internal fun RaceDetailsRoute(
 ) {
     val viewState by remember(raceId, stageId) {
         viewModel.uiState(
-            raceId,
-            stageId
+            raceId = raceId,
+            stageId = stageId,
         )
     }.collectAsStateWithLifecycle()
     val state = viewState ?: return
