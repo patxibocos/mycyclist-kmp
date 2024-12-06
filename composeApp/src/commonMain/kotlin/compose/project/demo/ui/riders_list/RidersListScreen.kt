@@ -3,7 +3,6 @@ package compose.project.demo.ui.riders_list
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,40 +30,40 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import compose.project.demo.domain.Rider
 import compose.project.demo.ui.emoji.getCountryEmoji
+import compose.project.demo.ui.riders_list.RidersListViewModel.UiState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.RidersListScreen(
+fun SharedTransitionScope.RidersListRoute(
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: RidersListViewModel = viewModel { RidersListViewModel() },
     onRiderClick: (Rider) -> Unit,
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     val state = viewState ?: return
-    RidersList(
+    RidersListScreen(
         animatedVisibilityScope = animatedVisibilityScope,
-        riders = state.riders,
-        onRiderSelected = onRiderClick,
+        state = state,
+        onRiderClick = onRiderClick,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SharedTransitionScope.RidersList(
+fun SharedTransitionScope.RidersListScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    riders: List<Rider>,
-    onRiderSelected: (Rider) -> Unit,
+    state: UiState,
+    onRiderClick: (Rider) -> Unit,
 ) {
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
-        items(riders, key = Rider::id) { rider ->
+        items(state.riders, key = Rider::id) { rider ->
             RiderRow(
                 animatedVisibilityScope = animatedVisibilityScope,
                 rider = rider,
-                onRiderSelected = onRiderSelected
+                onRiderSelected = onRiderClick,
             )
         }
     }

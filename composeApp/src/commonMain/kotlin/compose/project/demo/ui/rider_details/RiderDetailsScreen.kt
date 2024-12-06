@@ -33,10 +33,11 @@ import coil3.compose.AsyncImage
 import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.Team
+import compose.project.demo.ui.rider_details.RiderDetailsViewModel.UiState
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-internal fun SharedTransitionScope.RiderDetailsScreen(
+@OptIn(ExperimentalSharedTransitionApi::class)
+internal fun SharedTransitionScope.RiderDetailsRoute(
     riderId: String,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onBackPressed: () -> Unit,
@@ -49,7 +50,26 @@ internal fun SharedTransitionScope.RiderDetailsScreen(
         viewModel.uiState(riderId = riderId)
     }.collectAsStateWithLifecycle()
     val state = viewState ?: return
+    RiderDetailsScreen(
+        state = state,
+        animatedVisibilityScope = animatedVisibilityScope,
+        onBackPressed = onBackPressed,
+        onRaceSelected = onRaceSelected,
+        onTeamSelected = onTeamSelected,
+        onStageSelected = onStageSelected,
+    )
+}
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+internal fun SharedTransitionScope.RiderDetailsScreen(
+    state: UiState,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    onBackPressed: () -> Unit,
+    onRaceSelected: (Race) -> Unit,
+    onTeamSelected: (Team) -> Unit,
+    onStageSelected: (Race, Stage) -> Unit,
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = {

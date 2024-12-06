@@ -27,6 +27,7 @@ import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.startDate
 import compose.project.demo.ui.emoji.getCountryEmoji
+import compose.project.demo.ui.races_list.RacesListViewModel.UiState
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -37,23 +38,34 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 
 @Composable
-fun RacesListScreen(
+fun RacesListRoute(
     onRaceClick: (Race) -> Unit,
     viewModel: RacesListViewModel = viewModel { RacesListViewModel() }
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state = viewState ?: return
+    RacesListScreen(
+        state = state,
+        onRaceClick = onRaceClick,
+    )
+}
+
+@Composable
+fun RacesListScreen(
+    state: UiState,
+    onRaceClick: (Race) -> Unit,
+) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        val state = viewState ?: return@LazyColumn
         when (state) {
-            RacesListViewModel.UiState.EmptyViewState -> {
+            UiState.EmptyViewState -> {
                 item { Text(text = "Empty") }
             }
 
-            is RacesListViewModel.UiState.SeasonEndedViewState -> {
-                seasonEnded(state.pastRaces, {})
+            is UiState.SeasonEndedViewState -> {
+                seasonEnded(state.pastRaces, onRaceClick)
             }
 
-            is RacesListViewModel.UiState.SeasonInProgressViewState -> {
+            is UiState.SeasonInProgressViewState -> {
                 seasonInProgress(
                     state.pastRaces,
                     state.todayStages,
@@ -63,7 +75,7 @@ fun RacesListScreen(
                 )
             }
 
-            is RacesListViewModel.UiState.SeasonNotStartedViewState -> {
+            is UiState.SeasonNotStartedViewState -> {
                 seasonNotStarted(state.futureRaces, onRaceClick)
             }
         }
