@@ -16,7 +16,7 @@ data class RaceDto(
     @ProtoNumber(4)
     val stages: List<StageDto> = emptyList(),
     @ProtoNumber(5)
-    val teamParticipations: List<TeamParticipation> = emptyList(),
+    val teamParticipations: List<TeamParticipationDto> = emptyList(),
     @ProtoNumber(6)
     val website: String?,
 )
@@ -31,19 +31,19 @@ data class StageDto(
     @ProtoNumber(3)
     val distance: Float = 0f,
     @ProtoNumber(4)
-    val profileType: ProfileType = ProfileType.Unspecified,
+    val profileType: ProfileTypeDto = ProfileTypeDto.Unspecified,
     @ProtoNumber(5)
     val departure: String? = null,
     @ProtoNumber(6)
     val arrival: String? = null,
     @ProtoNumber(7)
-    val stageType: StageType = StageType.Unspecified,
+    val stageType: StageTypeDto = StageTypeDto.Unspecified,
     @ProtoNumber(8)
-    val stageResults: StageResults? = null,
+    val stageResults: StageResultsDto,
     @ProtoNumber(9)
-    val generalResults: GeneralResults? = null,
+    val generalResults: GeneralResultsDto,
 ) {
-    enum class ProfileType {
+    enum class ProfileTypeDto {
         @ProtoNumber(0)
         Unspecified,
 
@@ -63,7 +63,7 @@ data class StageDto(
         MountainsUphillFinish,
     }
 
-    enum class StageType {
+    enum class StageTypeDto {
         @ProtoNumber(0)
         Unspecified,
 
@@ -80,16 +80,16 @@ data class StageDto(
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class TeamParticipation(
+data class TeamParticipationDto(
     @ProtoNumber(1)
     val teamId: String,
     @ProtoNumber(2)
-    val riderParticipations: List<RiderParticipation> = emptyList(),
+    val riderParticipations: List<RiderParticipationDto> = emptyList(),
 )
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class RiderParticipation(
+data class RiderParticipationDto(
     @ProtoNumber(1)
     val riderId: String,
     @ProtoNumber(2)
@@ -98,37 +98,37 @@ data class RiderParticipation(
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class StageResults(
+data class StageResultsDto(
     @ProtoNumber(1)
-    val time: List<ParticipantResultTime> = emptyList(),
+    val time: List<ParticipantResultTimeDto> = emptyList(),
     @ProtoNumber(2)
-    val youth: List<ParticipantResultTime> = emptyList(),
+    val youth: List<ParticipantResultTimeDto> = emptyList(),
     @ProtoNumber(3)
-    val teams: List<ParticipantResultTime> = emptyList(),
+    val teams: List<ParticipantResultTimeDto> = emptyList(),
     @ProtoNumber(4)
-    val kom: List<PlacePoints> = emptyList(),
+    val kom: List<PlacePointsDto> = emptyList(),
     @ProtoNumber(5)
-    val points: List<PlacePoints> = emptyList(),
+    val points: List<PlacePointsDto> = emptyList(),
 )
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class GeneralResults(
+data class GeneralResultsDto(
     @ProtoNumber(1)
-    val time: List<ParticipantResultTime> = emptyList(),
+    val time: List<ParticipantResultTimeDto> = emptyList(),
     @ProtoNumber(2)
-    val youth: List<ParticipantResultTime> = emptyList(),
+    val youth: List<ParticipantResultTimeDto> = emptyList(),
     @ProtoNumber(3)
-    val teams: List<ParticipantResultTime> = emptyList(),
+    val teams: List<ParticipantResultTimeDto> = emptyList(),
     @ProtoNumber(4)
-    val kom: List<ParticipantResultPoints> = emptyList(),
+    val kom: List<ParticipantResultPointsDto> = emptyList(),
     @ProtoNumber(5)
-    val points: List<ParticipantResultPoints> = emptyList(),
+    val points: List<ParticipantResultPointsDto> = emptyList(),
 )
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class ParticipantResultTime(
+data class ParticipantResultTimeDto(
     @ProtoNumber(1)
     val position: Int,
     @ProtoNumber(2)
@@ -139,7 +139,7 @@ data class ParticipantResultTime(
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class ParticipantResultPoints(
+data class ParticipantResultPointsDto(
     @ProtoNumber(1)
     val position: Int,
     @ProtoNumber(2)
@@ -150,16 +150,16 @@ data class ParticipantResultPoints(
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class PlacePoints(
+data class PlacePointsDto(
     @ProtoNumber(1)
-    val place: Place,
+    val place: PlaceDto,
     @ProtoNumber(2)
-    val points: List<ParticipantResultPoints> = emptyList(),
+    val points: List<ParticipantResultPointsDto> = emptyList(),
 )
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Place(
+data class PlaceDto(
     @ProtoNumber(1)
     val name: String,
     @ProtoNumber(2)
