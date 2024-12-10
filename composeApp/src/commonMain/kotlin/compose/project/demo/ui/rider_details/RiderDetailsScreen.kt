@@ -37,8 +37,9 @@ import compose.project.demo.ui.rider_details.RiderDetailsViewModel.UiState
 
 @Composable
 @OptIn(ExperimentalSharedTransitionApi::class)
-internal fun SharedTransitionScope.RiderDetailsRoute(
+internal fun RiderDetailsRoute(
     riderId: String,
+    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onBackPressed: () -> Unit,
     onRaceSelected: (Race) -> Unit,
@@ -50,7 +51,7 @@ internal fun SharedTransitionScope.RiderDetailsRoute(
         viewModel.uiState(riderId = riderId)
     }.collectAsStateWithLifecycle()
     val state = viewState ?: return
-    RiderDetailsScreen(
+    sharedTransitionScope.RiderDetailsScreen(
         state = state,
         animatedVisibilityScope = animatedVisibilityScope,
         onBackPressed = onBackPressed,

@@ -2,8 +2,6 @@ package compose.project.demo.ui.scaffold
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -11,17 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import compose.project.demo.ui.navigation.NavigationRoutes
-import compose.project.demo.ui.race_details.RaceDetailsRoute
-import compose.project.demo.ui.races_list.RacesListRoute
-import compose.project.demo.ui.rider_details.RiderDetailsRoute
-import compose.project.demo.ui.riders_list.RidersListRoute
-import compose.project.demo.ui.team_details.TeamDetailsRoute
-import compose.project.demo.ui.teams_list.TeamsListRoute
+import compose.project.demo.ui.navigation.raceDetailsComposableRoute
+import compose.project.demo.ui.navigation.racesListComposableRoute
+import compose.project.demo.ui.navigation.riderDetailsComposableRoute
+import compose.project.demo.ui.navigation.ridersListComposableRoute
+import compose.project.demo.ui.navigation.teamDetailsComposableRoute
+import compose.project.demo.ui.navigation.teamsListComposableRoute
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -39,165 +34,62 @@ fun MyCyclistScaffold() {
                 startDestination = NavigationRoutes.RacesList,
                 modifier = Modifier.padding(it)
             ) {
-                composable<NavigationRoutes.RacesList>(
-                    deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern = NavigationRoutes.RacesList.deepLinkRoute()
-                        }
-                    ),
-                    enterTransition = {
-                        fadeIn()
-                    },
-                    exitTransition = {
-                        fadeOut()
-                    }
-                ) {
-                    RacesListRoute(
-                        onRaceClick = { race ->
-                            navController.navigate(
-                                NavigationRoutes.RaceDetails(
-                                    race.id,
-                                    null
-                                )
-                            )
-                        }
+                racesListComposableRoute(onRaceClick = { race ->
+                    navController.navigate(
+                        NavigationRoutes.RaceDetails(race.id, null)
                     )
-                }
-                composable<NavigationRoutes.RidersList>(
-                    deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern = NavigationRoutes.RidersList.deepLinkRoute()
-                        }
-                    ),
-                    enterTransition = {
-                        fadeIn()
-                    },
-                    exitTransition = {
-                        fadeOut()
-                    }
-                ) {
-                    RidersListRoute(
-                        animatedVisibilityScope = this@composable,
-                        onRiderClick = { rider ->
-                            navController.navigate(
-                                NavigationRoutes.RiderDetails(
-                                    rider.id
-                                )
+                })
+                ridersListComposableRoute(
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    onRiderClick = { rider ->
+                        navController.navigate(
+                            NavigationRoutes.RiderDetails(
+                                rider.id
                             )
-                        }
+                        )
+                    })
+                teamsListComposableRoute(onTeamClick = { team ->
+                    navController.navigate(
+                        NavigationRoutes.TeamDetails(team.id)
                     )
-                }
-                composable<NavigationRoutes.TeamsList>(
-                    deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern = NavigationRoutes.TeamsList.deepLinkRoute()
-                        }
-                    ),
-                    enterTransition = {
-                        fadeIn()
+                })
+                raceDetailsComposableRoute(onBackPressed = { navController.navigateUp() })
+                riderDetailsComposableRoute(
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    onRaceSelected = { race ->
+                        navController.navigate(
+                            NavigationRoutes.RaceDetails(
+                                race.id
+                            )
+                        )
                     },
-                    exitTransition = {
-                        fadeOut()
-                    }
-                ) {
-                    TeamsListRoute(
-                        onTeamClick = { team ->
-                            navController.navigate(
-                                NavigationRoutes.TeamDetails(team.id)
+                    onTeamSelected = { team ->
+                        navController.navigate(
+                            NavigationRoutes.TeamDetails(
+                                team.id
                             )
-                        }
-                    )
-                }
-                composable<NavigationRoutes.RaceDetails>(
-                    deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern = NavigationRoutes.RaceDetails.deepLinkRoute()
-                        }
-                    ),
-                    enterTransition = {
-                        fadeIn()
+                        )
                     },
-                    exitTransition = {
-                        fadeOut()
-                    }
-                ) { backStackEntry ->
-                    val raceDetails: NavigationRoutes.RaceDetails = backStackEntry.toRoute()
-                    RaceDetailsRoute(
-                        raceId = raceDetails.raceId,
-                        stageId = raceDetails.stageId,
-                        onBackPressed = { navController.navigateUp() },
-                        onRiderSelected = {},
-                        onTeamSelected = {},
-                        onParticipationsClicked = {},
-                    )
-                }
-                composable<NavigationRoutes.RiderDetails>(
-                    deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern = NavigationRoutes.RiderDetails.deepLinkRoute()
-                        }
-                    ),
-                    enterTransition = {
-                        fadeIn()
+                    onStageSelected = { race, stage ->
+                        navController.navigate(
+                            NavigationRoutes.RaceDetails(
+                                race.id,
+                                stage.id,
+                            )
+                        )
                     },
-                    exitTransition = {
-                        fadeOut()
-                    }
-                ) { backStackEntry ->
-                    val riderDetails: NavigationRoutes.RiderDetails = backStackEntry.toRoute()
-                    RiderDetailsRoute(
-                        riderId = riderDetails.riderId,
-                        animatedVisibilityScope = this@composable,
-                        onBackPressed = { navController.navigateUp() },
-                        onRaceSelected = { race ->
-                            navController.navigate(
-                                NavigationRoutes.RaceDetails(
-                                    race.id
-                                )
+                    onBackPressed = { navController.navigateUp() },
+                )
+                teamDetailsComposableRoute(
+                    onRiderSelected = { rider ->
+                        navController.navigate(
+                            NavigationRoutes.RiderDetails(
+                                rider.id
                             )
-                        },
-                        onTeamSelected = { team ->
-                            navController.navigate(
-                                NavigationRoutes.TeamDetails(
-                                    team.id
-                                )
-                            )
-                        },
-                        onStageSelected = { race, stage ->
-                            navController.navigate(
-                                NavigationRoutes.RaceDetails(
-                                    race.id, stage.id,
-                                )
-                            )
-                        },
-                    )
-                }
-                composable<NavigationRoutes.TeamDetails>(
-                    deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern = NavigationRoutes.TeamDetails.deepLinkRoute()
-                        }
-                    ),
-                    enterTransition = {
-                        fadeIn()
+                        )
                     },
-                    exitTransition = {
-                        fadeOut()
-                    }
-                ) { backStackEntry ->
-                    val teamDetails: NavigationRoutes.TeamDetails = backStackEntry.toRoute()
-                    TeamDetailsRoute(
-                        teamId = teamDetails.teamId,
-                        onBackPressed = { navController.navigateUp() },
-                        onRiderSelected = { rider ->
-                            navController.navigate(
-                                NavigationRoutes.RiderDetails(
-                                    rider.id
-                                )
-                            )
-                        }
-                    )
-                }
+                    onBackPressed = { navController.navigateUp() },
+                )
             }
         }
     }

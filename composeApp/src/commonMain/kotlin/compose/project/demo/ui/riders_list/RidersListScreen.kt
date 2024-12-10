@@ -34,14 +34,15 @@ import compose.project.demo.ui.riders_list.RidersListViewModel.UiState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.RidersListRoute(
+fun RidersListRoute(
+    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: RidersListViewModel = viewModel { RidersListViewModel() },
     onRiderClick: (Rider) -> Unit,
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     val state = viewState ?: return
-    RidersListScreen(
+    sharedTransitionScope.RidersListScreen(
         animatedVisibilityScope = animatedVisibilityScope,
         state = state,
         onRiderClick = onRiderClick,
