@@ -103,7 +103,7 @@ internal fun SharedTransitionScope.RiderDetailsScreen(
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )
-        if (state.rider.uciRankingPosition > 0) {
+        if (state.rider.uciRankingPosition != null) {
             Text(text = "UCI Ranking: ${state.rider.uciRankingPosition}")
         }
         Text(

@@ -65,13 +65,15 @@ internal object FirebaseDataMapper {
             lastName = this.lastName,
             photo = this.photo,
             country = this.country,
-            website = this.website.orEmpty(),
-            birthDate = Instant.fromEpochSeconds(this.birthDate?.seconds ?: 0)
-                .toLocalDateTime(TimeZone.currentSystemDefault()).date,
-            birthPlace = this.birthPlace.orEmpty(),
-            weight = this.weight ?: 0,
-            height = this.height ?: 0,
-            uciRankingPosition = this.uciRankingPosition ?: 0,
+            website = this.website,
+            birthDate = this.birthDate?.let {
+                Instant.fromEpochSeconds(it.seconds)
+                    .toLocalDateTime(TimeZone.currentSystemDefault()).date
+            },
+            birthPlace = this.birthPlace,
+            weight = this.weight,
+            height = this.height,
+            uciRankingPosition = this.uciRankingPosition,
         )
     }
 
