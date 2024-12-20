@@ -1,4 +1,4 @@
-package compose.project.demo.ui.riders_list
+package compose.project.demo.ui.rider.list
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -30,19 +30,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import compose.project.demo.domain.Rider
 import compose.project.demo.ui.emoji.getCountryEmoji
-import compose.project.demo.ui.riders_list.RidersListViewModel.UiState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun RidersListRoute(
+internal fun RiderListRoute(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: RidersListViewModel = viewModel { RidersListViewModel() },
+    viewModel: RiderListViewModel = viewModel { RiderListViewModel() },
     onRiderClick: (Rider) -> Unit,
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     val state = viewState ?: return
-    sharedTransitionScope.RidersListScreen(
+    sharedTransitionScope.RiderListScreen(
         animatedVisibilityScope = animatedVisibilityScope,
         state = state,
         onRiderClick = onRiderClick,
@@ -51,9 +50,9 @@ fun RidersListRoute(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.RidersListScreen(
+private fun SharedTransitionScope.RiderListScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    state: UiState,
+    state: RiderListViewModel.UiState,
     onRiderClick: (Rider) -> Unit,
 ) {
     LazyColumn(

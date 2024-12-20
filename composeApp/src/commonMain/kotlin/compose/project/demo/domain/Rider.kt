@@ -2,7 +2,7 @@ package compose.project.demo.domain
 
 import kotlinx.datetime.LocalDate
 
-data class Rider(
+internal data class Rider(
     val id: String,
     val firstName: String,
     val lastName: String,

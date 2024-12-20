@@ -1,4 +1,4 @@
-package compose.project.demo.ui.rider_details
+package compose.project.demo.ui.rider.details
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -33,7 +33,6 @@ import coil3.compose.AsyncImage
 import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.Team
-import compose.project.demo.ui.rider_details.RiderDetailsViewModel.UiState
 
 @Composable
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -63,8 +62,8 @@ internal fun RiderDetailsRoute(
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-internal fun SharedTransitionScope.RiderDetailsScreen(
-    state: UiState,
+private fun SharedTransitionScope.RiderDetailsScreen(
+    state: RiderDetailsViewModel.UiState,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onBackPressed: () -> Unit,
     onRaceSelected: (Race) -> Unit,

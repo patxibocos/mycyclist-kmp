@@ -1,4 +1,4 @@
-package compose.project.demo.ui.team_details
+package compose.project.demo.ui.team.details
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.project.demo.domain.Rider
-import compose.project.demo.ui.team_details.TeamDetailsViewModel.UiState
+import compose.project.demo.ui.team.details.TeamDetailsViewModel.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeamDetailsRoute(
+internal fun TeamDetailsRoute(
     teamId: String,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
@@ -43,7 +43,7 @@ fun TeamDetailsRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeamDetailsScreen(
+private fun TeamDetailsScreen(
     state: UiState,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,

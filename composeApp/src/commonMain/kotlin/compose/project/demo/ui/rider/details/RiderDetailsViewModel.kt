@@ -1,4 +1,4 @@
-package compose.project.demo.ui.rider_details
+package compose.project.demo.ui.rider.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +12,8 @@ import compose.project.demo.domain.firebaseDataRepository
 import compose.project.demo.domain.isSingleDay
 import compose.project.demo.domain.result
 import compose.project.demo.domain.startDate
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -20,7 +22,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-class RiderDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
+internal class RiderDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
     ViewModel() {
 
     data class UiState(
@@ -28,11 +30,11 @@ class RiderDetailsViewModel(private val dataRepository: DataRepository = firebas
         val team: Team,
         val currentParticipation: Participation?,
         val pastParticipations: List<Participation>,
-        val futureParticipations: List<Participation>,
-        val results: List<Result>,
+        val futureParticipations: ImmutableList<Participation>,
+        val results: ImmutableList<Result>,
     )
 
-    fun uiState(riderId: String): StateFlow<UiState?> =
+    internal fun uiState(riderId: String): StateFlow<UiState?> =
         combine(
             dataRepository.teams,
             dataRepository.riders,
@@ -53,8 +55,8 @@ class RiderDetailsViewModel(private val dataRepository: DataRepository = firebas
                 team = team,
                 currentParticipation = currentParticipation,
                 pastParticipations = pastParticipations,
-                futureParticipations = futureParticipations,
-                results = results,
+                futureParticipations = futureParticipations.toImmutableList(),
+                results = results.toImmutableList(),
             )
         }.stateIn(
             scope = viewModelScope,
@@ -119,6 +121,4 @@ class RiderDetailsViewModel(private val dataRepository: DataRepository = firebas
             override val position: Int,
         ) : Result(race, position)
     }
-
-
 }

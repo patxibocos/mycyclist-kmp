@@ -1,4 +1,4 @@
-package compose.project.demo.ui.races_list
+package compose.project.demo.ui.race.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +17,8 @@ import compose.project.demo.domain.isPast
 import compose.project.demo.domain.isSingleDay
 import compose.project.demo.domain.startDate
 import compose.project.demo.domain.todayStage
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -25,54 +27,53 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository) :
+internal class RaceListViewModel(dataRepository: DataRepository = firebaseDataRepository) :
     ViewModel() {
 
-    sealed interface TodayResults {
-        data class Teams(val teams: List<TeamTimeResult>) : TodayResults
-        data class Riders(val riders: List<RiderTimeResult>) : TodayResults
+    internal sealed interface TodayResults {
+        data class Teams(val teams: ImmutableList<TeamTimeResult>) : TodayResults
+        data class Riders(val riders: ImmutableList<RiderTimeResult>) : TodayResults
     }
 
-    data class RiderTimeResult(val rider: Rider, val time: Long)
+    internal data class RiderTimeResult(val rider: Rider, val time: Long)
 
-    data class TeamTimeResult(val team: Team, val time: Long)
+    internal data class TeamTimeResult(val team: Team, val time: Long)
 
-    sealed class TodayStage(open val race: Race) {
-        data class RestDay(override val race: Race) : TodayStage(race)
-        data class SingleDayRace(
+    internal sealed class TodayStage(open val race: Race) {
+        internal data class RestDay(override val race: Race) : TodayStage(race)
+        internal data class SingleDayRace(
             override val race: Race,
             val stage: Stage,
             val results: TodayResults,
         ) : TodayStage(race)
 
-        data class MultiStageRace(
+        internal data class MultiStageRace(
             override val race: Race,
             val stage: Stage,
             val stageNumber: Int,
             val results: TodayResults,
-        ) :
-            TodayStage(race)
+        ) : TodayStage(race)
     }
 
-    sealed class UiState {
-        data class SeasonNotStartedViewState(
-            val futureRaces: List<Race>,
+    internal sealed class UiState {
+        internal data class SeasonNotStartedViewState(
+            val futureRaces: ImmutableList<Race>,
         ) : UiState()
 
-        data class SeasonInProgressViewState(
-            val pastRaces: List<Race>,
-            val todayStages: List<TodayStage>,
-            val futureRaces: List<Race>,
+        internal data class SeasonInProgressViewState(
+            val pastRaces: ImmutableList<Race>,
+            val todayStages: ImmutableList<TodayStage>,
+            val futureRaces: ImmutableList<Race>,
         ) : UiState()
 
-        data class SeasonEndedViewState(
-            val pastRaces: List<Race>,
+        internal data class SeasonEndedViewState(
+            val pastRaces: ImmutableList<Race>,
         ) : UiState()
 
-        data object EmptyViewState : UiState()
+        internal data object EmptyViewState : UiState()
     }
 
-    val uiState: StateFlow<UiState?> =
+    internal val uiState: StateFlow<UiState?> =
         combine(
             dataRepository.races,
             dataRepository.teams,
@@ -82,8 +83,8 @@ class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository
             val maxEndDate = races.last().endDate()
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
             when {
-                today < minStartDate -> UiState.SeasonNotStartedViewState(races)
-                today > maxEndDate -> UiState.SeasonEndedViewState(races)
+                today < minStartDate -> UiState.SeasonNotStartedViewState(races.toImmutableList())
+                today > maxEndDate -> UiState.SeasonEndedViewState(races.toImmutableList())
                 else -> {
                     val todayStages = races.filter(Race::isActive).map { race ->
                         val todayStage = race.todayStage()
@@ -91,23 +92,31 @@ class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository
                             race.isSingleDay() -> TodayStage.SingleDayRace(
                                 race = race,
                                 stage = race.firstStage(),
-                                results = stageResults(race.firstStage(), riders, teams),
+                                results = stageResults(
+                                    race.firstStage(),
+                                    riders.toImmutableList(),
+                                    teams.toImmutableList()
+                                ),
                             )
 
                             todayStage != null -> TodayStage.MultiStageRace(
                                 race = race,
                                 stage = todayStage.first,
                                 stageNumber = todayStage.second + 1,
-                                results = stageResults(todayStage.first, riders, teams),
+                                results = stageResults(
+                                    todayStage.first,
+                                    riders.toImmutableList(),
+                                    teams.toImmutableList()
+                                ),
                             )
 
                             else -> TodayStage.RestDay(race)
                         }
                     }
                     UiState.SeasonInProgressViewState(
-                        todayStages = todayStages,
-                        pastRaces = races.filter(Race::isPast).reversed(),
-                        futureRaces = races.filter(Race::isFuture),
+                        todayStages = todayStages.toImmutableList(),
+                        pastRaces = races.filter(Race::isPast).reversed().toImmutableList(),
+                        futureRaces = races.filter(Race::isFuture).toImmutableList(),
                     )
                 }
             }
@@ -117,7 +126,11 @@ class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository
             initialValue = null,
         )
 
-    private fun stageResults(stage: Stage, riders: List<Rider>, teams: List<Team>): TodayResults {
+    private fun stageResults(
+        stage: Stage,
+        riders: ImmutableList<Rider>,
+        teams: ImmutableList<Team>
+    ): TodayResults {
         return when (stage.stageType) {
             StageType.REGULAR, StageType.INDIVIDUAL_TIME_TRIAL -> TodayResults.Riders(
                 stage.stageResults.time.take(3).map { participantResult ->
@@ -125,7 +138,7 @@ class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository
                         riders.find { it.id == participantResult.participantId }!!,
                         participantResult.time,
                     )
-                },
+                }.toImmutableList(),
             )
 
             StageType.TEAM_TIME_TRIAL -> TodayResults.Teams(
@@ -134,10 +147,8 @@ class RacesListViewModel(dataRepository: DataRepository = firebaseDataRepository
                         teams.find { it.id == participantResult.participantId }!!,
                         participantResult.time,
                     )
-                },
+                }.toImmutableList(),
             )
         }
     }
-
-
 }

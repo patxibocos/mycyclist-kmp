@@ -7,7 +7,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
-data class Race(
+internal data class Race(
     val id: String,
     val name: String,
     val stages: List<Stage>,
@@ -16,45 +16,56 @@ data class Race(
     val teamParticipations: List<TeamParticipation>,
 )
 
-data class ParticipantResultTime(val position: Int, val participantId: String, val time: Long)
+internal data class ParticipantResultTime(
+    val position: Int,
+    val participantId: String,
+    val time: Long
+)
 
-data class ParticipantResultPoints(val position: Int, val participant: String, val points: Int)
+internal data class ParticipantResultPoints(
+    val position: Int,
+    val participant: String,
+    val points: Int
+)
 
-data class PlaceResult(val place: Place, val points: List<ParticipantResultPoints>)
+internal data class PlaceResult(val place: Place, val points: List<ParticipantResultPoints>)
 
-data class Place(val name: String, val distance: Float)
+internal data class Place(val name: String, val distance: Float)
 
-data class TeamParticipation(val teamId: String, val riderParticipations: List<RiderParticipation>)
+internal data class TeamParticipation(
+    val teamId: String,
+    val riderParticipations: List<RiderParticipation>
+)
 
-data class RiderParticipation(val riderId: String, val number: Int)
+internal data class RiderParticipation(val riderId: String, val number: Int)
 
-fun Race.isSingleDay(): Boolean = this.stages.size == 1
+internal fun Race.isSingleDay(): Boolean = this.stages.size == 1
 
-fun Race.startDate(): LocalDate =
+internal fun Race.startDate(): LocalDate =
     this.stages.first().startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
-fun Race.endDate(): LocalDate =
+internal fun Race.endDate(): LocalDate =
     this.stages.last().startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
 private fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
-fun Race.isActive(): Boolean = this.isPast().not() && this.isFuture().not()
+internal fun Race.isActive(): Boolean = this.isPast().not() && this.isFuture().not()
 
-fun Race.isPast(): Boolean = today() > this.endDate()
+internal fun Race.isPast(): Boolean = today() > this.endDate()
 
-fun Race.isFuture(): Boolean = today() < this.startDate()
+internal fun Race.isFuture(): Boolean = today() < this.startDate()
 
-fun Race.todayStage(): Pair<Stage, Int>? =
+internal fun Race.todayStage(): Pair<Stage, Int>? =
     this.stages.find { it.startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()) == today() }
         ?.let { it to this.stages.indexOf(it) }
 
-fun Race.indexOfLastStageWithResults(): Int =
+internal fun Race.indexOfLastStageWithResults(): Int =
     this.stages.indexOfLast { it.stageResults.time.isNotEmpty() }
 
-fun Race.result(): List<ParticipantResultTime>? =
+internal fun Race.result(): List<ParticipantResultTime>? =
     this.stages.last().generalResults.time.takeIf { it.isAvailable() }
 
-data class Stage(
+internal data class Stage(
     val id: String,
     val distance: Float,
     val startDateTime: Instant,
@@ -66,7 +77,7 @@ data class Stage(
     val generalResults: GeneralResults,
 )
 
-data class StageResults(
+internal data class StageResults(
     val time: List<ParticipantResultTime>,
     val youth: List<ParticipantResultTime>,
     val teams: List<ParticipantResultTime>,
@@ -74,7 +85,7 @@ data class StageResults(
     val points: List<PlaceResult>,
 )
 
-data class GeneralResults(
+internal data class GeneralResults(
     val time: List<ParticipantResultTime>,
     val youth: List<ParticipantResultTime>,
     val teams: List<ParticipantResultTime>,
@@ -82,7 +93,7 @@ data class GeneralResults(
     val points: List<ParticipantResultPoints>,
 )
 
-enum class ProfileType {
+internal enum class ProfileType {
     FLAT,
     HILLS_FLAT_FINISH,
     HILLS_UPHILL_FINISH,
@@ -90,16 +101,16 @@ enum class ProfileType {
     MOUNTAINS_UPHILL_FINISH,
 }
 
-enum class StageType {
+internal enum class StageType {
     REGULAR,
     INDIVIDUAL_TIME_TRIAL,
     TEAM_TIME_TRIAL,
 }
 
-fun List<ParticipantResultTime>.isAvailable(): Boolean {
+internal fun List<ParticipantResultTime>.isAvailable(): Boolean {
     return this.isNotEmpty()
 }
 
-fun Race.firstStage(): Stage {
+internal fun Race.firstStage(): Stage {
     return this.stages.first()
 }

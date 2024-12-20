@@ -10,7 +10,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App() {
+internal fun App() {
     MaterialTheme {
         setSingletonImageLoaderFactory { context ->
             ImageLoader.Builder(context).crossfade(true).build()

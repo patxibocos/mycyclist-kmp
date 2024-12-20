@@ -145,7 +145,6 @@ internal object FirebaseDataMapper {
             place = this.place.toDomain(),
             points = this.points.map { it.toDomain() },
         )
-
     }
 
     private fun ParticipantResultTimeDto.toDomain(): ParticipantResultTime {
@@ -170,5 +169,4 @@ internal object FirebaseDataMapper {
             distance = this.distance,
         )
     }
-
 }

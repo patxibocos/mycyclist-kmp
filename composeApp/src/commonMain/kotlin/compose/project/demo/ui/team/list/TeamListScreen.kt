@@ -1,4 +1,4 @@
-package compose.project.demo.ui.teams_list
+package compose.project.demo.ui.team.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,25 +37,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import compose.project.demo.domain.Team
 import compose.project.demo.domain.TeamStatus
-import compose.project.demo.ui.teams_list.TeamsListViewModel.UiState
+import compose.project.demo.ui.team.list.TeamListViewModel.UiState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
-fun TeamsListRoute(
+internal fun TeamListRoute(
     onTeamClick: (Team) -> Unit,
-    viewModel: TeamsListViewModel = viewModel { TeamsListViewModel() }
+    viewModel: TeamListViewModel = viewModel { TeamListViewModel() }
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     val state = viewState ?: return
 
-    TeamsListScreen(
+    TeamListScreen(
         state = state,
         onTeamClick = onTeamClick,
     )
 }
 
 @Composable
-fun TeamsListScreen(
+private fun TeamListScreen(
     state: UiState,
     onTeamClick: (Team) -> Unit,
 ) {
@@ -85,14 +87,16 @@ fun TeamsListScreen(
             state = pagerState,
         ) { page ->
             if (page == 0) {
-                TeamsList(
-                    teams = state.teams.filter { it.status == TeamStatus.WORLD_TEAM },
+                TeamList(
+                    teams = state.teams.filter { it.status == TeamStatus.WORLD_TEAM }
+                        .toImmutableList(),
                     onTeamSelected = onTeamClick,
                     lazyListState = worldTeamsLazyGridState,
                 )
             } else {
-                TeamsList(
-                    teams = state.teams.filter { it.status == TeamStatus.PRO_TEAM },
+                TeamList(
+                    teams = state.teams.filter { it.status == TeamStatus.PRO_TEAM }
+                        .toImmutableList(),
                     onTeamSelected = onTeamClick,
                     lazyListState = proTeamsLazyGridState,
                 )
@@ -102,8 +106,8 @@ fun TeamsListScreen(
 }
 
 @Composable
-private fun TeamsList(
-    teams: List<Team>,
+private fun TeamList(
+    teams: ImmutableList<Team>,
     onTeamSelected: (Team) -> Unit,
     lazyListState: LazyGridState,
 ) {

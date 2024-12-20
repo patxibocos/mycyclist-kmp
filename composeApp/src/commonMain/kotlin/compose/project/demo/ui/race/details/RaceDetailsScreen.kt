@@ -1,9 +1,10 @@
-package compose.project.demo.ui.race_details
+package compose.project.demo.ui.race.details
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,10 +42,13 @@ import compose.project.demo.domain.Race
 import compose.project.demo.domain.Rider
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.Team
-import compose.project.demo.ui.race_details.RaceDetailsViewModel.ClassificationType
-import compose.project.demo.ui.race_details.RaceDetailsViewModel.Results
-import compose.project.demo.ui.race_details.RaceDetailsViewModel.ResultsMode
-import compose.project.demo.ui.race_details.RaceDetailsViewModel.UiState
+import compose.project.demo.ui.race.details.RaceDetailsViewModel.ClassificationType
+import compose.project.demo.ui.race.details.RaceDetailsViewModel.Results
+import compose.project.demo.ui.race.details.RaceDetailsViewModel.ResultsMode
+import compose.project.demo.ui.race.details.RaceDetailsViewModel.UiState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -79,7 +83,7 @@ internal fun RaceDetailsRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RaceDetailsScreen(
+private fun RaceDetailsScreen(
     state: UiState,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
@@ -118,7 +122,7 @@ fun RaceDetailsScreen(
             )
         } else {
             StagesList(
-                stages = state.race.stages,
+                stages = state.race.stages.toImmutableList(),
                 stagesResults = state.stagesResults,
                 currentStageIndex = state.currentStageIndex,
                 resultsMode = state.resultsMode,
@@ -134,7 +138,7 @@ fun RaceDetailsScreen(
 }
 
 @Composable
-private fun SingleStage(
+private fun ColumnScope.SingleStage(
     stage: Stage,
     results: Results,
     onRiderSelected: (Rider) -> Unit,
@@ -146,9 +150,9 @@ private fun SingleStage(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun StagesList(
-    stages: List<Stage>,
-    stagesResults: Map<Stage, Results>,
+private fun ColumnScope.StagesList(
+    stages: ImmutableList<Stage>,
+    stagesResults: ImmutableMap<Stage, Results>,
     currentStageIndex: Int,
     resultsMode: ResultsMode,
     classificationType: ClassificationType,

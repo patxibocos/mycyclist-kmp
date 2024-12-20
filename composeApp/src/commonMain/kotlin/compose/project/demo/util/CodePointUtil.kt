@@ -1,15 +1,15 @@
 package compose.project.demo.util
 
-class CodePointUtil {
+internal class CodePointUtil {
 
-    companion object {
+    internal companion object {
         private const val MIN_HIGH_SURROGATE = '\uD800'
         private const val MAX_HIGH_SURROGATE = '\uDBFF'
         private const val MIN_LOW_SURROGATE = '\uDC00'
         private const val MAX_LOW_SURROGATE = '\uDFFF'
         private const val MIN_SUPPLEMENTARY_CODE_POINT = 0x010000
 
-        fun buildStringFromCodePoints(codePoints: IntArray): String = buildString {
+        internal fun buildStringFromCodePoints(codePoints: IntArray): String = buildString {
             codePoints.forEach { codePoint ->
                 if (codePoint in 0x0000..0xFFFF) {
                     append(codePoint.toChar())
@@ -23,7 +23,7 @@ class CodePointUtil {
             }
         }
 
-        fun codePointAt(seq: CharSequence, index: Int): Int {
+        internal fun codePointAt(seq: CharSequence, index: Int): Int {
             val high = seq[index]
             val low = seq.getOrNull(index + 1) ?: return high.code
             return if ((isHighSurrogate(high) && isLowSurrogate(low))) {
@@ -42,5 +42,4 @@ class CodePointUtil {
         private fun toCodePoint(high: Char, low: Char): Int =
             ((high.code - MIN_HIGH_SURROGATE.code) shl 10) + (low.code - MIN_LOW_SURROGATE.code) + MIN_SUPPLEMENTARY_CODE_POINT
     }
-
 }

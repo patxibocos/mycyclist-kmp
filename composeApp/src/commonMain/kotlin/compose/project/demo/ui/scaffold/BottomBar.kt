@@ -18,14 +18,14 @@ import compose.project.demo.ui.navigation.NavigationRoutes
 import compose.project.demo.ui.navigation.TopLevelRoute
 
 @Composable
-fun BottomBar(navController: NavHostController) {
+internal fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val routes = remember {
         listOf(
-            TopLevelRoute(NavigationRoutes.RacesList, Icons.Outlined.Email, "Races"),
-            TopLevelRoute(NavigationRoutes.RidersList, Icons.Outlined.Face, "Riders"),
-            TopLevelRoute(NavigationRoutes.TeamsList, Icons.Outlined.Person, "Teams"),
+            TopLevelRoute(NavigationRoutes.RaceList, Icons.Outlined.Email, "Races"),
+            TopLevelRoute(NavigationRoutes.RiderList, Icons.Outlined.Face, "Riders"),
+            TopLevelRoute(NavigationRoutes.TeamList, Icons.Outlined.Person, "Teams"),
         )
     }
     NavigationBar {

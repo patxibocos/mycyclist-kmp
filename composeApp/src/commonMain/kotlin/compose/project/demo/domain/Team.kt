@@ -1,6 +1,6 @@
 package compose.project.demo.domain
 
-data class Team(
+internal data class Team(
     val id: String,
     val name: String,
     val status: TeamStatus,
@@ -12,7 +12,7 @@ data class Team(
     val riderIds: List<String>,
 )
 
-enum class TeamStatus {
+internal enum class TeamStatus {
     WORLD_TEAM,
     PRO_TEAM,
 }

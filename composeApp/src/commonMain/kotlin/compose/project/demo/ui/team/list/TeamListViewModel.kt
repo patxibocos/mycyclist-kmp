@@ -1,22 +1,25 @@
-package compose.project.demo.ui.teams_list
+package compose.project.demo.ui.team.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import compose.project.demo.domain.DataRepository
 import compose.project.demo.domain.Team
 import compose.project.demo.domain.firebaseDataRepository
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class TeamsListViewModel(dataRepository: DataRepository = firebaseDataRepository) : ViewModel() {
+internal class TeamListViewModel(dataRepository: DataRepository = firebaseDataRepository) :
+    ViewModel() {
 
-    data class UiState(val teams: List<Team>)
+    internal data class UiState(val teams: ImmutableList<Team>)
 
-    val uiState: StateFlow<UiState?> =
+    internal val uiState: StateFlow<UiState?> =
         dataRepository.teams.map { teams ->
-            UiState(teams)
+            UiState(teams.toImmutableList())
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),

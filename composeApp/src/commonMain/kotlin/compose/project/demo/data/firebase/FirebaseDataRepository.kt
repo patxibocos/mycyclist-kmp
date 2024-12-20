@@ -27,7 +27,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
-class FirebaseDataRepository(
+internal class FirebaseDataRepository(
     private val firebaseRemoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig,
 ) :
     DataRepository {

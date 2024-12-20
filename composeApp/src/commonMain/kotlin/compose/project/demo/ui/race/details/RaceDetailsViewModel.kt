@@ -1,4 +1,4 @@
-package compose.project.demo.ui.race_details
+package compose.project.demo.ui.race.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +14,8 @@ import compose.project.demo.domain.indexOfLastStageWithResults
 import compose.project.demo.domain.isActive
 import compose.project.demo.domain.isPast
 import compose.project.demo.domain.todayStage
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,15 +25,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class RaceDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
+internal class RaceDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
     ViewModel() {
 
-    data class UiState(
+    internal data class UiState(
         val race: Race,
         val currentStageIndex: Int,
         val resultsMode: ResultsMode,
         val classificationType: ClassificationType,
-        val stagesResults: Map<Stage, Results>,
+        val stagesResults: ImmutableMap<Stage, Results>,
     )
 
     private val _stageIndex = MutableSharedFlow<Int>(replay = 1)
@@ -46,12 +48,12 @@ class RaceDetailsViewModel(private val dataRepository: DataRepository = firebase
         Triple(stageIndex, resultsMode, classificationType)
     }
 
-    enum class ResultsMode {
+    internal enum class ResultsMode {
         Stage,
         General,
     }
 
-    enum class ClassificationType {
+    internal enum class ClassificationType {
         Time,
         Points,
         Kom,
@@ -59,7 +61,7 @@ class RaceDetailsViewModel(private val dataRepository: DataRepository = firebase
         Teams,
     }
 
-    sealed interface Results {
+    internal sealed interface Results {
         data class TeamsTimeResult(val teams: List<TeamTimeResult>) : Results
         data class RidersTimeResult(val riders: List<RiderTimeResult>) : Results
         data class RidersPointResult(val riders: List<RiderPointsResult>) : Results
@@ -67,22 +69,22 @@ class RaceDetailsViewModel(private val dataRepository: DataRepository = firebase
             Results
     }
 
-    data class RiderTimeResult(val rider: Rider, val time: Long)
+    internal data class RiderTimeResult(val rider: Rider, val time: Long)
 
-    data class TeamTimeResult(val team: Team, val time: Long)
+    internal data class TeamTimeResult(val team: Team, val time: Long)
 
-    data class RiderPointsResult(
+    internal data class RiderPointsResult(
         val rider: Rider,
         val points: Int,
     )
 
-    data class RaceWithTeamsAndRiders(
+    internal data class RaceWithTeamsAndRiders(
         val race: Race,
         val teams: List<Team>,
         val riders: List<Rider>,
     )
 
-    fun uiState(raceId: String, stageId: String?): StateFlow<UiState?> {
+    internal fun uiState(raceId: String, stageId: String?): StateFlow<UiState?> {
         return combine(
             dataRepository.races,
             dataRepository.teams,
@@ -113,7 +115,7 @@ class RaceDetailsViewModel(private val dataRepository: DataRepository = firebase
                     currentStageIndex = stageIndex,
                     resultsMode = resultsMode,
                     classificationType = classificationType,
-                    stagesResults = stagesResults
+                    stagesResults = stagesResults.toImmutableMap(),
                 )
             }.stateIn(
                 scope = viewModelScope,
@@ -171,138 +173,164 @@ class RaceDetailsViewModel(private val dataRepository: DataRepository = firebase
         teams: List<Team>,
     ): Results =
         when (classificationType) {
-            ClassificationType.Time -> when (resultsMode) {
-                ResultsMode.Stage -> when (stage.stageType) {
-                    StageType.TEAM_TIME_TRIAL -> Results.TeamsTimeResult(
-                        stage.stageResults.time.map { participantResult ->
-                            TeamTimeResult(
-                                teams.find { it.id == participantResult.participantId }!!,
-                                participantResult.time,
-                            )
-                        },
-                    )
-
-                    else -> Results.RidersTimeResult(
-                        stage.stageResults.time.map { participantResult ->
-                            RiderTimeResult(
-                                riders.find { it.id == participantResult.participantId }!!,
-                                participantResult.time,
-                            )
-                        },
-                    )
-                }
-
-                ResultsMode.General -> Results.RidersTimeResult(
-                    stage.generalResults.time.map { participantResult ->
-                        RiderTimeResult(
-                            riders.find { it.id == participantResult.participantId }!!,
-                            participantResult.time,
-                        )
-                    },
-                )
-            }
-
-            ClassificationType.Points -> when (resultsMode) {
-                ResultsMode.Stage -> Results.RidersPointsPerPlaceResult(
-                    stage.stageResults.points.associate {
-                        it.place to it.points.map { riderResult ->
-                            RiderPointsResult(
-                                riders.find { rider -> rider.id == riderResult.participant }!!,
-                                riderResult.points,
-                            )
-                        }
-                    },
-                )
-
-                ResultsMode.General -> Results.RidersPointResult(
-                    stage.generalResults.points.map { participantResult ->
-                        RiderPointsResult(
-                            riders.find { it.id == participantResult.participant }!!,
-                            participantResult.points,
-                        )
-                    },
-                )
-            }
-
-            ClassificationType.Kom -> when (resultsMode) {
-                ResultsMode.Stage -> Results.RidersPointsPerPlaceResult(
-                    stage.stageResults.kom.associate {
-                        it.place to it.points.map { riderResult ->
-                            RiderPointsResult(
-                                riders.find { rider -> rider.id == riderResult.participant }!!,
-                                riderResult.points,
-                            )
-                        }
-                    },
-                )
-
-                ResultsMode.General -> Results.RidersPointResult(
-                    stage.generalResults.kom.map { participantResult ->
-                        RiderPointsResult(
-                            riders.find { it.id == participantResult.participant }!!,
-                            participantResult.points,
-                        )
-                    },
-                )
-            }
-
-            ClassificationType.Youth -> when (resultsMode) {
-                ResultsMode.Stage -> Results.RidersTimeResult(
-                    stage.stageResults.youth.map { participantResult ->
-                        RiderTimeResult(
-                            riders.find { it.id == participantResult.participantId }!!,
-                            participantResult.time,
-                        )
-                    },
-                )
-
-                ResultsMode.General -> Results.RidersTimeResult(
-                    stage.generalResults.youth.map { participantResult ->
-                        RiderTimeResult(
-                            riders.find { it.id == participantResult.participantId }!!,
-                            participantResult.time,
-                        )
-                    },
-                )
-            }
-
-            ClassificationType.Teams -> when (resultsMode) {
-                ResultsMode.Stage -> Results.TeamsTimeResult(
-                    stage.stageResults.teams.map { participantResult ->
-                        TeamTimeResult(
-                            teams.find { it.id == participantResult.participantId }!!,
-                            participantResult.time,
-                        )
-                    },
-                )
-
-                ResultsMode.General -> Results.TeamsTimeResult(
-                    stage.generalResults.teams.map { participantResult ->
-                        TeamTimeResult(
-                            teams.find { it.id == participantResult.participantId }!!,
-                            participantResult.time,
-                        )
-                    },
-                )
-            }
+            ClassificationType.Time -> timeResults(resultsMode, stage, teams, riders)
+            ClassificationType.Points -> pointsResults(resultsMode, stage, riders)
+            ClassificationType.Kom -> komResults(resultsMode, stage, riders)
+            ClassificationType.Youth -> youthResults(resultsMode, stage, riders)
+            ClassificationType.Teams -> teamsResults(resultsMode, stage, teams)
         }
 
-    fun onStageSelected(stageIndex: Int) {
+    private fun teamsResults(
+        resultsMode: ResultsMode,
+        stage: Stage,
+        teams: List<Team>
+    ): Results.TeamsTimeResult = when (resultsMode) {
+        ResultsMode.Stage -> Results.TeamsTimeResult(
+            stage.stageResults.teams.map { participantResult ->
+                TeamTimeResult(
+                    teams.find { it.id == participantResult.participantId }!!,
+                    participantResult.time,
+                )
+            },
+        )
+
+        ResultsMode.General -> Results.TeamsTimeResult(
+            stage.generalResults.teams.map { participantResult ->
+                TeamTimeResult(
+                    teams.find { it.id == participantResult.participantId }!!,
+                    participantResult.time,
+                )
+            },
+        )
+    }
+
+    private fun youthResults(
+        resultsMode: ResultsMode,
+        stage: Stage,
+        riders: List<Rider>
+    ): Results.RidersTimeResult = when (resultsMode) {
+        ResultsMode.Stage -> Results.RidersTimeResult(
+            stage.stageResults.youth.map { participantResult ->
+                RiderTimeResult(
+                    riders.find { it.id == participantResult.participantId }!!,
+                    participantResult.time,
+                )
+            },
+        )
+
+        ResultsMode.General -> Results.RidersTimeResult(
+            stage.generalResults.youth.map { participantResult ->
+                RiderTimeResult(
+                    riders.find { it.id == participantResult.participantId }!!,
+                    participantResult.time,
+                )
+            },
+        )
+    }
+
+    private fun komResults(
+        resultsMode: ResultsMode,
+        stage: Stage,
+        riders: List<Rider>
+    ): Results = when (resultsMode) {
+        ResultsMode.Stage -> Results.RidersPointsPerPlaceResult(
+            stage.stageResults.kom.associate {
+                it.place to it.points.map { riderResult ->
+                    RiderPointsResult(
+                        riders.find { rider -> rider.id == riderResult.participant }!!,
+                        riderResult.points,
+                    )
+                }
+            },
+        )
+
+        ResultsMode.General -> Results.RidersPointResult(
+            stage.generalResults.kom.map { participantResult ->
+                RiderPointsResult(
+                    riders.find { it.id == participantResult.participant }!!,
+                    participantResult.points,
+                )
+            },
+        )
+    }
+
+    private fun timeResults(
+        resultsMode: ResultsMode,
+        stage: Stage,
+        teams: List<Team>,
+        riders: List<Rider>
+    ): Results = when (resultsMode) {
+        ResultsMode.Stage -> when (stage.stageType) {
+            StageType.TEAM_TIME_TRIAL -> Results.TeamsTimeResult(
+                stage.stageResults.time.map { participantResult ->
+                    TeamTimeResult(
+                        teams.find { it.id == participantResult.participantId }!!,
+                        participantResult.time,
+                    )
+                },
+            )
+
+            else -> Results.RidersTimeResult(
+                stage.stageResults.time.map { participantResult ->
+                    RiderTimeResult(
+                        riders.find { it.id == participantResult.participantId }!!,
+                        participantResult.time,
+                    )
+                },
+            )
+        }
+
+        ResultsMode.General -> Results.RidersTimeResult(
+            stage.generalResults.time.map { participantResult ->
+                RiderTimeResult(
+                    riders.find { it.id == participantResult.participantId }!!,
+                    participantResult.time,
+                )
+            },
+        )
+    }
+
+    private fun pointsResults(
+        resultsMode: ResultsMode,
+        stage: Stage,
+        riders: List<Rider>
+    ): Results = when (resultsMode) {
+        ResultsMode.Stage -> Results.RidersPointsPerPlaceResult(
+            stage.stageResults.points.associate {
+                it.place to it.points.map { riderResult ->
+                    RiderPointsResult(
+                        riders.find { rider -> rider.id == riderResult.participant }!!,
+                        riderResult.points,
+                    )
+                }
+            },
+        )
+
+        ResultsMode.General -> Results.RidersPointResult(
+            stage.generalResults.points.map { participantResult ->
+                RiderPointsResult(
+                    riders.find { it.id == participantResult.participant }!!,
+                    participantResult.points,
+                )
+            },
+        )
+    }
+
+    internal fun onStageSelected(stageIndex: Int) {
         viewModelScope.launch {
             _stageIndex.emit(stageIndex)
         }
     }
 
-    fun onResultsModeChanged(resultsMode: ResultsMode) {
+    internal fun onResultsModeChanged(resultsMode: ResultsMode) {
         viewModelScope.launch {
             _resultsMode.emit(resultsMode)
         }
     }
 
-    fun onClassificationTypeChanged(classificationType: ClassificationType) {
+    internal fun onClassificationTypeChanged(classificationType: ClassificationType) {
         viewModelScope.launch {
             _classificationType.emit(classificationType)
         }
     }
-
 }

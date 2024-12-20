@@ -1,3 +1,3 @@
 package compose.project.demo.expect
 
-expect fun unGZip(buf: ByteArray): ByteArray
+internal expect fun unGZip(buf: ByteArray): ByteArray

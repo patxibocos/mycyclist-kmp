@@ -2,24 +2,24 @@ package compose.project.demo.ui.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed interface NavigationRoutes {
+internal sealed interface NavigationRoutes {
 
     val deepLink: String
 
     fun deepLinkRoute() = "mycyclist://$deepLink"
 
     @Serializable
-    data object RacesList : NavigationRoutes {
+    data object RaceList : NavigationRoutes {
         override val deepLink = "races"
     }
 
     @Serializable
-    data object RidersList : NavigationRoutes {
+    data object RiderList : NavigationRoutes {
         override val deepLink = "riders"
     }
 
     @Serializable
-    data object TeamsList : NavigationRoutes {
+    data object TeamList : NavigationRoutes {
         override val deepLink = "teams"
     }
 
@@ -43,5 +43,4 @@ sealed interface NavigationRoutes {
             override val deepLink = "teams/{teamId}"
         }
     }
-
 }

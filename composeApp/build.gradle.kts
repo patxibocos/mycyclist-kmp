@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.googleServices)
     alias(libs.plugins.cocoapods)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -52,6 +54,7 @@ kotlin {
             implementation(libs.firebase.common)
             implementation(libs.firebase.config)
             implementation(libs.kotlin.serialization.protobuf)
+            implementation(libs.kotlin.collections.immutable)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -113,5 +116,21 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+    coreLibraryDesugaring(libs.desugar.jdk.get())
+    detektPlugins(libs.ktlint.detekt.rules.get())
+    detektPlugins(libs.twitter.compose.detekt.rules.get())
+}
+
+detekt {
+    toolVersion = libs.versions.detekt.get()
+    config.setFrom(file("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+    autoCorrect = true
+}
+
+tasks.withType<Detekt> {
+    val buildDir = project.layout.buildDirectory.asFile.get()
+    exclude {
+        it.file.relativeTo(projectDir).startsWith(buildDir.relativeTo(projectDir))
+    }
 }

@@ -1,4 +1,4 @@
-package compose.project.demo.ui.races_list
+package compose.project.demo.ui.race.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,7 +27,7 @@ import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.startDate
 import compose.project.demo.ui.emoji.getCountryEmoji
-import compose.project.demo.ui.races_list.RacesListViewModel.UiState
+import compose.project.demo.ui.race.list.RaceListViewModel.UiState
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -38,20 +38,20 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 
 @Composable
-fun RacesListRoute(
+internal fun RaceListRoute(
     onRaceClick: (Race) -> Unit,
-    viewModel: RacesListViewModel = viewModel { RacesListViewModel() }
+    viewModel: RaceListViewModel = viewModel { RaceListViewModel() }
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
     val state = viewState ?: return
-    RacesListScreen(
+    RaceListScreen(
         state = state,
         onRaceClick = onRaceClick,
     )
 }
 
 @Composable
-fun RacesListScreen(
+private fun RaceListScreen(
     state: UiState,
     onRaceClick: (Race) -> Unit,
 ) {
@@ -114,7 +114,7 @@ private fun LazyListScope.seasonNotStarted(
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.seasonInProgress(
     pastRaces: List<Race>,
-    todayStages: List<RacesListViewModel.TodayStage>,
+    todayStages: List<RaceListViewModel.TodayStage>,
     futureRaces: List<Race>,
     onRaceSelected: (Race) -> Unit,
     onStageSelected: (Race, Stage) -> Unit,
@@ -136,7 +136,7 @@ private fun LazyListScope.seasonInProgress(
     }
     items(todayStages) { todayStage ->
         when (todayStage) {
-            is RacesListViewModel.TodayStage.MultiStageRace -> TodayMultiStageRaceStage(
+            is RaceListViewModel.TodayStage.MultiStageRace -> TodayMultiStageRaceStage(
                 todayStage.race,
                 todayStage.stage,
                 todayStage.stageNumber,
@@ -144,14 +144,14 @@ private fun LazyListScope.seasonInProgress(
                 onStageSelected,
             )
 
-            is RacesListViewModel.TodayStage.SingleDayRace -> TodaySingleDayRaceStage(
+            is RaceListViewModel.TodayStage.SingleDayRace -> TodaySingleDayRaceStage(
                 todayStage.race,
                 todayStage.stage,
                 todayStage.results,
                 onRaceSelected,
             )
 
-            is RacesListViewModel.TodayStage.RestDay -> TodayRestDayStage(
+            is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
                 todayStage.race,
                 onRaceSelected
             )
@@ -202,7 +202,7 @@ private fun TodayMultiStageRaceStage(
     race: Race,
     stage: Stage,
     stageNumber: Int,
-    results: RacesListViewModel.TodayResults,
+    results: RaceListViewModel.TodayResults,
     onStageSelected: (Race, Stage) -> Unit,
 ) {
     Card(
@@ -223,7 +223,7 @@ private fun TodayMultiStageRaceStage(
 private fun TodaySingleDayRaceStage(
     race: Race,
     stage: Stage,
-    results: RacesListViewModel.TodayResults,
+    results: RaceListViewModel.TodayResults,
     onRaceSelected: (Race) -> Unit,
 ) {
     Card(
@@ -247,15 +247,15 @@ private fun formatTime(instant: Instant): String {
 }
 
 @Composable
-private fun Results(results: RacesListViewModel.TodayResults) {
+private fun Results(results: RaceListViewModel.TodayResults) {
     when (results) {
-        is RacesListViewModel.TodayResults.Riders -> {
+        is RaceListViewModel.TodayResults.Riders -> {
             results.riders.forEachIndexed { index, rider ->
                 Text("${index + 1}. ${rider.rider.fullName()}")
             }
         }
 
-        is RacesListViewModel.TodayResults.Teams -> {
+        is RaceListViewModel.TodayResults.Teams -> {
             results.teams.forEachIndexed { index, team ->
                 Text("${index + 1}. ${team.team.name}")
             }

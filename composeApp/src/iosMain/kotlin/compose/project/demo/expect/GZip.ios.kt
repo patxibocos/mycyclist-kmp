@@ -11,7 +11,7 @@ import platform.darwin.COMPRESSION_ZLIB
 import platform.darwin.compression_decode_buffer
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun unGZip(buf: ByteArray): ByteArray {
+internal actual fun unGZip(buf: ByteArray): ByteArray {
     val fixedBuf = buf.sliceArray(10 until buf.size - 8)
     memScoped {
         val destinationBuffer = allocArray<UByteVar>(CAPACITY)
