@@ -7,11 +7,7 @@ import compose.project.demo.domain.Race
 import compose.project.demo.domain.Rider
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.Team
-import compose.project.demo.domain.endDate
 import compose.project.demo.domain.firebaseDataRepository
-import compose.project.demo.domain.isSingleDay
-import compose.project.demo.domain.result
-import compose.project.demo.domain.startDate
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +20,10 @@ import kotlinx.datetime.todayIn
 
 internal class RiderDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
     ViewModel() {
+
+    private companion object {
+        private const val RESULTS_TO_DISPLAY = 3
+    }
 
     data class UiState(
         val rider: Rider,
@@ -69,7 +69,8 @@ internal class RiderDetailsViewModel(private val dataRepository: DataRepository 
         races: List<Race>,
     ): Triple<List<Participation>, Participation?, List<Participation>> {
         val participations = races.mapNotNull { race ->
-            race.teamParticipations.flatMap { it.riderParticipations } // Flattening this because team IDs may change on PCS
+            race.teamParticipations
+                .flatMap { it.riderParticipations } // Flattening this because team IDs may change on PCS
                 .find { it.riderId == riderId }
                 ?.let { Participation(race, it.number) }
         }
@@ -87,19 +88,21 @@ internal class RiderDetailsViewModel(private val dataRepository: DataRepository 
     ): List<Result> {
         return participations.map { it.race }
             .flatMap { race ->
-                val raceResult = race.result()?.take(3)?.find { it.participantId == riderId }
-                    ?.let { Result.RaceResult(race, it.position) }
+                val raceResult =
+                    race.result()?.take(RESULTS_TO_DISPLAY)?.find { it.participantId == riderId }
+                        ?.let { Result.RaceResult(race, it.position) }
                 if (race.isSingleDay()) {
                     return@flatMap listOfNotNull(raceResult)
                 }
                 val stageResults = race.stages.mapNotNull { stage ->
-                    stage.stageResults.time.take(3).find { it.participantId == riderId }
+                    stage.stageResults.time.take(RESULTS_TO_DISPLAY)
+                        .find { it.participantId == riderId }
                         ?.let {
                             Result.StageResult(
-                                race,
-                                stage,
-                                race.stages.indexOf(stage) + 1,
-                                it.position,
+                                race = race,
+                                stage = stage,
+                                stageNumber = race.stages.indexOf(stage) + 1,
+                                position = it.position,
                             )
                         }
                 }

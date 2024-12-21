@@ -1,8 +1,8 @@
 package compose.project.demo.data.firebase
 
-import compose.project.demo.data.firebase.FirebaseDataMapper.toRaces
-import compose.project.demo.data.firebase.FirebaseDataMapper.toRiders
-import compose.project.demo.data.firebase.FirebaseDataMapper.toTeams
+import compose.project.demo.data.mapper.RaceMapper.toRaces
+import compose.project.demo.data.mapper.RiderMapper.toRiders
+import compose.project.demo.data.mapper.TeamMapper.toTeams
 import compose.project.demo.data.protobuf.CyclingDataDto
 import compose.project.demo.domain.DataRepository
 import compose.project.demo.domain.Race

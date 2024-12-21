@@ -10,10 +10,6 @@ import compose.project.demo.domain.Stage
 import compose.project.demo.domain.StageType
 import compose.project.demo.domain.Team
 import compose.project.demo.domain.firebaseDataRepository
-import compose.project.demo.domain.indexOfLastStageWithResults
-import compose.project.demo.domain.isActive
-import compose.project.demo.domain.isPast
-import compose.project.demo.domain.todayStage
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.flow.MutableSharedFlow

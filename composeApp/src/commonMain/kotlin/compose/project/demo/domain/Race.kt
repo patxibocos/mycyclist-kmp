@@ -14,7 +14,36 @@ internal data class Race(
     val country: String,
     val website: String?,
     val teamParticipations: List<TeamParticipation>,
-)
+) {
+    internal fun isSingleDay(): Boolean = stages.size == 1
+
+    internal fun startDate(): LocalDate =
+        stages.first().startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date
+
+    internal fun endDate(): LocalDate =
+        stages.last().startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date
+
+    private fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    internal fun isActive(): Boolean = isPast().not() && isFuture().not()
+
+    internal fun isPast(): Boolean = today() > endDate()
+
+    internal fun isFuture(): Boolean = today() < startDate()
+
+    internal fun todayStage(): Pair<Stage, Int>? =
+        stages.find { it.startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()) == today() }
+            ?.let { it to stages.indexOf(it) }
+
+    internal fun indexOfLastStageWithResults(): Int =
+        stages.indexOfLast { it.stageResults.time.isNotEmpty() }
+
+    internal fun result(): List<ParticipantResultTime>? =
+        stages.last().generalResults.time.takeIf { it.isAvailable() }
+
+    internal fun firstStage(): Stage =
+        stages.first()
+}
 
 internal data class ParticipantResultTime(
     val position: Int,
@@ -38,32 +67,6 @@ internal data class TeamParticipation(
 )
 
 internal data class RiderParticipation(val riderId: String, val number: Int)
-
-internal fun Race.isSingleDay(): Boolean = this.stages.size == 1
-
-internal fun Race.startDate(): LocalDate =
-    this.stages.first().startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date
-
-internal fun Race.endDate(): LocalDate =
-    this.stages.last().startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date
-
-private fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-
-internal fun Race.isActive(): Boolean = this.isPast().not() && this.isFuture().not()
-
-internal fun Race.isPast(): Boolean = today() > this.endDate()
-
-internal fun Race.isFuture(): Boolean = today() < this.startDate()
-
-internal fun Race.todayStage(): Pair<Stage, Int>? =
-    this.stages.find { it.startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()) == today() }
-        ?.let { it to this.stages.indexOf(it) }
-
-internal fun Race.indexOfLastStageWithResults(): Int =
-    this.stages.indexOfLast { it.stageResults.time.isNotEmpty() }
-
-internal fun Race.result(): List<ParticipantResultTime>? =
-    this.stages.last().generalResults.time.takeIf { it.isAvailable() }
 
 internal data class Stage(
     val id: String,
@@ -109,8 +112,4 @@ internal enum class StageType {
 
 internal fun List<ParticipantResultTime>.isAvailable(): Boolean {
     return this.isNotEmpty()
-}
-
-internal fun Race.firstStage(): Stage {
-    return this.stages.first()
 }

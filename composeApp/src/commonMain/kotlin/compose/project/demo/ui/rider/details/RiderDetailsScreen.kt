@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import compose.project.demo.domain.Race
+import compose.project.demo.domain.Rider
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.Team
 
@@ -86,21 +87,10 @@ private fun SharedTransitionScope.RiderDetailsScreen(
                 }
             }
         )
-        AsyncImage(
-            model = state.rider.photo,
-            modifier = Modifier
-                .sharedElement(
-                    state = rememberSharedContentState(key = state.rider.id),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                )
-                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
-                .padding(2.dp)
-                .size(150.dp)
-                .align(Alignment.CenterHorizontally)
-                .clip(CircleShape),
-            alignment = Alignment.TopCenter,
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
+        RiderPhoto(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            rider = state.rider,
+            animatedVisibilityScope = animatedVisibilityScope,
         )
         if (state.rider.uciRankingPosition != null) {
             Text(text = "UCI Ranking: ${state.rider.uciRankingPosition}")
@@ -137,4 +127,28 @@ private fun SharedTransitionScope.RiderDetailsScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedTransitionScope.RiderPhoto(
+    rider: Rider,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
+) {
+    AsyncImage(
+        model = rider.photo,
+        modifier = modifier
+            .sharedElement(
+                state = rememberSharedContentState(key = rider.id),
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+            .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+            .padding(2.dp)
+            .size(150.dp)
+            .clip(CircleShape),
+        alignment = Alignment.TopCenter,
+        contentScale = ContentScale.Crop,
+        contentDescription = null,
+    )
 }

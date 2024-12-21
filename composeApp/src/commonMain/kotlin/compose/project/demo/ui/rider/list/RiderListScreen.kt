@@ -29,7 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import compose.project.demo.domain.Rider
-import compose.project.demo.ui.emoji.getCountryEmoji
+import compose.project.demo.ui.emoji.EmojiUtil.getCountryEmoji
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

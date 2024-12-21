@@ -25,8 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.project.demo.domain.Race
 import compose.project.demo.domain.Stage
-import compose.project.demo.domain.startDate
-import compose.project.demo.ui.emoji.getCountryEmoji
+import compose.project.demo.ui.emoji.EmojiUtil.getCountryEmoji
 import compose.project.demo.ui.race.list.RaceListViewModel.UiState
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -129,71 +128,98 @@ private fun LazyListScope.seasonInProgress(
                 .fillMaxWidth(),
         )
     }
+    todayStages(todayStages, onStageSelected, onRaceSelected)
+    futureRaces(futureRaces, onRaceSelected)
+    pastRaces(pastRaces, onRaceSelected)
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+private fun LazyListScope.pastRaces(
+    pastRaces: List<Race>,
+    onRaceSelected: (Race) -> Unit
+) {
+    if (pastRaces.isEmpty()) {
+        return
+    }
+    stickyHeader {
+        Text(
+            text = "Past races",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(10.dp)
+                .fillMaxWidth(),
+        )
+    }
+    items(
+        items = pastRaces,
+        key = Race::id,
+        itemContent = { race ->
+            RaceRow(race, onRaceSelected)
+        },
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+private fun LazyListScope.futureRaces(
+    futureRaces: List<Race>,
+    onRaceSelected: (Race) -> Unit
+) {
+    if (futureRaces.isEmpty()) {
+        return
+    }
+    stickyHeader {
+        Text(
+            text = "Future races",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(10.dp)
+                .fillMaxWidth(),
+        )
+    }
+    items(
+        items = futureRaces,
+        key = Race::id,
+        itemContent = { race ->
+            RaceRow(race, onRaceSelected)
+        },
+    )
+}
+
+private fun LazyListScope.todayStages(
+    todayStages: List<RaceListViewModel.TodayStage>,
+    onStageSelected: (Race, Stage) -> Unit,
+    onRaceSelected: (Race) -> Unit
+) {
     if (todayStages.isEmpty()) {
         item {
             Text("No races today, see next races below")
         }
-    }
-    items(todayStages) { todayStage ->
-        when (todayStage) {
-            is RaceListViewModel.TodayStage.MultiStageRace -> TodayMultiStageRaceStage(
-                todayStage.race,
-                todayStage.stage,
-                todayStage.stageNumber,
-                todayStage.results,
-                onStageSelected,
-            )
+    } else {
+        items(todayStages) { todayStage ->
+            when (todayStage) {
+                is RaceListViewModel.TodayStage.MultiStageRace -> TodayMultiStageRaceStage(
+                    todayStage.race,
+                    todayStage.stage,
+                    todayStage.stageNumber,
+                    todayStage.results,
+                    onStageSelected,
+                )
 
-            is RaceListViewModel.TodayStage.SingleDayRace -> TodaySingleDayRaceStage(
-                todayStage.race,
-                todayStage.stage,
-                todayStage.results,
-                onRaceSelected,
-            )
+                is RaceListViewModel.TodayStage.SingleDayRace -> TodaySingleDayRaceStage(
+                    todayStage.race,
+                    todayStage.stage,
+                    todayStage.results,
+                    onRaceSelected,
+                )
 
-            is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
-                todayStage.race,
-                onRaceSelected
-            )
+                is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
+                    todayStage.race,
+                    onRaceSelected
+                )
+            }
         }
-    }
-    if (futureRaces.isNotEmpty()) {
-        stickyHeader {
-            Text(
-                text = "Future races",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-            )
-        }
-        items(
-            items = futureRaces,
-            key = Race::id,
-            itemContent = { race ->
-                RaceRow(race, onRaceSelected)
-            },
-        )
-    }
-    if (pastRaces.isNotEmpty()) {
-        stickyHeader {
-            Text(
-                text = "Past races",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-            )
-        }
-        items(
-            items = pastRaces,
-            key = Race::id,
-            itemContent = { race ->
-                RaceRow(race, onRaceSelected)
-            },
-        )
     }
 }
 

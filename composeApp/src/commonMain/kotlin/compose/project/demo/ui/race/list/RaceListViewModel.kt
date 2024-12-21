@@ -8,15 +8,7 @@ import compose.project.demo.domain.Rider
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.StageType
 import compose.project.demo.domain.Team
-import compose.project.demo.domain.endDate
 import compose.project.demo.domain.firebaseDataRepository
-import compose.project.demo.domain.firstStage
-import compose.project.demo.domain.isActive
-import compose.project.demo.domain.isFuture
-import compose.project.demo.domain.isPast
-import compose.project.demo.domain.isSingleDay
-import compose.project.demo.domain.startDate
-import compose.project.demo.domain.todayStage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,6 +21,10 @@ import kotlinx.datetime.todayIn
 
 internal class RaceListViewModel(dataRepository: DataRepository = firebaseDataRepository) :
     ViewModel() {
+
+    private companion object {
+        private const val RESULTS_TO_DISPLAY = 3
+    }
 
     internal sealed interface TodayResults {
         data class Teams(val teams: ImmutableList<TeamTimeResult>) : TodayResults
@@ -133,7 +129,7 @@ internal class RaceListViewModel(dataRepository: DataRepository = firebaseDataRe
     ): TodayResults {
         return when (stage.stageType) {
             StageType.REGULAR, StageType.INDIVIDUAL_TIME_TRIAL -> TodayResults.Riders(
-                stage.stageResults.time.take(3).map { participantResult ->
+                stage.stageResults.time.take(RESULTS_TO_DISPLAY).map { participantResult ->
                     RiderTimeResult(
                         riders.find { it.id == participantResult.participantId }!!,
                         participantResult.time,
@@ -142,7 +138,7 @@ internal class RaceListViewModel(dataRepository: DataRepository = firebaseDataRe
             )
 
             StageType.TEAM_TIME_TRIAL -> TodayResults.Teams(
-                stage.stageResults.time.take(3).map { participantResult ->
+                stage.stageResults.time.take(RESULTS_TO_DISPLAY).map { participantResult ->
                     TeamTimeResult(
                         teams.find { it.id == participantResult.participantId }!!,
                         participantResult.time,

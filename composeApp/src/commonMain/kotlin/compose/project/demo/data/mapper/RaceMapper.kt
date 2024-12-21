@@ -1,14 +1,12 @@
-package compose.project.demo.data.firebase
+package compose.project.demo.data.mapper
 
 import compose.project.demo.data.protobuf.ParticipantResultPointsDto
 import compose.project.demo.data.protobuf.ParticipantResultTimeDto
 import compose.project.demo.data.protobuf.PlaceDto
 import compose.project.demo.data.protobuf.PlacePointsDto
 import compose.project.demo.data.protobuf.RaceDto
-import compose.project.demo.data.protobuf.RiderDto
 import compose.project.demo.data.protobuf.RiderParticipationDto
 import compose.project.demo.data.protobuf.StageDto
-import compose.project.demo.data.protobuf.TeamDto
 import compose.project.demo.data.protobuf.TeamParticipationDto
 import compose.project.demo.domain.GeneralResults
 import compose.project.demo.domain.ParticipantResultPoints
@@ -17,65 +15,17 @@ import compose.project.demo.domain.Place
 import compose.project.demo.domain.PlaceResult
 import compose.project.demo.domain.ProfileType
 import compose.project.demo.domain.Race
-import compose.project.demo.domain.Rider
 import compose.project.demo.domain.RiderParticipation
 import compose.project.demo.domain.Stage
 import compose.project.demo.domain.StageResults
 import compose.project.demo.domain.StageType
-import compose.project.demo.domain.Team
 import compose.project.demo.domain.TeamParticipation
-import compose.project.demo.domain.TeamStatus
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
-internal object FirebaseDataMapper {
-
-    internal fun List<TeamDto>.toTeams(): List<Team> =
-        map { it.toDomain() }
-
-    internal fun List<RiderDto>.toRiders(): List<Rider> =
-        map { it.toDomain() }
+internal object RaceMapper {
 
     internal fun List<RaceDto>.toRaces(): List<Race> =
         map { it.toDomain() }
-
-    private fun TeamDto.toDomain(): Team {
-        return Team(
-            id = this.id,
-            name = this.name,
-            status = when (this.status) {
-                TeamDto.Status.WorldTeam -> TeamStatus.WORLD_TEAM
-                TeamDto.Status.ProTeam -> TeamStatus.PRO_TEAM
-                else -> error("Unexpected team status")
-            },
-            abbreviation = this.abbreviation,
-            jersey = this.jersey,
-            bike = this.bike,
-            riderIds = this.riderIds,
-            country = this.country,
-            website = this.website
-        )
-    }
-
-    private fun RiderDto.toDomain(): Rider {
-        return Rider(
-            id = this.id,
-            firstName = this.firstName,
-            lastName = this.lastName,
-            photo = this.photo,
-            country = this.country,
-            website = this.website,
-            birthDate = this.birthDate?.let {
-                Instant.fromEpochSeconds(it.seconds)
-                    .toLocalDateTime(TimeZone.currentSystemDefault()).date
-            },
-            birthPlace = this.birthPlace,
-            weight = this.weight,
-            height = this.height,
-            uciRankingPosition = this.uciRankingPosition,
-        )
-    }
 
     private fun RaceDto.toDomain(): Race {
         return Race(
@@ -106,7 +56,7 @@ internal object FirebaseDataMapper {
         return Stage(
             id = this.id,
             distance = this.distance,
-            startDateTime = Instant.fromEpochSeconds(this.startDateTime?.seconds ?: 0),
+            startDateTime = Instant.Companion.fromEpochSeconds(this.startDateTime?.seconds ?: 0),
             departure = this.departure,
             arrival = this.arrival,
             profileType = when (this.profileType) {

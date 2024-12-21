@@ -24,7 +24,7 @@ internal sealed interface NavigationRoutes {
     }
 
     @Serializable
-    data class RaceDetails(val raceId: String, val stageId: String? = null) {
+    data class RaceDetails(val raceId: String, val stageId: String?) {
         companion object : NavigationRoutes {
             override val deepLink = "races/{raceId}?stage={stageId}"
         }

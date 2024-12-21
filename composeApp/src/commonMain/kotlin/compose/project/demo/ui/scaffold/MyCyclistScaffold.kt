@@ -55,13 +55,7 @@ private fun SharedTransitionScope.Navigation(
         })
         RiderListComposableRoute(
             sharedTransitionScope = this@Navigation,
-            onRiderClick = { rider ->
-                navController.navigate(
-                    NavigationRoutes.RiderDetails(
-                        rider.id
-                    )
-                )
-            }
+            onRiderClick = { rider -> navController.navigateToRiderDetails(rider.id) }
         )
         TeamListComposableRoute(onTeamClick = { team ->
             navController.navigate(
@@ -71,13 +65,7 @@ private fun SharedTransitionScope.Navigation(
         raceDetailsComposableRoute(onBackPressed = { navController.navigateUp() })
         riderDetailsComposableRoute(
             sharedTransitionScope = this@Navigation,
-            onRaceSelected = { race ->
-                navController.navigate(
-                    NavigationRoutes.RaceDetails(
-                        race.id
-                    )
-                )
-            },
+            onRaceSelected = { race -> navController.navigateToRaceDetails(raceId = race.id) },
             onTeamSelected = { team ->
                 navController.navigate(
                     NavigationRoutes.TeamDetails(
@@ -86,24 +74,22 @@ private fun SharedTransitionScope.Navigation(
                 )
             },
             onStageSelected = { race, stage ->
-                navController.navigate(
-                    NavigationRoutes.RaceDetails(
-                        race.id,
-                        stage.id,
-                    )
+                navController.navigateToRaceDetails(
+                    raceId = race.id,
+                    stageId = stage.id
                 )
             },
             onBackPressed = { navController.navigateUp() },
         )
         teamDetailsComposableRoute(
-            onRiderSelected = { rider ->
-                navController.navigate(
-                    NavigationRoutes.RiderDetails(
-                        rider.id
-                    )
-                )
-            },
+            onRiderSelected = { rider -> navController.navigateToRiderDetails(rider.id) },
             onBackPressed = { navController.navigateUp() },
         )
     }
 }
+
+fun NavHostController.navigateToRaceDetails(raceId: String, stageId: String? = null) =
+    navigate(NavigationRoutes.RaceDetails(raceId = raceId, stageId = stageId))
+
+fun NavHostController.navigateToRiderDetails(riderId: String) =
+    navigate(NavigationRoutes.RiderDetails(riderId = riderId))
