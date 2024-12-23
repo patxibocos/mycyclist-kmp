@@ -84,7 +84,7 @@ kotlin {
 }
 
 android {
-    namespace = "compose.project.demo"
+    namespace = "io.github.patxibocos.mycyclist"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
