@@ -1,46 +1,47 @@
 package compose.project.demo.ui.navigation
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 internal sealed interface NavigationRoutes {
 
-    val deepLink: String
+    val path: String
 
-    fun deepLinkRoute() = "mycyclist://$deepLink"
+    fun deepLinkRoute(): String = "mycyclist://$path"
 
     @Serializable
     data object RaceList : NavigationRoutes {
-        override val deepLink = "races"
+        override val path = "races"
     }
 
     @Serializable
     data object RiderList : NavigationRoutes {
-        override val deepLink = "riders"
+        override val path = "riders"
     }
 
     @Serializable
     data object TeamList : NavigationRoutes {
-        override val deepLink = "teams"
+        override val path = "teams"
     }
 
     @Serializable
-    data class RaceDetails(val raceId: String, val stageId: String?) {
+    data class RaceDetails(val raceId: String, @SerialName("stage") val stageId: String? = null) {
         companion object : NavigationRoutes {
-            override val deepLink = "races/{raceId}?stage={stageId}"
+            override val path = "races"
         }
     }
 
     @Serializable
     data class RiderDetails(val riderId: String) {
         companion object : NavigationRoutes {
-            override val deepLink = "riders/{riderId}"
+            override val path = "riders"
         }
     }
 
     @Serializable
-    data class TeamDetails(val teamId: String) {
+    data class TeamDetails(@SerialName("team") val teamId: String) {
         companion object : NavigationRoutes {
-            override val deepLink = "teams/{teamId}"
+            override val path = "teams"
         }
     }
 }

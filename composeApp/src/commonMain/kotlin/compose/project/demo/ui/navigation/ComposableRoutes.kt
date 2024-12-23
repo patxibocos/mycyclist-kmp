@@ -19,12 +19,10 @@ import compose.project.demo.ui.rider.list.RiderListRoute
 import compose.project.demo.ui.team.details.TeamDetailsRoute
 import compose.project.demo.ui.team.list.TeamListRoute
 
-internal fun NavGraphBuilder.RaceListComposableRoute(onRaceClick: (Race) -> Unit) {
+internal fun NavGraphBuilder.raceListComposableRoute(onRaceClick: (Race) -> Unit) {
     composable<NavigationRoutes.RaceList>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = NavigationRoutes.RaceList.deepLinkRoute()
-            }
+            navDeepLink<NavigationRoutes.RaceList>(basePath = NavigationRoutes.RaceList.deepLinkRoute())
         ),
         enterTransition = {
             fadeIn()
@@ -38,15 +36,13 @@ internal fun NavGraphBuilder.RaceListComposableRoute(onRaceClick: (Race) -> Unit
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-internal fun NavGraphBuilder.RiderListComposableRoute(
+internal fun NavGraphBuilder.riderListComposableRoute(
     sharedTransitionScope: SharedTransitionScope,
     onRiderClick: (Rider) -> Unit
 ) {
     composable<NavigationRoutes.RiderList>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = NavigationRoutes.RiderList.deepLinkRoute()
-            }
+            navDeepLink<NavigationRoutes.RiderList>(basePath = NavigationRoutes.RiderList.deepLinkRoute())
         ),
         enterTransition = {
             fadeIn()
@@ -63,12 +59,10 @@ internal fun NavGraphBuilder.RiderListComposableRoute(
     }
 }
 
-internal fun NavGraphBuilder.TeamListComposableRoute(onTeamClick: (Team) -> Unit) {
+internal fun NavGraphBuilder.teamListComposableRoute(onTeamClick: (Team) -> Unit) {
     composable<NavigationRoutes.TeamList>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = NavigationRoutes.TeamList.deepLinkRoute()
-            }
+            navDeepLink<NavigationRoutes.TeamList>(basePath = NavigationRoutes.TeamList.deepLinkRoute())
         ),
         enterTransition = {
             fadeIn()
@@ -84,9 +78,7 @@ internal fun NavGraphBuilder.TeamListComposableRoute(onTeamClick: (Team) -> Unit
 internal fun NavGraphBuilder.raceDetailsComposableRoute(onBackPressed: () -> Unit) {
     composable<NavigationRoutes.RaceDetails>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = NavigationRoutes.RaceDetails.deepLinkRoute()
-            }
+            navDeepLink<NavigationRoutes.RaceDetails>(NavigationRoutes.RaceDetails.deepLinkRoute())
         ),
         enterTransition = {
             fadeIn()
@@ -117,9 +109,7 @@ internal fun NavGraphBuilder.riderDetailsComposableRoute(
 ) {
     composable<NavigationRoutes.RiderDetails>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = NavigationRoutes.RiderDetails.deepLinkRoute()
-            }
+            navDeepLink<NavigationRoutes.RiderDetails>(basePath = NavigationRoutes.RiderDetails.deepLinkRoute())
         ),
         enterTransition = {
             fadeIn()
@@ -147,9 +137,7 @@ internal fun NavGraphBuilder.teamDetailsComposableRoute(
 ) {
     composable<NavigationRoutes.TeamDetails>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = NavigationRoutes.TeamDetails.deepLinkRoute()
-            }
+            navDeepLink<NavigationRoutes.TeamDetails>(basePath = NavigationRoutes.TeamDetails.deepLinkRoute())
         ),
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }

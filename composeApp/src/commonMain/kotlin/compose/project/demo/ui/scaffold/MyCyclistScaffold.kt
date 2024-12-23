@@ -14,12 +14,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import compose.project.demo.ui.navigation.NavigationRoutes
-import compose.project.demo.ui.navigation.RaceListComposableRoute
-import compose.project.demo.ui.navigation.RiderListComposableRoute
-import compose.project.demo.ui.navigation.TeamListComposableRoute
 import compose.project.demo.ui.navigation.raceDetailsComposableRoute
+import compose.project.demo.ui.navigation.raceListComposableRoute
 import compose.project.demo.ui.navigation.riderDetailsComposableRoute
+import compose.project.demo.ui.navigation.riderListComposableRoute
 import compose.project.demo.ui.navigation.teamDetailsComposableRoute
+import compose.project.demo.ui.navigation.teamListComposableRoute
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -48,16 +48,16 @@ private fun SharedTransitionScope.Navigation(
         startDestination = NavigationRoutes.RaceList,
         modifier = Modifier.padding(values)
     ) {
-        RaceListComposableRoute(onRaceClick = { race ->
+        raceListComposableRoute(onRaceClick = { race ->
             navController.navigate(
-                NavigationRoutes.RaceDetails(race.id, null)
+                NavigationRoutes.RaceDetails(race.id)
             )
         })
-        RiderListComposableRoute(
+        riderListComposableRoute(
             sharedTransitionScope = this@Navigation,
             onRiderClick = { rider -> navController.navigateToRiderDetails(rider.id) }
         )
-        TeamListComposableRoute(onTeamClick = { team ->
+        teamListComposableRoute(onTeamClick = { team ->
             navController.navigate(
                 NavigationRoutes.TeamDetails(team.id)
             )
