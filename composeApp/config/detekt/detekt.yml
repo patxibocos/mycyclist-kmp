@@ -22,7 +22,7 @@ complexity:
     ignoreDefaultParameters: true
   TooManyFunctions:
     thresholdInClasses: 12
-    ignoreAnnotated: [ 'Preview' ]
+    ignoreAnnotatedFunctions: [ 'Preview' ]
 
 TwitterCompose:
   CompositionLocalAllowlist:
