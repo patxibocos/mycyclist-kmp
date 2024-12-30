@@ -3,6 +3,7 @@ package io.github.patxibocos.mycyclist.ui.rider.list
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
+import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -40,31 +45,100 @@ internal fun RiderListRoute(
     onRiderClick: (Rider) -> Unit,
 ) {
     val viewState by viewModel.uiState.collectAsStateWithLifecycle()
+    val topBarState by viewModel.topBarState.collectAsStateWithLifecycle()
     val state = viewState ?: return
     sharedTransitionScope.RiderListScreen(
         animatedVisibilityScope = animatedVisibilityScope,
-        state = state,
+        uiState = state,
+        topBarState = topBarState,
         onRiderClick = onRiderClick,
+        onRiderSearched = viewModel::onSearched,
+        onToggled = viewModel::onToggled,
+        onSortingSelected = viewModel::onSorted,
     )
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun SharedTransitionScope.RiderListScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    state: RiderListViewModel.UiState,
+    uiState: RiderListViewModel.UiState,
+    topBarState: RiderListViewModel.TopBarState,
     onRiderClick: (Rider) -> Unit,
+    onRiderSearched: (String) -> Unit,
+    onToggled: () -> Unit,
+    onSortingSelected: (Sorting) -> Unit,
+) {
+    val lazyListState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
+    Column {
+        TopBar(
+            topBarState = topBarState,
+            focusManager = focusManager,
+            onSortingSelected = onSortingSelected,
+            onSearched = onRiderSearched,
+            onToggled = onToggled,
+            onClicked = {
+                lazyListState.scrollToItem(0)
+            },
+        )
+        RiderList(lazyListState, uiState, animatedVisibilityScope, onRiderClick)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedTransitionScope.RiderList(
+    lazyListState: LazyListState,
+    uiState: RiderListViewModel.UiState,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    onRiderClick: (Rider) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp),
+        state = lazyListState,
     ) {
-        items(state.riders, key = Rider::id) { rider ->
-            RiderRow(
-                animatedVisibilityScope = animatedVisibilityScope,
-                rider = rider,
-                onRiderSelected = onRiderClick,
-            )
+        when (uiState.riders) {
+            is RiderListViewModel.UiState.Riders.ByLastName -> {
+                uiState.riders.riders.forEach { (letter, riders) ->
+                    stickyHeader {
+                        Text(text = letter.toString())
+                    }
+                    items(riders, key = Rider::id) { rider ->
+                        RiderRow(
+                            rider = rider,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            onRiderSelected = onRiderClick,
+                        )
+                    }
+                }
+            }
+
+            is RiderListViewModel.UiState.Riders.ByCountry -> {
+                uiState.riders.riders.forEach { (country, riders) ->
+                    stickyHeader {
+                        Text(text = country)
+                    }
+                    items(riders, key = Rider::id) { rider ->
+                        RiderRow(
+                            rider = rider,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            onRiderSelected = onRiderClick,
+                        )
+                    }
+                }
+            }
+
+            is RiderListViewModel.UiState.Riders.ByUciRanking -> {
+                items(uiState.riders.riders, key = Rider::id) { rider ->
+                    RiderRow(
+                        rider = rider,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        onRiderSelected = onRiderClick,
+                    )
+                }
+            }
         }
     }
 }

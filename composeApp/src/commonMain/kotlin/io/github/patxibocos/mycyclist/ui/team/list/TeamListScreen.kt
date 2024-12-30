@@ -73,12 +73,28 @@ private fun TeamListScreen(
         ) {
             Tab(
                 selected = pagerState.currentPage == 0,
-                onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
+                onClick = {
+                    coroutineScope.launch {
+                        if (pagerState.currentPage == 0) {
+                            worldTeamsLazyGridState.scrollToItem(0)
+                        } else {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    }
+                },
                 text = { Text("World Teams") },
             )
             Tab(
                 selected = pagerState.currentPage == 1,
-                onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
+                onClick = {
+                    coroutineScope.launch {
+                        if (pagerState.currentPage == 1) {
+                            proTeamsLazyGridState.scrollToItem(0)
+                        } else {
+                            pagerState.animateScrollToPage(1)
+                        }
+                    }
+                },
                 text = { Text("Pro Teams") },
             )
         }
