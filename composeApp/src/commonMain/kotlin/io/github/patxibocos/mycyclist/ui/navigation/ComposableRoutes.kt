@@ -4,6 +4,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
@@ -14,7 +16,8 @@ import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsRoute
 import io.github.patxibocos.mycyclist.ui.race.list.RaceListRoute
-import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsRoute
+import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsScreen
+import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListRoute
 import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsRoute
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListRoute
@@ -119,8 +122,11 @@ internal fun NavGraphBuilder.riderDetailsComposableRoute(
         }
     ) { backStackEntry ->
         val riderDetails: NavigationRoutes.RiderDetails = backStackEntry.toRoute()
-        RiderDetailsRoute(
-            riderId = riderDetails.riderId,
+        val viewModel: RiderDetailsViewModel =
+            viewModel { RiderDetailsViewModel(riderId = riderDetails.riderId) }
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
+        RiderDetailsScreen(
+            uiState = uiState,
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this@composable,
             onBackPressed = onBackPressed,

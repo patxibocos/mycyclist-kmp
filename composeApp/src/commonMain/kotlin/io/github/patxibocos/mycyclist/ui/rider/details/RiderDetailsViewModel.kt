@@ -18,8 +18,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-internal class RiderDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
-    ViewModel() {
+internal class RiderDetailsViewModel(
+    dataRepository: DataRepository = firebaseDataRepository,
+    riderId: String,
+) : ViewModel() {
 
     private companion object {
         private const val RESULTS_TO_DISPLAY = 3
@@ -34,7 +36,7 @@ internal class RiderDetailsViewModel(private val dataRepository: DataRepository 
         val results: ImmutableList<Result>,
     )
 
-    internal fun uiState(riderId: String): StateFlow<UiState?> =
+    internal val uiState: StateFlow<UiState?> =
         combine(
             dataRepository.teams,
             dataRepository.riders,
