@@ -1,6 +1,5 @@
 package io.github.patxibocos.mycyclist.ui.race.details
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -138,7 +137,6 @@ private fun ColumnScope.SingleStage(
     StageResults(results, onRiderSelected, onTeamSelected)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ColumnScope.StagesList(
     stages: ImmutableList<Stage>,

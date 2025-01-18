@@ -134,7 +134,7 @@ private fun TeamList(
         horizontalArrangement = Arrangement.spacedBy(5.dp),
         state = lazyListState,
     ) {
-        items(teams) { team ->
+        items(teams, key = Team::id) { team ->
             TeamRow(team, onTeamSelected)
         }
     }

@@ -108,7 +108,7 @@ private fun LazyListScope.todayStages(
             Text("No races today, see next races below")
         }
     } else {
-        items(todayStages) { todayStage ->
+        items(todayStages, key = { it.race.id }) { todayStage ->
             when (todayStage) {
                 is RaceListViewModel.TodayStage.MultiStageRace -> TodayMultiStageRaceStage(
                     todayStage.race,

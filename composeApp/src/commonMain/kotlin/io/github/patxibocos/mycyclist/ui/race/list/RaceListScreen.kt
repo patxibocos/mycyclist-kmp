@@ -81,7 +81,7 @@ private fun LazyListScope.seasonEnded(pastRaces: List<Race>, onRaceSelected: (Ra
     stickyHeader {
         Text(text = "Past races")
     }
-    items(pastRaces) { pastRace ->
+    items(pastRaces, key = Race::id) { pastRace ->
         RaceRow(race = pastRace, onRaceSelected = onRaceSelected)
     }
 }
@@ -97,7 +97,7 @@ private fun LazyListScope.seasonNotStarted(
     stickyHeader {
         Text(text = "Future races")
     }
-    items(futureRaces) { pastRace ->
+    items(futureRaces, key = Race::id) { pastRace ->
         RaceRow(race = pastRace, onRaceSelected = onRaceSelected)
     }
 }
