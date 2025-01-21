@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -14,15 +15,22 @@ import io.github.patxibocos.mycyclist.domain.Race
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsRoute
-import io.github.patxibocos.mycyclist.ui.race.list.RaceListRoute
+import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsScreen
+import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsViewModel
+import io.github.patxibocos.mycyclist.ui.race.list.RaceListScreen
+import io.github.patxibocos.mycyclist.ui.race.list.RaceListViewModel
 import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsScreen
 import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsViewModel
-import io.github.patxibocos.mycyclist.ui.rider.list.RiderListRoute
+import io.github.patxibocos.mycyclist.ui.rider.list.RiderListScreen
+import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel
 import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsRoute
-import io.github.patxibocos.mycyclist.ui.team.list.TeamListRoute
+import io.github.patxibocos.mycyclist.ui.team.list.TeamListScreen
+import io.github.patxibocos.mycyclist.ui.team.list.TeamListViewModel
 
-internal fun NavGraphBuilder.raceListComposableRoute(onRaceClick: (Race) -> Unit) {
+internal fun NavGraphBuilder.raceListComposableRoute(
+    onRaceClick: (Race) -> Unit,
+    onRaceStageClick: (Race, Stage) -> Unit,
+) {
     composable<NavigationRoutes.RaceList>(
         deepLinks = listOf(
             navDeepLink<NavigationRoutes.RaceList>(basePath = NavigationRoutes.RaceList.deepLinkRoute())
@@ -34,7 +42,13 @@ internal fun NavGraphBuilder.raceListComposableRoute(onRaceClick: (Race) -> Unit
             fadeOut()
         }
     ) {
-        RaceListRoute(onRaceClick = onRaceClick)
+        val viewModel = viewModel { RaceListViewModel() }
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
+        RaceListScreen(
+            uiState = uiState,
+            onRaceClick = onRaceClick,
+            onRaceStageClick = onRaceStageClick,
+        )
     }
 }
 
@@ -54,10 +68,18 @@ internal fun NavGraphBuilder.riderListComposableRoute(
             fadeOut()
         }
     ) {
-        RiderListRoute(
+        val viewModel = viewModel { RiderListViewModel() }
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
+        val topBarState by viewModel.topBarState.collectAsStateWithLifecycle()
+        RiderListScreen(
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this@composable,
-            onRiderClick = onRiderClick
+            onRiderClick = onRiderClick,
+            uiState = uiState,
+            topBarState = topBarState,
+            onRiderSearched = viewModel::onSearched,
+            onToggled = viewModel::onToggled,
+            onSortingSelected = viewModel::onSorted,
         )
     }
 }
@@ -74,7 +96,12 @@ internal fun NavGraphBuilder.teamListComposableRoute(onTeamClick: (Team) -> Unit
             fadeOut()
         }
     ) {
-        TeamListRoute(onTeamClick = onTeamClick)
+        val viewModel = viewModel { TeamListViewModel() }
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
+        TeamListScreen(
+            uiState = uiState,
+            onTeamClick = onTeamClick
+        )
     }
 }
 
@@ -91,12 +118,18 @@ internal fun NavGraphBuilder.raceDetailsComposableRoute(onBackPressed: () -> Uni
         }
     ) { backStackEntry ->
         val raceDetails: NavigationRoutes.RaceDetails = backStackEntry.toRoute()
-        RaceDetailsRoute(
-            raceId = raceDetails.raceId,
-            stageId = raceDetails.stageId,
+        val viewModel = viewModel {
+            RaceDetailsViewModel(raceId = raceDetails.raceId, stageId = raceDetails.stageId)
+        }
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
+        RaceDetailsScreen(
+            uiState = uiState,
             onBackPressed = onBackPressed,
             onRiderSelected = {},
             onTeamSelected = {},
+            onResultsModeChanged = viewModel::onResultsModeChanged,
+            onClassificationTypeChanged = viewModel::onClassificationTypeChanged,
+            onStageSelected = viewModel::onStageSelected,
             onParticipationsClicked = {},
         )
     }

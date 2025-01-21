@@ -21,7 +21,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-internal class RaceDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
+internal class RaceDetailsViewModel(
+    private val raceId: String,
+    private val stageId: String?,
+    dataRepository: DataRepository = firebaseDataRepository,
+) :
     ViewModel() {
 
     internal data class UiState(
@@ -65,12 +69,13 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             Results
     }
 
-    internal data class RiderTimeResult(val rider: Rider, val time: Long)
+    internal data class RiderTimeResult(val rider: Rider, val position: Int, val time: Long)
 
-    internal data class TeamTimeResult(val team: Team, val time: Long)
+    internal data class TeamTimeResult(val team: Team, val position: Int, val time: Long)
 
     internal data class RiderPointsResult(
         val rider: Rider,
+        val position: Int,
         val points: Int,
     )
 
@@ -80,8 +85,8 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
         val riders: List<Rider>,
     )
 
-    internal fun uiState(raceId: String, stageId: String?): StateFlow<UiState?> {
-        return combine(
+    internal val uiState: StateFlow<UiState?> =
+        combine(
             dataRepository.races,
             dataRepository.teams,
             dataRepository.riders
@@ -118,7 +123,6 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
                 started = SharingStarted.WhileSubscribed(),
                 initialValue = null,
             )
-    }
 
     private suspend fun emitInitialRaceState(race: Race, stageId: String?) {
         val stageIndex: Int
@@ -185,6 +189,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.stageResults.teams.map { participantResult ->
                 TeamTimeResult(
                     teams.find { it.id == participantResult.participantId }!!,
+                    position = participantResult.position,
                     participantResult.time,
                 )
             },
@@ -194,6 +199,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.generalResults.teams.map { participantResult ->
                 TeamTimeResult(
                     teams.find { it.id == participantResult.participantId }!!,
+                    position = participantResult.position,
                     participantResult.time,
                 )
             },
@@ -209,6 +215,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.stageResults.youth.map { participantResult ->
                 RiderTimeResult(
                     riders.find { it.id == participantResult.participantId }!!,
+                    position = participantResult.position,
                     participantResult.time,
                 )
             },
@@ -218,6 +225,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.generalResults.youth.map { participantResult ->
                 RiderTimeResult(
                     riders.find { it.id == participantResult.participantId }!!,
+                    position = participantResult.position,
                     participantResult.time,
                 )
             },
@@ -234,6 +242,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
                 it.place to it.points.map { riderResult ->
                     RiderPointsResult(
                         riders.find { rider -> rider.id == riderResult.participant }!!,
+                        position = riderResult.position,
                         riderResult.points,
                     )
                 }
@@ -244,6 +253,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.generalResults.kom.map { participantResult ->
                 RiderPointsResult(
                     riders.find { it.id == participantResult.participant }!!,
+                    position = participantResult.position,
                     participantResult.points,
                 )
             },
@@ -261,6 +271,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
                 stage.stageResults.time.map { participantResult ->
                     TeamTimeResult(
                         teams.find { it.id == participantResult.participantId }!!,
+                        position = participantResult.position,
                         participantResult.time,
                     )
                 },
@@ -270,6 +281,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
                 stage.stageResults.time.map { participantResult ->
                     RiderTimeResult(
                         riders.find { it.id == participantResult.participantId }!!,
+                        position = participantResult.position,
                         participantResult.time,
                     )
                 },
@@ -280,6 +292,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.generalResults.time.map { participantResult ->
                 RiderTimeResult(
                     riders.find { it.id == participantResult.participantId }!!,
+                    position = participantResult.position,
                     participantResult.time,
                 )
             },
@@ -296,6 +309,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
                 it.place to it.points.map { riderResult ->
                     RiderPointsResult(
                         riders.find { rider -> rider.id == riderResult.participant }!!,
+                        position = riderResult.position,
                         riderResult.points,
                     )
                 }
@@ -306,6 +320,7 @@ internal class RaceDetailsViewModel(private val dataRepository: DataRepository =
             stage.generalResults.points.map { participantResult ->
                 RiderPointsResult(
                     riders.find { it.id == participantResult.participant }!!,
+                    position = participantResult.position,
                     participantResult.points,
                 )
             },

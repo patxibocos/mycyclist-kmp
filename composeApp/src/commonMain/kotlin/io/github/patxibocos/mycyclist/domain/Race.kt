@@ -32,7 +32,7 @@ internal data class Race(
     internal fun isFuture(): Boolean = today() < startDate()
 
     internal fun todayStage(): Pair<Stage, Int>? =
-        stages.find { it.startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()) == today() }
+        stages.find { it.startDateTime.toLocalDateTime(TimeZone.currentSystemDefault()).date == today() }
             ?.let { it to stages.indexOf(it) }
 
     internal fun indexOfLastStageWithResults(): Int =

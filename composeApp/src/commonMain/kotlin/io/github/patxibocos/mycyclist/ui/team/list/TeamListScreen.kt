@@ -26,14 +26,11 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.domain.TeamStatus
@@ -42,22 +39,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun TeamListRoute(
-    onTeamClick: (Team) -> Unit,
-    viewModel: TeamListViewModel = viewModel { TeamListViewModel() }
-) {
-    val viewState by viewModel.uiState.collectAsStateWithLifecycle()
-    val state = viewState ?: return
-
-    TeamListScreen(
-        state = state,
-        onTeamClick = onTeamClick,
-    )
-}
-
-@Composable
-private fun TeamListScreen(
-    state: TeamListViewModel.UiState,
+internal fun TeamListScreen(
+    uiState: TeamListViewModel.UiState,
     onTeamClick: (Team) -> Unit,
 ) {
     val worldTeamsLazyGridState = rememberLazyGridState()
@@ -103,14 +86,14 @@ private fun TeamListScreen(
         ) { page ->
             if (page == 0) {
                 TeamList(
-                    teams = state.teams.filter { it.status == TeamStatus.WORLD_TEAM }
+                    teams = uiState.teams.filter { it.status == TeamStatus.WORLD_TEAM }
                         .toImmutableList(),
                     onTeamSelected = onTeamClick,
                     lazyListState = worldTeamsLazyGridState,
                 )
             } else {
                 TeamList(
-                    teams = state.teams.filter { it.status == TeamStatus.PRO_TEAM }
+                    teams = uiState.teams.filter { it.status == TeamStatus.PRO_TEAM }
                         .toImmutableList(),
                     onTeamSelected = onTeamClick,
                     lazyListState = proTeamsLazyGridState,

@@ -48,11 +48,18 @@ private fun SharedTransitionScope.Navigation(
         startDestination = NavigationRoutes.RaceList,
         modifier = Modifier.padding(values)
     ) {
-        raceListComposableRoute(onRaceClick = { race ->
-            navController.navigate(
-                NavigationRoutes.RaceDetails(race.id)
-            )
-        })
+        raceListComposableRoute(
+            onRaceClick = { race ->
+                navController.navigate(
+                    NavigationRoutes.RaceDetails(race.id)
+                )
+            },
+            onRaceStageClick = { race, stage ->
+                navController.navigate(
+                    NavigationRoutes.RaceDetails(race.id, stage.id)
+                )
+            }
+        )
         riderListComposableRoute(
             sharedTransitionScope = this@Navigation,
             onRiderClick = { rider -> navController.navigateToRiderDetails(rider.id) }

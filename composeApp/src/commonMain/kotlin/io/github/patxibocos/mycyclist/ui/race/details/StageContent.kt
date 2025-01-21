@@ -42,14 +42,25 @@ internal fun StageResults(
             .verticalScroll(rememberScrollState()),
     ) {
         when (results) {
-            is RaceDetailsViewModel.Results.RidersPointResult -> RidersPointResult(results, onRiderSelected)
+            is RaceDetailsViewModel.Results.RidersPointResult -> RidersPointResult(
+                results,
+                onRiderSelected
+            )
+
             is RaceDetailsViewModel.Results.RidersPointsPerPlaceResult -> RidersPointsPerPlaceResult(
                 results,
                 onRiderSelected,
             )
 
-            is RaceDetailsViewModel.Results.RidersTimeResult -> RidersTimeResult(results, onRiderSelected)
-            is RaceDetailsViewModel.Results.TeamsTimeResult -> TeamsTimeResult(results, onTeamSelected)
+            is RaceDetailsViewModel.Results.RidersTimeResult -> RidersTimeResult(
+                results,
+                onRiderSelected
+            )
+
+            is RaceDetailsViewModel.Results.TeamsTimeResult -> TeamsTimeResult(
+                results,
+                onTeamSelected
+            )
         }
     }
 }
@@ -59,9 +70,9 @@ private fun RidersPointResult(
     results: RaceDetailsViewModel.Results.RidersPointResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
-    results.riders.forEachIndexed { i, (rider, points) ->
+    results.riders.forEach { (rider, position, points) ->
         Text(
-            text = "${i + 1}. ${rider.fullName()} - $points",
+            text = "$position. ${rider.fullName()} - $points",
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onRiderSelected(rider) },
@@ -76,9 +87,9 @@ private fun RidersPointsPerPlaceResult(
 ) {
     results.perPlaceResult.forEach { (place, riders) ->
         Text(text = "${place.name} - ${place.distance}")
-        riders.forEachIndexed { i, (rider, points) ->
+        riders.forEach { (rider, position, points) ->
             Text(
-                text = "${i + 1}. ${rider.fullName()} - $points",
+                text = "$position. ${rider.fullName()} - $points",
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onRiderSelected(rider) },
@@ -93,14 +104,14 @@ private fun RidersTimeResult(
     results: RaceDetailsViewModel.Results.RidersTimeResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
-    results.riders.forEachIndexed { i, (rider, time) ->
+    results.riders.forEachIndexed { i, (rider, position, time) ->
         val duration = if (i == 0) {
             time.seconds.toString()
         } else {
             "+${(time - results.riders.first().time).seconds}"
         }
         Text(
-            text = "${i + 1}. ${rider.fullName()} - $duration",
+            text = "$position. ${rider.fullName()} - $duration",
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onRiderSelected(rider) },
@@ -113,14 +124,14 @@ private fun TeamsTimeResult(
     results: RaceDetailsViewModel.Results.TeamsTimeResult,
     onTeamSelected: (Team) -> Unit,
 ) {
-    results.teams.forEachIndexed { i, (team, time) ->
+    results.teams.forEachIndexed { i, (team, position, time) ->
         val duration = if (i == 0) {
             time.seconds.toString()
         } else {
             "+${(time - results.teams.first().time).seconds}"
         }
         Text(
-            text = "${i + 1}. ${team.name} - $duration",
+            text = "$position. ${team.name} - $duration",
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onTeamSelected(team) },

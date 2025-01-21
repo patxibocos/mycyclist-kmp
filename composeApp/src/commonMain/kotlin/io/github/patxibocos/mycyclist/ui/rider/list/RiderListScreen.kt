@@ -22,15 +22,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
@@ -38,29 +35,8 @@ import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-internal fun RiderListRoute(
+internal fun RiderListScreen(
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: RiderListViewModel = viewModel { RiderListViewModel() },
-    onRiderClick: (Rider) -> Unit,
-) {
-    val viewState by viewModel.uiState.collectAsStateWithLifecycle()
-    val topBarState by viewModel.topBarState.collectAsStateWithLifecycle()
-    val state = viewState ?: return
-    sharedTransitionScope.RiderListScreen(
-        animatedVisibilityScope = animatedVisibilityScope,
-        uiState = state,
-        topBarState = topBarState,
-        onRiderClick = onRiderClick,
-        onRiderSearched = viewModel::onSearched,
-        onToggled = viewModel::onToggled,
-        onSortingSelected = viewModel::onSorted,
-    )
-}
-
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalFoundationApi::class)
-@Composable
-private fun SharedTransitionScope.RiderListScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     uiState: RiderListViewModel.UiState,
     topBarState: RiderListViewModel.TopBarState,
@@ -82,7 +58,12 @@ private fun SharedTransitionScope.RiderListScreen(
                 lazyListState.scrollToItem(0)
             },
         )
-        RiderList(lazyListState, uiState, animatedVisibilityScope, onRiderClick)
+        sharedTransitionScope.RiderList(
+            lazyListState,
+            uiState,
+            animatedVisibilityScope,
+            onRiderClick
+        )
     }
 }
 

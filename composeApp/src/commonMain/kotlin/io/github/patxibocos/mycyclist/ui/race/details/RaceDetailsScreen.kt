@@ -22,16 +22,12 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.patxibocos.mycyclist.domain.Race
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.domain.Stage
@@ -41,39 +37,10 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
-@Composable
-internal fun RaceDetailsRoute(
-    raceId: String,
-    stageId: String?,
-    onRiderSelected: (Rider) -> Unit,
-    onTeamSelected: (Team) -> Unit,
-    onParticipationsClicked: (Race) -> Unit,
-    onBackPressed: () -> Unit = {},
-    viewModel: RaceDetailsViewModel = viewModel { RaceDetailsViewModel() },
-) {
-    val viewState by remember(raceId, stageId) {
-        viewModel.uiState(
-            raceId = raceId,
-            stageId = stageId,
-        )
-    }.collectAsStateWithLifecycle()
-    val state = viewState ?: return
-    RaceDetailsScreen(
-        state = state,
-        onRiderSelected = onRiderSelected,
-        onTeamSelected = onTeamSelected,
-        onResultsModeChanged = viewModel::onResultsModeChanged,
-        onClassificationTypeChanged = viewModel::onClassificationTypeChanged,
-        onStageSelected = viewModel::onStageSelected,
-        onParticipationsClicked = onParticipationsClicked,
-        onBackPressed = onBackPressed,
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RaceDetailsScreen(
-    state: RaceDetailsViewModel.UiState,
+internal fun RaceDetailsScreen(
+    uiState: RaceDetailsViewModel.UiState,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
@@ -86,7 +53,7 @@ private fun RaceDetailsScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = state.race.name,
+                    text = uiState.race.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(end = 8.dp),
@@ -98,24 +65,24 @@ private fun RaceDetailsScreen(
                 }
             }
         )
-        Button(onClick = { onParticipationsClicked(state.race) }) {
+        Button(onClick = { onParticipationsClicked(uiState.race) }) {
             Text(text = "Participants")
         }
-        if (state.race.stages.size == 1) {
-            val stage = state.race.stages.first()
+        if (uiState.race.stages.size == 1) {
+            val stage = uiState.race.stages.first()
             SingleStage(
                 stage,
-                state.stagesResults[stage]!!,
+                uiState.stagesResults[stage]!!,
                 onRiderSelected,
                 onTeamSelected,
             )
         } else {
             StagesList(
-                stages = state.race.stages.toImmutableList(),
-                stagesResults = state.stagesResults,
-                currentStageIndex = state.currentStageIndex,
-                resultsMode = state.resultsMode,
-                classificationType = state.classificationType,
+                stages = uiState.race.stages.toImmutableList(),
+                stagesResults = uiState.stagesResults,
+                currentStageIndex = uiState.currentStageIndex,
+                resultsMode = uiState.resultsMode,
+                classificationType = uiState.classificationType,
                 onRiderSelected = onRiderSelected,
                 onTeamSelected = onTeamSelected,
                 onResultsModeChanged = onResultsModeChanged,

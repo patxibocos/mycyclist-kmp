@@ -15,59 +15,51 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.patxibocos.mycyclist.domain.Race
+import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 
 @Composable
-internal fun RaceListRoute(
+internal fun RaceListScreen(
+    uiState: RaceListViewModel.UiState,
     onRaceClick: (Race) -> Unit,
-    viewModel: RaceListViewModel = viewModel { RaceListViewModel() }
-) {
-    val viewState by viewModel.uiState.collectAsStateWithLifecycle()
-    val state = viewState ?: return
-    RaceListScreen(
-        state = state,
-        onRaceClick = onRaceClick,
-    )
-}
-
-@Composable
-private fun RaceListScreen(
-    state: RaceListViewModel.UiState,
-    onRaceClick: (Race) -> Unit,
+    onRaceStageClick: (Race, Stage) -> Unit,
 ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        when (state) {
+        when (uiState) {
             RaceListViewModel.UiState.EmptyViewState -> {
                 item { Text(text = "Empty") }
             }
 
             is RaceListViewModel.UiState.SeasonEndedViewState -> {
-                seasonEnded(state.pastRaces, onRaceClick)
+                seasonEnded(
+                    pastRaces = uiState.pastRaces,
+                    onRaceSelected = onRaceClick,
+                )
             }
 
             is RaceListViewModel.UiState.SeasonInProgressViewState -> {
                 seasonInProgress(
-                    state.pastRaces,
-                    state.todayStages,
-                    state.futureRaces,
-                    {},
-                    { _, _ -> },
+                    pastRaces = uiState.pastRaces,
+                    todayStages = uiState.todayStages,
+                    futureRaces = uiState.futureRaces,
+                    onRaceSelected = onRaceClick,
+                    onStageSelected = onRaceStageClick,
                 )
             }
 
             is RaceListViewModel.UiState.SeasonNotStartedViewState -> {
-                seasonNotStarted(state.futureRaces, onRaceClick)
+                seasonNotStarted(
+                    futureRaces = uiState.futureRaces,
+                    onRaceSelected = onRaceClick
+                )
             }
         }
     }
