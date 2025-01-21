@@ -12,38 +12,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.patxibocos.mycyclist.domain.Rider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun TeamDetailsRoute(
-    teamId: String,
-    onBackPressed: () -> Unit,
-    onRiderSelected: (Rider) -> Unit,
-    viewModel: TeamDetailsViewModel = viewModel { TeamDetailsViewModel() }
-) {
-    val viewState by remember(teamId) {
-        viewModel.uiState(teamId = teamId)
-    }.collectAsStateWithLifecycle()
-    val state = viewState ?: return
-    TeamDetailsScreen(
-        state = state,
-        onBackPressed = onBackPressed,
-        onRiderSelected = onRiderSelected,
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TeamDetailsScreen(
-    state: TeamDetailsViewModel.UiState,
+internal fun TeamDetailsScreen(
+    uiState: TeamDetailsViewModel.UiState,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
 ) {
@@ -51,7 +28,7 @@ private fun TeamDetailsScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = state.team.name,
+                    text = uiState.team.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(end = 8.dp),
@@ -63,8 +40,8 @@ private fun TeamDetailsScreen(
                 }
             }
         )
-        Text(text = state.team.name)
-        state.riders.forEach {
+        Text(text = uiState.team.name)
+        uiState.riders.forEach {
             RiderRow(rider = it, onRiderSelected = onRiderSelected)
         }
     }

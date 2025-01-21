@@ -13,12 +13,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
-internal class TeamDetailsViewModel(private val dataRepository: DataRepository = firebaseDataRepository) :
+internal class TeamDetailsViewModel(
+    private val teamId: String,
+    dataRepository: DataRepository = firebaseDataRepository
+) :
     ViewModel() {
 
     internal data class UiState(val team: Team, val riders: ImmutableList<Rider>)
 
-    internal fun uiState(teamId: String): StateFlow<UiState?> =
+    internal val uiState: StateFlow<UiState?> =
         combine(dataRepository.teams, dataRepository.riders) { teams, riders ->
             val team = teams.find { it.id == teamId }!!
             val teamRiders = riders.filter { team.riderIds.contains(it.id) }

@@ -23,7 +23,8 @@ import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsScreen
 import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListScreen
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel
-import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsRoute
+import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsScreen
+import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListScreen
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListViewModel
 
@@ -182,8 +183,10 @@ internal fun NavGraphBuilder.teamDetailsComposableRoute(
         exitTransition = { fadeOut() }
     ) { backStackEntry ->
         val teamDetails: NavigationRoutes.TeamDetails = backStackEntry.toRoute()
-        TeamDetailsRoute(
-            teamId = teamDetails.teamId,
+        val viewModel = viewModel { TeamDetailsViewModel(teamId = teamDetails.teamId) }
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
+        TeamDetailsScreen(
+            uiState = uiState,
             onBackPressed = onBackPressed,
             onRiderSelected = onRiderSelected,
         )
