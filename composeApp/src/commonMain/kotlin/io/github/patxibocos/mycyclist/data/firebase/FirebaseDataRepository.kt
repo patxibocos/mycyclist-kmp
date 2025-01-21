@@ -13,10 +13,12 @@ import io.github.patxibocos.mycyclist.domain.Race
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.expect.unGZip
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -29,22 +31,20 @@ import kotlin.time.Duration.Companion.hours
 
 internal class FirebaseDataRepository(
     private val firebaseRemoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig,
+    refreshInterval: Duration = 1.hours,
 ) :
     DataRepository {
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
+        MainScope().launch {
+            // Emit the cached value if available
             emitData(firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString())
             firebaseRemoteConfig.settings {
-                minimumFetchInterval = 1.hours
+                minimumFetchInterval = refreshInterval
             }
-            try {
-                withContext(Dispatchers.IO) {
-                    firebaseRemoteConfig.fetchAndActivate()
-                }
-                emitData(firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString())
-            } catch (_: FirebaseRemoteConfigException) {
-                return@launch
+            while (isActive) {
+                refresh()
+                delay(refreshInterval)
             }
         }
     }
@@ -69,8 +69,8 @@ internal class FirebaseDataRepository(
     override val riders = _riders
     override val races = _races
 
-    override suspend fun refresh(): Boolean {
-        return try {
+    override suspend fun refresh(): Boolean = withContext(Dispatchers.IO) {
+        try {
             firebaseRemoteConfig.fetch(Duration.ZERO)
             if (firebaseRemoteConfig.activate()) {
                 emitData(firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString())
