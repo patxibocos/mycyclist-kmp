@@ -106,7 +106,11 @@ internal fun NavGraphBuilder.teamListComposableRoute(onTeamClick: (Team) -> Unit
     }
 }
 
-internal fun NavGraphBuilder.raceDetailsComposableRoute(onBackPressed: () -> Unit) {
+internal fun NavGraphBuilder.raceDetailsComposableRoute(
+    onRiderSelected: (Rider) -> Unit,
+    onTeamSelected: (Team) -> Unit,
+    onBackPressed: () -> Unit,
+) {
     composable<NavigationRoutes.RaceDetails>(
         deepLinks = listOf(
             navDeepLink<NavigationRoutes.RaceDetails>(NavigationRoutes.RaceDetails.deepLinkRoute())
@@ -126,8 +130,8 @@ internal fun NavGraphBuilder.raceDetailsComposableRoute(onBackPressed: () -> Uni
         RaceDetailsScreen(
             uiState = uiState,
             onBackPressed = onBackPressed,
-            onRiderSelected = {},
-            onTeamSelected = {},
+            onRiderSelected = onRiderSelected,
+            onTeamSelected = onTeamSelected,
             onResultsModeChanged = viewModel::onResultsModeChanged,
             onClassificationTypeChanged = viewModel::onClassificationTypeChanged,
             onStageSelected = viewModel::onStageSelected,

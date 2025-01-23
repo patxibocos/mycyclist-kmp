@@ -38,7 +38,7 @@ internal class FirebaseDataRepository(
     init {
         MainScope().launch {
             // Emit the cached value if available
-            emitData(firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString())
+            emitRemoteConfigValue()
             firebaseRemoteConfig.settings {
                 minimumFetchInterval = refreshInterval
             }
@@ -50,11 +50,12 @@ internal class FirebaseDataRepository(
     }
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalSerializationApi::class)
-    private suspend fun emitData(serializedContent: String) = withContext(Dispatchers.Default) {
-        if (serializedContent.isEmpty()) {
+    private suspend fun emitRemoteConfigValue() = withContext(Dispatchers.Default) {
+        val remoteConfigValue = firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString()
+        if (remoteConfigValue.isEmpty()) {
             return@withContext
         }
-        val unzipped = unGZip(Base64.decode(serializedContent))
+        val unzipped = unGZip(Base64.decode(remoteConfigValue))
         val cyclingData = ProtoBuf.decodeFromByteArray<CyclingDataDto>(unzipped)
         _teams.emit(cyclingData.teams.toTeams())
         _riders.emit(cyclingData.riders.toRiders())
@@ -73,7 +74,7 @@ internal class FirebaseDataRepository(
         try {
             firebaseRemoteConfig.fetch(Duration.ZERO)
             if (firebaseRemoteConfig.activate()) {
-                emitData(firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString())
+                emitRemoteConfigValue()
             }
             true
         } catch (_: FirebaseRemoteConfigException) {

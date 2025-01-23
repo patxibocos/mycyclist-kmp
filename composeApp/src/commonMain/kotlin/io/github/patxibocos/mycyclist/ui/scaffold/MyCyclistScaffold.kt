@@ -13,6 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import io.github.patxibocos.mycyclist.domain.Race
+import io.github.patxibocos.mycyclist.domain.Rider
+import io.github.patxibocos.mycyclist.domain.Stage
+import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.ui.navigation.NavigationRoutes
 import io.github.patxibocos.mycyclist.ui.navigation.raceDetailsComposableRoute
 import io.github.patxibocos.mycyclist.ui.navigation.raceListComposableRoute
@@ -49,54 +53,48 @@ private fun SharedTransitionScope.Navigation(
         modifier = Modifier.padding(values)
     ) {
         raceListComposableRoute(
-            onRaceClick = { race ->
-                navController.navigate(
-                    NavigationRoutes.RaceDetails(race.id)
-                )
-            },
+            onRaceClick = { race -> navController.navigateToRaceDetails(race) },
             onRaceStageClick = { race, stage ->
-                navController.navigate(
-                    NavigationRoutes.RaceDetails(race.id, stage.id)
+                navController.navigateToRaceDetails(
+                    race = race,
+                    stage = stage,
                 )
             }
         )
         riderListComposableRoute(
             sharedTransitionScope = this@Navigation,
-            onRiderClick = { rider -> navController.navigateToRiderDetails(rider.id) }
+            onRiderClick = { rider -> navController.navigateToRiderDetails(rider) }
         )
-        teamListComposableRoute(onTeamClick = { team ->
-            navController.navigate(
-                NavigationRoutes.TeamDetails(team.id)
-            )
-        })
-        raceDetailsComposableRoute(onBackPressed = { navController.navigateUp() })
+        teamListComposableRoute(onTeamClick = { team -> navController.navigateToTeamDetails(team) })
+        raceDetailsComposableRoute(
+            onBackPressed = { navController.navigateUp() },
+            onRiderSelected = { rider -> navController.navigateToRiderDetails(rider) },
+            onTeamSelected = { team -> navController.navigateToTeamDetails(team) },
+        )
         riderDetailsComposableRoute(
             sharedTransitionScope = this@Navigation,
-            onRaceSelected = { race -> navController.navigateToRaceDetails(raceId = race.id) },
-            onTeamSelected = { team ->
-                navController.navigate(
-                    NavigationRoutes.TeamDetails(
-                        team.id
-                    )
-                )
-            },
+            onRaceSelected = { race -> navController.navigateToRaceDetails(race) },
+            onTeamSelected = { team -> navController.navigateToTeamDetails(team) },
             onStageSelected = { race, stage ->
                 navController.navigateToRaceDetails(
-                    raceId = race.id,
-                    stageId = stage.id
+                    race = race,
+                    stage = stage,
                 )
             },
             onBackPressed = { navController.navigateUp() },
         )
         teamDetailsComposableRoute(
-            onRiderSelected = { rider -> navController.navigateToRiderDetails(rider.id) },
+            onRiderSelected = { rider -> navController.navigateToRiderDetails(rider) },
             onBackPressed = { navController.navigateUp() },
         )
     }
 }
 
-fun NavHostController.navigateToRaceDetails(raceId: String, stageId: String? = null) =
-    navigate(NavigationRoutes.RaceDetails(raceId = raceId, stageId = stageId))
+private fun NavHostController.navigateToRaceDetails(race: Race, stage: Stage? = null) =
+    navigate(NavigationRoutes.RaceDetails(raceId = race.id, stageId = stage?.id))
 
-fun NavHostController.navigateToRiderDetails(riderId: String) =
-    navigate(NavigationRoutes.RiderDetails(riderId = riderId))
+private fun NavHostController.navigateToRiderDetails(rider: Rider) =
+    navigate(NavigationRoutes.RiderDetails(riderId = rider.id))
+
+private fun NavHostController.navigateToTeamDetails(team: Team) =
+    navigate(NavigationRoutes.TeamDetails(teamId = team.id))
