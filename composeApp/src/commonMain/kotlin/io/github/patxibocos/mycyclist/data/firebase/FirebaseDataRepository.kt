@@ -24,6 +24,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
+import kotlin.coroutines.CoroutineContext
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.time.Duration
@@ -31,6 +32,8 @@ import kotlin.time.Duration.Companion.hours
 
 internal class FirebaseDataRepository(
     private val firebaseRemoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig,
+    private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
+    private val ioDispatcher: CoroutineContext = Dispatchers.IO,
     refreshInterval: Duration = 1.hours,
 ) :
     DataRepository {
@@ -50,7 +53,7 @@ internal class FirebaseDataRepository(
     }
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalSerializationApi::class)
-    private suspend fun emitRemoteConfigValue() = withContext(Dispatchers.Default) {
+    private suspend fun emitRemoteConfigValue() = withContext(defaultDispatcher) {
         val remoteConfigValue = firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString()
         if (remoteConfigValue.isEmpty()) {
             return@withContext
@@ -70,7 +73,7 @@ internal class FirebaseDataRepository(
     override val riders = _riders
     override val races = _races
 
-    override suspend fun refresh(): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun refresh(): Boolean = withContext(ioDispatcher) {
         try {
             firebaseRemoteConfig.fetch(Duration.ZERO)
             if (firebaseRemoteConfig.activate()) {
