@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.patxibocos.mycyclist.domain.DataRepository
 import io.github.patxibocos.mycyclist.domain.Rider
+import io.github.patxibocos.mycyclist.domain.SearchRiders
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.UiState.Riders
 import kotlinx.collections.immutable.ImmutableList
@@ -21,6 +22,7 @@ import kotlin.coroutines.CoroutineContext
 
 internal class RiderListViewModel(
     dataRepository: DataRepository = firebaseDataRepository,
+    searchRiders: SearchRiders = SearchRiders(),
     defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
     ViewModel() {
@@ -56,7 +58,7 @@ internal class RiderListViewModel(
             _search,
             _sorting,
         ) { riders, query, sorting ->
-            val filteredRiders = searchRiders(defaultDispatcher, riders, query)
+            val filteredRiders = searchRiders(riders, query)
             val groupedRiders = sortRiders(defaultDispatcher, filteredRiders, sorting)
             UiState(groupedRiders)
         }.stateIn(
@@ -87,26 +89,6 @@ internal class RiderListViewModel(
 
     internal fun onSorted(sorting: Sorting) {
         _sorting.value = sorting
-    }
-
-    private suspend fun searchRiders(
-        defaultDispatcher: CoroutineContext,
-        riders: List<Rider>,
-        query: String,
-    ): List<Rider> = withContext(defaultDispatcher) {
-        if (query.isBlank()) {
-            return@withContext riders
-        }
-        val querySplits = query.trim().split(" ").map { it.trim() }
-        riders.filter { rider ->
-            // For each of the split, it should be contained either on first or last name
-            querySplits.all { q ->
-                rider.firstName.contains(
-                    q,
-                    ignoreCase = true,
-                ) || rider.lastName.contains(q, ignoreCase = true)
-            }
-        }
     }
 
     private suspend fun sortRiders(
