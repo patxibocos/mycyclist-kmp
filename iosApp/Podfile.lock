@@ -1,6 +1,7 @@
 PODS:
   - composeApp (1.0):
     - FirebaseCore
+    - FirebaseMessaging
     - FirebaseRemoteConfig
   - FirebaseABTesting (11.4.0):
     - FirebaseCore (~> 11.0)
@@ -15,6 +16,15 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
+  - FirebaseMessaging (11.4.0):
+    - FirebaseCore (~> 11.0)
+    - FirebaseInstallations (~> 11.0)
+    - GoogleDataTransport (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/Reachability (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - nanopb (~> 3.30910.0)
   - FirebaseRemoteConfig (11.4.0):
     - FirebaseABTesting (~> 11.0)
     - FirebaseCore (~> 11.0)
@@ -25,17 +35,38 @@ PODS:
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
   - FirebaseRemoteConfigInterop (11.4.0)
   - FirebaseSharedSwift (11.4.0)
+  - GoogleDataTransport (10.1.0):
+    - nanopb (~> 3.30910.0)
+    - PromisesObjC (~> 2.4)
+  - GoogleUtilities/AppDelegateSwizzler (8.0.2):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+    - GoogleUtilities/Privacy
   - GoogleUtilities/Environment (8.0.2):
     - GoogleUtilities/Privacy
   - GoogleUtilities/Logger (8.0.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
+  - GoogleUtilities/Network (8.0.2):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Privacy
+    - GoogleUtilities/Reachability
   - "GoogleUtilities/NSData+zlib (8.0.2)":
     - GoogleUtilities/Privacy
   - GoogleUtilities/Privacy (8.0.2)
+  - GoogleUtilities/Reachability (8.0.2):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
   - GoogleUtilities/UserDefaults (8.0.2):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
+  - nanopb (3.30910.0):
+    - nanopb/decode (= 3.30910.0)
+    - nanopb/encode (= 3.30910.0)
+  - nanopb/decode (3.30910.0)
+  - nanopb/encode (3.30910.0)
   - PromisesObjC (2.4.0)
 
 DEPENDENCIES:
@@ -47,10 +78,13 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreInternal
     - FirebaseInstallations
+    - FirebaseMessaging
     - FirebaseRemoteConfig
     - FirebaseRemoteConfigInterop
     - FirebaseSharedSwift
+    - GoogleDataTransport
     - GoogleUtilities
+    - nanopb
     - PromisesObjC
 
 EXTERNAL SOURCES:
@@ -58,15 +92,18 @@ EXTERNAL SOURCES:
     :path: "../composeApp"
 
 SPEC CHECKSUMS:
-  composeApp: e3c6fd648464d2c8994079ef25d0f61d97f944ce
+  composeApp: 719d20f61cc4832b27b1cb2252e1d24290c675e5
   FirebaseABTesting: aef1719704fade00b200827e7973f352efc4caee
   FirebaseCore: 6b32c57269bd999aab34354c3923d92a6e5f3f84
   FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
   FirebaseInstallations: 6ef4a1c7eb2a61ee1f74727d7f6ce2e72acf1414
+  FirebaseMessaging: f8a160d99c2c2e5babbbcc90c4a3e15db036aee2
   FirebaseRemoteConfig: 7655681d02417bc9b287338edb9d721ff79e1a4a
   FirebaseRemoteConfigInterop: e76f46ffa4d6a65e273d4dfebb6a79e588cec136
   FirebaseSharedSwift: 505dae2d05969dbf6d43749a642bb1bf230f0252
+  GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
+  nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
 PODFILE CHECKSUM: d3522b44ee874ea0940502b5312121f663443a46

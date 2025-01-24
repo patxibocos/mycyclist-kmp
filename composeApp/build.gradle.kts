@@ -53,6 +53,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.firebase.common)
             implementation(libs.firebase.config)
+            implementation(libs.firebase.messaging)
             implementation(libs.kotlin.serialization.protobuf)
             implementation(libs.kotlin.collections.immutable)
         }
@@ -78,6 +79,7 @@ kotlin {
 
         pod("FirebaseCore")
         pod("FirebaseRemoteConfig")
+        pod("FirebaseMessaging")
 
         podfile = project.file("../iosApp/Podfile")
     }

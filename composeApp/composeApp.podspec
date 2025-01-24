@@ -10,6 +10,7 @@ Pod::Spec.new do |spec|
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '18.0'
     spec.dependency 'FirebaseCore'
+    spec.dependency 'FirebaseMessaging'
     spec.dependency 'FirebaseRemoteConfig'
                 
     if !Dir.exist?('build/cocoapods/framework/composeApp.framework') || Dir.empty?('build/cocoapods/framework/composeApp.framework')
