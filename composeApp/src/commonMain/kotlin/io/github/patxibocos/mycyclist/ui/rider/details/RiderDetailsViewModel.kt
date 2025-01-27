@@ -29,7 +29,7 @@ internal class RiderDetailsViewModel(
 
     data class UiState(
         val rider: Rider,
-        val team: Team,
+        val team: Team?,
         val currentParticipation: Participation?,
         val pastParticipations: List<Participation>,
         val futureParticipations: ImmutableList<Participation>,
@@ -43,7 +43,7 @@ internal class RiderDetailsViewModel(
             dataRepository.races,
         ) { teams, riders, races ->
             val rider = riders.find { it.id == riderId }!!
-            val team = teams.find { it.riderIds.contains(riderId) }!!
+            val team = teams.find { it.riderIds.contains(riderId) }
             val (pastParticipations, currentParticipation, futureParticipations) = riderParticipations(
                 riderId,
                 races,

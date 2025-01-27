@@ -34,14 +34,19 @@ internal class FirebaseDataRepository(
     private val firebaseRemoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig,
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
-    refreshInterval: Duration = 1.hours,
+    private val refreshInterval: Duration = 1.hours,
 ) :
     DataRepository {
 
-    init {
+    @Suppress("TooGenericExceptionCaught")
+    override fun initialize() {
         MainScope().launch {
-            // Emit the cached value if available
-            emitRemoteConfigValue()
+            try {
+                // Emit the cached value if available
+                emitRemoteConfigValue()
+            } catch (e: Throwable) {
+                println("Skipping cached configuration value because of: ${e.message}")
+            }
             firebaseRemoteConfig.settings {
                 minimumFetchInterval = refreshInterval
             }

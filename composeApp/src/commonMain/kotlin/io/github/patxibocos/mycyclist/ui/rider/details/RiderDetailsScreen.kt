@@ -66,12 +66,14 @@ internal fun RiderDetailsScreen(
         if (uiState.rider.uciRankingPosition != null) {
             Text(text = "UCI Ranking: ${uiState.rider.uciRankingPosition}")
         }
-        Text(
-            text = uiState.team.name,
-            modifier = Modifier.clickable {
-                onTeamSelected(uiState.team)
-            },
-        )
+        if (uiState.team != null) {
+            Text(
+                text = uiState.team.name,
+                modifier = Modifier.clickable {
+                    onTeamSelected(uiState.team)
+                },
+            )
+        }
         uiState.currentParticipation?.let { currentParticipation ->
             Text(
                 text = "Currently running ${currentParticipation.race.name}",
