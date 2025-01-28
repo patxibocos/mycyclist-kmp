@@ -8,14 +8,18 @@ import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 internal class TeamDetailsViewModel(
     private val teamId: String,
-    dataRepository: DataRepository = firebaseDataRepository
+    dataRepository: DataRepository = firebaseDataRepository,
+    private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
     ViewModel() {
 
@@ -23,9 +27,11 @@ internal class TeamDetailsViewModel(
 
     internal val uiState: StateFlow<UiState?> =
         combine(dataRepository.teams, dataRepository.riders) { teams, riders ->
-            val team = teams.find { it.id == teamId }!!
-            val teamRiders = riders.filter { team.riderIds.contains(it.id) }
-            UiState(team, teamRiders.toImmutableList())
+            val team = withContext(defaultDispatcher) { teams.find { it.id == teamId }!! }
+            val teamRiders = withContext(defaultDispatcher) {
+                riders.filter { team.riderIds.contains(it.id) }.toImmutableList()
+            }
+            UiState(team, teamRiders)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),

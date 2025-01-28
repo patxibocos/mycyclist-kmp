@@ -12,6 +12,7 @@ import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +21,14 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 internal class RaceDetailsViewModel(
     private val raceId: String,
     private val stageId: String?,
     dataRepository: DataRepository = firebaseDataRepository,
+    private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
     ViewModel() {
 
@@ -91,7 +95,9 @@ internal class RaceDetailsViewModel(
             dataRepository.teams,
             dataRepository.riders
         ) { races, teams, riders ->
-            val race = races.find { it.id == raceId }!!
+            val race = withContext(defaultDispatcher) {
+                races.find { it.id == raceId }!!
+            }
             RaceWithTeamsAndRiders(
                 race = race,
                 teams = teams,
@@ -102,21 +108,23 @@ internal class RaceDetailsViewModel(
                 emitInitialRaceState(raceWithTeamsAndRiders.race, stageId)
             }
             .combine(_raceState) { raceWithTeamsAndRiders, (stageIndex, resultsMode, classificationType) ->
-                val stagesResults = raceWithTeamsAndRiders.race.stages.associateWith { stage ->
-                    stageResults(
-                        stage = stage,
-                        resultsMode = resultsMode,
-                        classificationType = classificationType,
-                        riders = raceWithTeamsAndRiders.riders,
-                        teams = raceWithTeamsAndRiders.teams,
-                    )
+                val stagesResults = withContext(defaultDispatcher) {
+                    raceWithTeamsAndRiders.race.stages.associateWith { stage ->
+                        stageResults(
+                            stage = stage,
+                            resultsMode = resultsMode,
+                            classificationType = classificationType,
+                            riders = raceWithTeamsAndRiders.riders,
+                            teams = raceWithTeamsAndRiders.teams,
+                        )
+                    }.toImmutableMap()
                 }
                 UiState(
                     race = raceWithTeamsAndRiders.race,
                     currentStageIndex = stageIndex,
                     resultsMode = resultsMode,
                     classificationType = classificationType,
-                    stagesResults = stagesResults.toImmutableMap(),
+                    stagesResults = stagesResults,
                 )
             }.stateIn(
                 scope = viewModelScope,

@@ -10,16 +10,20 @@ import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.coroutines.CoroutineContext
 
 internal class RiderDetailsViewModel(
     dataRepository: DataRepository = firebaseDataRepository,
+    private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
     riderId: String,
 ) : ViewModel() {
 
@@ -42,8 +46,9 @@ internal class RiderDetailsViewModel(
             dataRepository.riders,
             dataRepository.races,
         ) { teams, riders, races ->
-            val rider = riders.find { it.id == riderId }!!
-            val team = teams.find { it.riderIds.contains(riderId) }
+            val rider = withContext(defaultDispatcher) { riders.find { it.id == riderId }!! }
+            val team =
+                withContext(defaultDispatcher) { teams.find { it.riderIds.contains(riderId) } }
             val (pastParticipations, currentParticipation, futureParticipations) = riderParticipations(
                 riderId,
                 races,
@@ -57,8 +62,8 @@ internal class RiderDetailsViewModel(
                 team = team,
                 currentParticipation = currentParticipation,
                 pastParticipations = pastParticipations,
-                futureParticipations = futureParticipations.toImmutableList(),
-                results = results.toImmutableList(),
+                futureParticipations = futureParticipations,
+                results = results,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -66,28 +71,31 @@ internal class RiderDetailsViewModel(
             initialValue = null,
         )
 
-    private fun riderParticipations(
+    private suspend fun riderParticipations(
         riderId: String,
         races: List<Race>,
-    ): Triple<List<Participation>, Participation?, List<Participation>> {
-        val participations = races.mapNotNull { race ->
-            race.teamParticipations
-                .flatMap { it.riderParticipations } // Flattening this because team IDs may change on PCS
-                .find { it.riderId == riderId }
-                ?.let { Participation(race, it.number) }
+    ): Triple<ImmutableList<Participation>, Participation?, ImmutableList<Participation>> =
+        withContext(defaultDispatcher) {
+            val participations = races.mapNotNull { race ->
+                race.teamParticipations
+                    .flatMap { it.riderParticipations } // Flattening this because team IDs may change on PCS
+                    .find { it.riderId == riderId }
+                    ?.let { Participation(race, it.number) }
+            }
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val currentParticipation =
+                participations.find { it.race.startDate() <= today && it.race.endDate() >= today }
+            val pastParticipations =
+                participations.filter { it.race.endDate() < today }.toImmutableList()
+            val futureParticipations =
+                participations.filter { it.race.startDate() > today }.toImmutableList()
+            Triple(pastParticipations, currentParticipation, futureParticipations)
         }
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        val currentParticipation =
-            participations.find { it.race.startDate() <= today && it.race.endDate() >= today }
-        val pastParticipations = participations.filter { it.race.endDate() < today }
-        val futureParticipations = participations.filter { it.race.startDate() > today }
-        return Triple(pastParticipations, currentParticipation, futureParticipations)
-    }
 
     private fun riderResults(
         riderId: String,
         participations: List<Participation>,
-    ): List<Result> {
+    ): ImmutableList<Result> {
         return participations.map { it.race }
             .flatMap { race ->
                 val raceResult =
@@ -109,7 +117,7 @@ internal class RiderDetailsViewModel(
                         }
                 }
                 return@flatMap stageResults + listOfNotNull(raceResult)
-            }
+            }.toImmutableList()
     }
 
     data class Participation(val race: Race, val number: Int)
