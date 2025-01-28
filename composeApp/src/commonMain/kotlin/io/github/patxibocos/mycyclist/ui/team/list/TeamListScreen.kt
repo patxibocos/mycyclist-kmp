@@ -33,9 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.domain.TeamStatus
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -86,15 +84,13 @@ internal fun TeamListScreen(
         ) { page ->
             if (page == 0) {
                 TeamList(
-                    teams = uiState.teams.filter { it.status == TeamStatus.WORLD_TEAM }
-                        .toImmutableList(),
+                    teams = uiState.worldTeams,
                     onTeamSelected = onTeamClick,
                     lazyListState = worldTeamsLazyGridState,
                 )
             } else {
                 TeamList(
-                    teams = uiState.teams.filter { it.status == TeamStatus.PRO_TEAM }
-                        .toImmutableList(),
+                    teams = uiState.proTeams,
                     onTeamSelected = onTeamClick,
                     lazyListState = proTeamsLazyGridState,
                 )

@@ -11,15 +11,23 @@ import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.coroutines.CoroutineContext
 
-internal class RaceListViewModel(dataRepository: DataRepository = firebaseDataRepository) :
+internal class RaceListViewModel(
+    dataRepository: DataRepository = firebaseDataRepository,
+    private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
+) :
     ViewModel() {
 
     private companion object {
@@ -82,37 +90,47 @@ internal class RaceListViewModel(dataRepository: DataRepository = firebaseDataRe
                 today < minStartDate -> UiState.SeasonNotStartedViewState(races.toImmutableList())
                 today > maxEndDate -> UiState.SeasonEndedViewState(races.toImmutableList())
                 else -> {
-                    val todayStages = races.filter(Race::isActive).map { race ->
-                        val todayStage = race.todayStage()
-                        when {
-                            race.isSingleDay() -> TodayStage.SingleDayRace(
-                                race = race,
-                                stage = race.firstStage(),
-                                results = stageResults(
-                                    race.firstStage(),
-                                    riders.toImmutableList(),
-                                    teams.toImmutableList()
-                                ),
-                            )
+                    val todayStages = withContext(defaultDispatcher) {
+                        races.filter(Race::isActive).map { race ->
+                            val todayStage = race.todayStage()
+                            when {
+                                race.isSingleDay() -> TodayStage.SingleDayRace(
+                                    race = race,
+                                    stage = race.firstStage(),
+                                    results = stageResults(
+                                        race.firstStage(),
+                                        riders.toImmutableList(),
+                                        teams.toImmutableList()
+                                    ),
+                                )
 
-                            todayStage != null -> TodayStage.MultiStageRace(
-                                race = race,
-                                stage = todayStage.first,
-                                stageNumber = todayStage.second + 1,
-                                results = stageResults(
-                                    todayStage.first,
-                                    riders.toImmutableList(),
-                                    teams.toImmutableList()
-                                ),
-                            )
+                                todayStage != null -> TodayStage.MultiStageRace(
+                                    race = race,
+                                    stage = todayStage.first,
+                                    stageNumber = todayStage.second + 1,
+                                    results = stageResults(
+                                        todayStage.first,
+                                        riders.toImmutableList(),
+                                        teams.toImmutableList()
+                                    ),
+                                )
 
-                            else -> TodayStage.RestDay(race)
-                        }
+                                else -> TodayStage.RestDay(race)
+                            }
+                        }.toImmutableList()
                     }
+                    val (pastRaces, futureRaces) = listOf(
+                        viewModelScope.async {
+                            races.filter(Race::isPast).reversed().toImmutableList()
+                        },
+                        viewModelScope.async {
+                            races.filter(Race::isFuture).toImmutableList()
+                        }
+                    ).awaitAll()
                     UiState.SeasonInProgressViewState(
-                        todayStages = todayStages.toImmutableList(),
-                        pastRaces = races.filter(Race::isPast).reversed().toImmutableList(),
-                        futureRaces = races.filter(Race::isFuture).toImmutableList(),
+                        todayStages = todayStages,
+                        pastRaces = pastRaces,
+                        futureRaces = futureRaces,
                     )
                 }
             }
