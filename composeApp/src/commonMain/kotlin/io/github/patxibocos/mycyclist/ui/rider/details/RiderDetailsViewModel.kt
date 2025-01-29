@@ -46,51 +46,51 @@ internal class RiderDetailsViewModel(
             dataRepository.riders,
             dataRepository.races,
         ) { teams, riders, races ->
-            val rider = withContext(defaultDispatcher) { riders.find { it.id == riderId }!! }
-            val team =
-                withContext(defaultDispatcher) { teams.find { it.riderIds.contains(riderId) } }
-            val (pastParticipations, currentParticipation, futureParticipations) = riderParticipations(
-                riderId,
-                races,
-            )
-            val results = riderResults(
-                riderId,
-                pastParticipations + listOfNotNull(currentParticipation),
-            )
-            UiState(
-                rider = rider,
-                team = team,
-                currentParticipation = currentParticipation,
-                pastParticipations = pastParticipations,
-                futureParticipations = futureParticipations,
-                results = results,
-            )
+            withContext(defaultDispatcher) {
+                val rider = riders.find { it.id == riderId }!!
+                val team = teams.find { it.riderIds.contains(riderId) }
+                val (pastParticipations, currentParticipation, futureParticipations) = riderParticipations(
+                    riderId,
+                    races,
+                )
+                val results = riderResults(
+                    riderId,
+                    pastParticipations + listOfNotNull(currentParticipation),
+                )
+                UiState(
+                    rider = rider,
+                    team = team,
+                    currentParticipation = currentParticipation,
+                    pastParticipations = pastParticipations,
+                    futureParticipations = futureParticipations,
+                    results = results,
+                )
+            }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = null,
         )
 
-    private suspend fun riderParticipations(
+    private fun riderParticipations(
         riderId: String,
         races: List<Race>,
-    ): Triple<ImmutableList<Participation>, Participation?, ImmutableList<Participation>> =
-        withContext(defaultDispatcher) {
-            val participations = races.mapNotNull { race ->
-                race.teamParticipations
-                    .flatMap { it.riderParticipations } // Flattening this because team IDs may change on PCS
-                    .find { it.riderId == riderId }
-                    ?.let { Participation(race, it.number) }
-            }
-            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val currentParticipation =
-                participations.find { it.race.startDate() <= today && it.race.endDate() >= today }
-            val pastParticipations =
-                participations.filter { it.race.endDate() < today }.toImmutableList()
-            val futureParticipations =
-                participations.filter { it.race.startDate() > today }.toImmutableList()
-            Triple(pastParticipations, currentParticipation, futureParticipations)
+    ): Triple<ImmutableList<Participation>, Participation?, ImmutableList<Participation>> {
+        val participations = races.mapNotNull { race ->
+            race.teamParticipations
+                .flatMap { it.riderParticipations } // Flattening this because team IDs may change on PCS
+                .find { it.riderId == riderId }
+                ?.let { Participation(race, it.number) }
         }
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val currentParticipation =
+            participations.find { it.race.startDate() <= today && it.race.endDate() >= today }
+        val pastParticipations =
+            participations.filter { it.race.endDate() < today }.toImmutableList()
+        val futureParticipations =
+            participations.filter { it.race.startDate() > today }.toImmutableList()
+        return Triple(pastParticipations, currentParticipation, futureParticipations)
+    }
 
     private fun riderResults(
         riderId: String,

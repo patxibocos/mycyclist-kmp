@@ -108,8 +108,8 @@ internal class RaceDetailsViewModel(
                 emitInitialRaceState(raceWithTeamsAndRiders.race, stageId)
             }
             .combine(_raceState) { raceWithTeamsAndRiders, (stageIndex, resultsMode, classificationType) ->
-                val stagesResults = withContext(defaultDispatcher) {
-                    raceWithTeamsAndRiders.race.stages.associateWith { stage ->
+                withContext(defaultDispatcher) {
+                    val stagesResults = raceWithTeamsAndRiders.race.stages.associateWith { stage ->
                         stageResults(
                             stage = stage,
                             resultsMode = resultsMode,
@@ -118,14 +118,14 @@ internal class RaceDetailsViewModel(
                             teams = raceWithTeamsAndRiders.teams,
                         )
                     }.toImmutableMap()
+                    UiState(
+                        race = raceWithTeamsAndRiders.race,
+                        currentStageIndex = stageIndex,
+                        resultsMode = resultsMode,
+                        classificationType = classificationType,
+                        stagesResults = stagesResults,
+                    )
                 }
-                UiState(
-                    race = raceWithTeamsAndRiders.race,
-                    currentStageIndex = stageIndex,
-                    resultsMode = resultsMode,
-                    classificationType = classificationType,
-                    stagesResults = stagesResults,
-                )
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(),

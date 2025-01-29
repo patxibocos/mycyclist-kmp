@@ -27,11 +27,11 @@ internal class TeamDetailsViewModel(
 
     internal val uiState: StateFlow<UiState?> =
         combine(dataRepository.teams, dataRepository.riders) { teams, riders ->
-            val team = withContext(defaultDispatcher) { teams.find { it.id == teamId }!! }
-            val teamRiders = withContext(defaultDispatcher) {
-                riders.filter { team.riderIds.contains(it.id) }.toImmutableList()
+            withContext(defaultDispatcher) {
+                val team = teams.find { it.id == teamId }!!
+                val teamRiders = riders.filter { team.riderIds.contains(it.id) }.toImmutableList()
+                UiState(team, teamRiders)
             }
-            UiState(team, teamRiders)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
