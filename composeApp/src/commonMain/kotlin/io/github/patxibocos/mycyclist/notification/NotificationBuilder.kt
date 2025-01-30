@@ -18,13 +18,12 @@ internal class NotificationBuilder(private val dataRepository: DataRepository = 
         val (race, stage) = getRaceAndStage(data)
         val winner = stage.stageResults.time.first().participantId
         val stageWinnerName = if (stage.stageType == StageType.TEAM_TIME_TRIAL) {
-            requireNotNull(dataRepository.teams.first().find { it.id == winner }).name
+            requireNotNull(dataRepository.cyclingData.first().teams.find { it.id == winner }).name
         } else {
-            requireNotNull(dataRepository.riders.first().find { it.id == winner }).fullName()
+            requireNotNull(dataRepository.cyclingData.first().riders.find { it.id == winner }).fullName()
         }
         val gcFirstName = requireNotNull(
-            dataRepository.riders.first()
-                .find { it.id == stage.generalResults.time.first().participantId },
+            dataRepository.cyclingData.first().riders.find { it.id == stage.generalResults.time.first().participantId },
         ).fullName()
         val stageNumber = race.stages.indexOfFirst { it.id == stage.id } + 1
         val notificationText: String
@@ -43,7 +42,7 @@ internal class NotificationBuilder(private val dataRepository: DataRepository = 
     private suspend fun getRaceAndStage(messageData: Map<String, String>): Pair<Race, Stage> {
         val raceId = messageData["race-id"]
         val stageId = messageData["stage-id"]
-        val race = requireNotNull(dataRepository.races.first().find { it.id == raceId })
+        val race = requireNotNull(dataRepository.cyclingData.first().races.find { it.id == raceId })
         val stage = requireNotNull(race.stages.find { it.id == stageId })
         return race to stage
     }

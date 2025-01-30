@@ -8,10 +8,8 @@ import io.github.patxibocos.mycyclist.data.mapper.RaceMapper.toRaces
 import io.github.patxibocos.mycyclist.data.mapper.RiderMapper.toRiders
 import io.github.patxibocos.mycyclist.data.mapper.TeamMapper.toTeams
 import io.github.patxibocos.mycyclist.data.protobuf.CyclingDataDto
+import io.github.patxibocos.mycyclist.domain.CyclingData
 import io.github.patxibocos.mycyclist.domain.DataRepository
-import io.github.patxibocos.mycyclist.domain.Race
-import io.github.patxibocos.mycyclist.domain.Rider
-import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.expect.unGZip
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -66,19 +64,17 @@ internal class FirebaseDataRepository(
             return@withContext
         }
         val unzipped = unGZip(Base64.decode(remoteConfigValue))
-        val cyclingData = ProtoBuf.decodeFromByteArray<CyclingDataDto>(unzipped)
-        _teams.emit(cyclingData.teams.toTeams())
-        _riders.emit(cyclingData.riders.toRiders())
-        _races.emit(cyclingData.races.toRaces())
+        val cyclingDataDto = ProtoBuf.decodeFromByteArray<CyclingDataDto>(unzipped)
+        val teams = cyclingDataDto.teams.toTeams()
+        val riders = cyclingDataDto.riders.toRiders()
+        val races = cyclingDataDto.races.toRaces()
+        val cyclingData = CyclingData(races, teams, riders)
+        _cyclingData.emit(cyclingData)
     }
 
-    private val _teams = MutableSharedFlow<List<Team>>(replay = 1)
-    private val _riders = MutableSharedFlow<List<Rider>>(replay = 1)
-    private val _races = MutableSharedFlow<List<Race>>(replay = 1)
+    private val _cyclingData = MutableSharedFlow<CyclingData>(replay = 1)
 
-    override val teams = _teams
-    override val riders = _riders
-    override val races = _races
+    override val cyclingData = _cyclingData
 
     override suspend fun refresh(): Boolean = withContext(ioDispatcher) {
         try {

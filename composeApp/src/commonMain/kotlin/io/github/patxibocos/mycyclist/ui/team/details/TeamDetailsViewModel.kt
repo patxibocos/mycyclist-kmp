@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -26,7 +26,7 @@ internal class TeamDetailsViewModel(
     internal data class UiState(val team: Team, val riders: ImmutableList<Rider>)
 
     internal val uiState: StateFlow<UiState?> =
-        combine(dataRepository.teams, dataRepository.riders) { teams, riders ->
+        dataRepository.cyclingData.map { (races, teams, riders) ->
             withContext(defaultDispatcher) {
                 val team = teams.find { it.id == teamId }!!
                 val teamRiders = riders.filter { team.riderIds.contains(it.id) }.toImmutableList()

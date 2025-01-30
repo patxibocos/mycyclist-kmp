@@ -54,10 +54,10 @@ internal class RiderListViewModel(
 
     internal val uiState =
         combine(
-            dataRepository.riders,
+            dataRepository.cyclingData,
             _search,
             _sorting,
-        ) { riders, query, sorting ->
+        ) { (_, _, riders), query, sorting ->
             val filteredRiders = searchRiders(riders, query)
             val groupedRiders = sortRiders(defaultDispatcher, filteredRiders, sorting)
             UiState(groupedRiders)

@@ -14,7 +14,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -76,11 +76,7 @@ internal class RaceListViewModel(
     }
 
     internal val uiState: StateFlow<UiState?> =
-        combine(
-            dataRepository.races,
-            dataRepository.teams,
-            dataRepository.riders,
-        ) { races, teams, riders ->
+        dataRepository.cyclingData.map { (races, teams, riders) ->
             withContext(defaultDispatcher) {
                 val minStartDate = races.first().startDate()
                 val maxEndDate = races.last().endDate()

@@ -27,7 +27,7 @@ internal class TeamListViewModel(
     )
 
     internal val uiState: StateFlow<UiState?> =
-        dataRepository.teams.map { teams ->
+        dataRepository.cyclingData.map { (races, teams, riders) ->
             withContext(defaultDispatcher) {
                 val worldTeams = teams.filter { it.status == TeamStatus.WORLD_TEAM }
                 val proTeams = teams.filter { it.status == TeamStatus.PRO_TEAM }

@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -90,11 +90,7 @@ internal class RaceDetailsViewModel(
     )
 
     internal val uiState: StateFlow<UiState?> =
-        combine(
-            dataRepository.races,
-            dataRepository.teams,
-            dataRepository.riders
-        ) { races, teams, riders ->
+        dataRepository.cyclingData.map { (races, teams, riders) ->
             val race = withContext(defaultDispatcher) {
                 races.find { it.id == raceId }!!
             }
@@ -103,10 +99,9 @@ internal class RaceDetailsViewModel(
                 teams = teams,
                 riders = riders,
             )
-        }.distinctUntilChanged()
-            .onEach { raceWithTeamsAndRiders ->
-                emitInitialRaceState(raceWithTeamsAndRiders.race, stageId)
-            }
+        }.onEach { raceWithTeamsAndRiders ->
+            emitInitialRaceState(raceWithTeamsAndRiders.race, stageId)
+        }
             .combine(_raceState) { raceWithTeamsAndRiders, (stageIndex, resultsMode, classificationType) ->
                 withContext(defaultDispatcher) {
                     val stagesResults = raceWithTeamsAndRiders.race.stages.associateWith { stage ->
@@ -168,9 +163,15 @@ internal class RaceDetailsViewModel(
                 }
             }
         }
-        _stageIndex.emit(stageIndex)
-        _resultsMode.emit(resultsMode)
-        _classificationType.emit(ClassificationType.Time)
+        _stageIndex.emitIfCacheIsEmpty(stageIndex)
+        _resultsMode.emitIfCacheIsEmpty(resultsMode)
+        _classificationType.emitIfCacheIsEmpty(ClassificationType.Time)
+    }
+
+    private suspend fun <T> MutableSharedFlow<T>.emitIfCacheIsEmpty(value: T) {
+        if (replayCache.isEmpty()) {
+            emit(value)
+        }
     }
 
     private fun stageResults(
