@@ -30,12 +30,19 @@ internal fun BottomBar(navController: NavHostController) {
     }
     NavigationBar {
         routes.forEach { topLevelRoute ->
+            val isRouteSelected = currentDestination?.hasRoute(topLevelRoute.route::class) == true
             NavigationBarItem(
                 icon = { Icon(topLevelRoute.icon, null) },
                 label = { Text(topLevelRoute.title) },
-                selected = currentDestination?.hasRoute(topLevelRoute.route::class) == true,
+                selected = isRouteSelected,
                 onClick = {
-                    navController.navigate(topLevelRoute.route)
+                    if (isRouteSelected) {
+                        return@NavigationBarItem
+                    }
+                    navController.navigate(topLevelRoute.route) {
+                        launchSingleTop = true
+                        popUpTo(navController.graph.startDestDisplayName)
+                    }
                 },
             )
         }
