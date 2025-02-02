@@ -49,6 +49,7 @@ internal fun NavGraphBuilder.raceListComposableRoute(
             uiState = uiState,
             onRaceClick = onRaceClick,
             onRaceStageClick = onRaceStageClick,
+            onRefresh = viewModel::refresh,
         )
     }
 }
@@ -81,6 +82,7 @@ internal fun NavGraphBuilder.riderListComposableRoute(
             onRiderSearched = viewModel::onSearched,
             onToggled = viewModel::onToggled,
             onSortingSelected = viewModel::onSorted,
+            onRefresh = viewModel::refresh,
         )
     }
 }
@@ -101,7 +103,8 @@ internal fun NavGraphBuilder.teamListComposableRoute(onTeamClick: (Team) -> Unit
         val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
         TeamListScreen(
             uiState = uiState,
-            onTeamClick = onTeamClick
+            onTeamClick = onTeamClick,
+            onRefresh = viewModel::refresh,
         )
     }
 }

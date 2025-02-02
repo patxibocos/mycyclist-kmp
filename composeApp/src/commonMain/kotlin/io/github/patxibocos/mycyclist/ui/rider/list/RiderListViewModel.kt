@@ -12,16 +12,20 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.measureTime
 
 internal class RiderListViewModel(
-    dataRepository: DataRepository = firebaseDataRepository,
+    private val dataRepository: DataRepository = firebaseDataRepository,
     searchRiders: SearchRiders = SearchRiders(),
     defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
@@ -30,8 +34,9 @@ internal class RiderListViewModel(
     private val _search = MutableStateFlow("")
     private val _searching = MutableStateFlow(false)
     private val _sorting = MutableStateFlow(Sorting.UciRanking)
+    private val _refreshing = MutableStateFlow(false)
 
-    data class UiState(val riders: Riders) {
+    data class UiState(val riders: Riders, val refreshing: Boolean) {
 
         sealed class Riders {
             data class ByLastName(val riders: ImmutableMap<Char, List<Rider>>) : Riders()
@@ -57,10 +62,11 @@ internal class RiderListViewModel(
             dataRepository.cyclingData,
             _search,
             _sorting,
-        ) { (_, _, riders), query, sorting ->
+            _refreshing,
+        ) { (_, _, riders), query, sorting, refreshing ->
             val filteredRiders = searchRiders(riders, query)
             val groupedRiders = sortRiders(defaultDispatcher, filteredRiders, sorting)
-            UiState(groupedRiders)
+            UiState(groupedRiders, refreshing)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
@@ -89,6 +95,18 @@ internal class RiderListViewModel(
 
     internal fun onSorted(sorting: Sorting) {
         _sorting.value = sorting
+    }
+
+    internal fun refresh() {
+        viewModelScope.launch {
+            _refreshing.value = true
+            val refreshTime = measureTime {
+                dataRepository.refresh()
+            }
+            // Show loading at least for a second
+            delay(1.seconds.minus(refreshTime))
+            _refreshing.value = false
+        }
     }
 
     private suspend fun sortRiders(

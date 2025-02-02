@@ -12,21 +12,28 @@ import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.measureTime
 
 internal class RaceListViewModel(
-    dataRepository: DataRepository = firebaseDataRepository,
+    private val dataRepository: DataRepository = firebaseDataRepository,
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
     ViewModel() {
+
+    private val _refreshing = MutableStateFlow(false)
 
     private companion object {
         private const val RESULTS_TO_DISPLAY = 3
@@ -57,33 +64,35 @@ internal class RaceListViewModel(
         ) : TodayStage(race)
     }
 
-    internal sealed class UiState {
-        internal data class SeasonNotStartedViewState(
-            val futureRaces: ImmutableList<Race>,
-        ) : UiState()
+    internal data class UiState(val refreshing: Boolean, val content: Content)
 
-        internal data class SeasonInProgressViewState(
+    internal sealed interface Content {
+        data class SeasonNotStartedViewState(
+            val futureRaces: ImmutableList<Race>,
+        ) : Content
+
+        data class SeasonInProgressViewState(
             val pastRaces: ImmutableList<Race>,
             val todayStages: ImmutableList<TodayStage>,
             val futureRaces: ImmutableList<Race>,
-        ) : UiState()
+        ) : Content
 
-        internal data class SeasonEndedViewState(
+        data class SeasonEndedViewState(
             val pastRaces: ImmutableList<Race>,
-        ) : UiState()
+        ) : Content
 
-        internal data object EmptyViewState : UiState()
+        data object EmptyViewState : Content
     }
 
     internal val uiState: StateFlow<UiState?> =
-        dataRepository.cyclingData.map { (races, teams, riders) ->
+        combine(dataRepository.cyclingData, _refreshing) { (races, teams, riders), refreshing ->
             withContext(defaultDispatcher) {
                 val minStartDate = races.first().startDate()
                 val maxEndDate = races.last().endDate()
                 val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-                when {
-                    today < minStartDate -> UiState.SeasonNotStartedViewState(races.toImmutableList())
-                    today > maxEndDate -> UiState.SeasonEndedViewState(races.toImmutableList())
+                val content = when {
+                    today < minStartDate -> Content.SeasonNotStartedViewState(races.toImmutableList())
+                    today > maxEndDate -> Content.SeasonEndedViewState(races.toImmutableList())
                     else -> {
                         val todayStages = races.filter(Race::isActive).map { race ->
                             val todayStage = race.todayStage()
@@ -114,19 +123,32 @@ internal class RaceListViewModel(
                         }.toImmutableList()
                         val pastRaces = races.filter(Race::isPast).reversed().toImmutableList()
                         val futureRaces = races.filter(Race::isFuture).toImmutableList()
-                        UiState.SeasonInProgressViewState(
+                        Content.SeasonInProgressViewState(
                             todayStages = todayStages,
                             pastRaces = pastRaces,
                             futureRaces = futureRaces,
                         )
                     }
                 }
+                UiState(refreshing, content)
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = null,
         )
+
+    internal fun refresh() {
+        viewModelScope.launch {
+            _refreshing.value = true
+            val refreshTime = measureTime {
+                dataRepository.refresh()
+            }
+            // Show loading at least for a second
+            delay(1.seconds.minus(refreshTime))
+            _refreshing.value = false
+        }
+    }
 
     private fun stageResults(
         stage: Stage,

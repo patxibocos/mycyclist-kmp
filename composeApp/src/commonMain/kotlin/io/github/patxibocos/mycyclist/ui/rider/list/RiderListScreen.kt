@@ -19,8 +19,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +35,7 @@ import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun RiderListScreen(
     sharedTransitionScope: SharedTransitionScope,
@@ -44,26 +46,29 @@ internal fun RiderListScreen(
     onRiderSearched: (String) -> Unit,
     onToggled: () -> Unit,
     onSortingSelected: (Sorting) -> Unit,
+    onRefresh: () -> Unit,
 ) {
-    val lazyListState = rememberLazyListState()
-    val focusManager = LocalFocusManager.current
-    Column {
-        TopBar(
-            topBarState = topBarState,
-            focusManager = focusManager,
-            onSortingSelected = onSortingSelected,
-            onSearched = onRiderSearched,
-            onToggled = onToggled,
-            onClicked = {
-                lazyListState.scrollToItem(0)
-            },
-        )
-        sharedTransitionScope.RiderList(
-            lazyListState,
-            uiState,
-            animatedVisibilityScope,
-            onRiderClick
-        )
+    PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
+        val lazyListState = rememberLazyListState()
+        val focusManager = LocalFocusManager.current
+        Column {
+            TopBar(
+                topBarState = topBarState,
+                focusManager = focusManager,
+                onSortingSelected = onSortingSelected,
+                onSearched = onRiderSearched,
+                onToggled = onToggled,
+                onClicked = {
+                    lazyListState.scrollToItem(0)
+                },
+            )
+            sharedTransitionScope.RiderList(
+                lazyListState,
+                uiState,
+                animatedVisibilityScope,
+                onRiderClick
+            )
+        }
     }
 }
 

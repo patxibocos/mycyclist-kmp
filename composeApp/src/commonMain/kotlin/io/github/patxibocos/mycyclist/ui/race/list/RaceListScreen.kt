@@ -12,8 +12,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,40 +28,44 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RaceListScreen(
     uiState: RaceListViewModel.UiState,
     onRaceClick: (Race) -> Unit,
     onRaceStageClick: (Race, Stage) -> Unit,
+    onRefresh: () -> Unit,
 ) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        when (uiState) {
-            RaceListViewModel.UiState.EmptyViewState -> {
-                item { Text(text = "Empty") }
-            }
+    PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            when (val content = uiState.content) {
+                RaceListViewModel.Content.EmptyViewState -> {
+                    item { Text(text = "Empty") }
+                }
 
-            is RaceListViewModel.UiState.SeasonEndedViewState -> {
-                seasonEnded(
-                    pastRaces = uiState.pastRaces,
-                    onRaceSelected = onRaceClick,
-                )
-            }
+                is RaceListViewModel.Content.SeasonEndedViewState -> {
+                    seasonEnded(
+                        pastRaces = content.pastRaces,
+                        onRaceSelected = onRaceClick,
+                    )
+                }
 
-            is RaceListViewModel.UiState.SeasonInProgressViewState -> {
-                seasonInProgress(
-                    pastRaces = uiState.pastRaces,
-                    todayStages = uiState.todayStages,
-                    futureRaces = uiState.futureRaces,
-                    onRaceSelected = onRaceClick,
-                    onStageSelected = onRaceStageClick,
-                )
-            }
+                is RaceListViewModel.Content.SeasonInProgressViewState -> {
+                    seasonInProgress(
+                        pastRaces = content.pastRaces,
+                        todayStages = content.todayStages,
+                        futureRaces = content.futureRaces,
+                        onRaceSelected = onRaceClick,
+                        onStageSelected = onRaceStageClick,
+                    )
+                }
 
-            is RaceListViewModel.UiState.SeasonNotStartedViewState -> {
-                seasonNotStarted(
-                    futureRaces = uiState.futureRaces,
-                    onRaceSelected = onRaceClick
-                )
+                is RaceListViewModel.Content.SeasonNotStartedViewState -> {
+                    seasonNotStarted(
+                        futureRaces = content.futureRaces,
+                        onRaceSelected = onRaceClick
+                    )
+                }
             }
         }
     }
