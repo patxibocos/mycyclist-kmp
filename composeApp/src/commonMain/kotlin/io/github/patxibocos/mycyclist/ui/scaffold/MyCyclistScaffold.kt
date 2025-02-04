@@ -3,7 +3,7 @@ package io.github.patxibocos.mycyclist.ui.scaffold
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -34,9 +34,11 @@ internal fun MyCyclistScaffold() {
         bottomBar = {
             BottomBar(navController)
         }
-    ) {
-        SharedTransitionLayout {
-            Navigation(navController, it)
+    ) { paddingValues ->
+        SharedTransitionLayout(
+            modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues)
+        ) {
+            Navigation(navController)
         }
     }
 }
@@ -45,12 +47,10 @@ internal fun MyCyclistScaffold() {
 @Composable
 private fun SharedTransitionScope.Navigation(
     navController: NavHostController,
-    values: PaddingValues
 ) {
     NavHost(
         navController = navController,
         startDestination = NavigationRoutes.RaceList,
-        modifier = Modifier.padding(values)
     ) {
         raceListComposableRoute(
             onRaceClick = { race -> navController.navigateToRaceDetails(race) },
