@@ -1,11 +1,11 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.2"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
-androidx-activityCompose = "1.10.0"
+androidx-activityCompose = "1.10.1"
 androidx-appcompat = "1.7.0"
-androidx-constraintlayout = "2.2.0"
+androidx-constraintlayout = "2.2.1"
 androidx-core-ktx = "1.15.0"
 androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.4"
@@ -16,7 +16,7 @@ compose-plugin = "1.7.3"
 firebase = "2.1.0"
 junit = "4.13.2"
 kotlin = "2.1.10"
-ktor = "3.0.3"
+ktor = "3.1.0"
 coil-network-ktor = "3.0.4"
 detekt = "1.23.7"
 
@@ -43,8 +43,8 @@ coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.re
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-kotlin-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version = "1.7.3" }
-desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.4" }
+kotlin-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version = "1.8.0" }
+desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5" }
 kotlin-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.8" }
 twitter-compose-detekt-rules = { module = "com.twitter.compose.rules:detekt", version = "0.0.26" }
 ktlint-detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
@@ -57,5 +57,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version = "4.4.2" }
 cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version = "2.1.0-Beta2" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "2.1.0" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "2.1.10" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

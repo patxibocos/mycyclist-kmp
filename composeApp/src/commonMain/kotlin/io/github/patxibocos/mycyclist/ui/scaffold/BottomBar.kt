@@ -1,8 +1,11 @@
 package io.github.patxibocos.mycyclist.ui.scaffold
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -23,16 +26,36 @@ internal fun BottomBar(navController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
     val routes = remember {
         listOf(
-            TopLevelRoute(NavigationRoutes.RaceList, Icons.Outlined.Email, "Races"),
-            TopLevelRoute(NavigationRoutes.RiderList, Icons.Outlined.Face, "Riders"),
-            TopLevelRoute(NavigationRoutes.TeamList, Icons.Outlined.Person, "Teams"),
+            TopLevelRoute(
+                route = NavigationRoutes.RaceList,
+                unselectedIcon = Icons.Outlined.Flag,
+                selectedIcon = Icons.Filled.Flag,
+                title = "Races"
+            ),
+            TopLevelRoute(
+                route = NavigationRoutes.RiderList,
+                unselectedIcon = Icons.Outlined.Person,
+                selectedIcon = Icons.Filled.Person,
+                title = "Riders"
+            ),
+            TopLevelRoute(
+                route = NavigationRoutes.TeamList,
+                unselectedIcon = Icons.Outlined.Group,
+                selectedIcon = Icons.Filled.Group,
+                title = "Teams"
+            ),
         )
     }
     NavigationBar {
         routes.forEach { topLevelRoute ->
             val isRouteSelected = currentDestination?.hasRoute(topLevelRoute.route::class) == true
             NavigationBarItem(
-                icon = { Icon(topLevelRoute.icon, null) },
+                icon = {
+                    Icon(
+                        imageVector = if (isRouteSelected) topLevelRoute.selectedIcon else topLevelRoute.unselectedIcon,
+                        contentDescription = null,
+                    )
+                },
                 label = { Text(topLevelRoute.title) },
                 selected = isRouteSelected,
                 onClick = {

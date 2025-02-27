@@ -38,7 +38,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,16 +91,12 @@ internal fun TopBar(
                 IconButton(onClick = { sortingOptionsVisible = true }) {
                     Icon(imageVector = Icons.AutoMirrored.Outlined.List, contentDescription = null)
                 }
-                val coroutineScope = rememberCoroutineScope()
                 SortingMenu(
                     expanded = sortingOptionsVisible,
                     selectedSorting = topBarState.sorting,
                     onSortingSelected = { sorting ->
                         sortingOptionsVisible = false
-                        coroutineScope.launch {
-                            delay(timeMillis = 50)
-                            onSortingSelected(sorting)
-                        }
+                        onSortingSelected(sorting)
                     },
                     onDismissed = { sortingOptionsVisible = false },
                 )
