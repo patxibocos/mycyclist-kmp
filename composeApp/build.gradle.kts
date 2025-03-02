@@ -40,6 +40,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.material3AdaptiveNavigationSuite)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
@@ -57,6 +58,10 @@ kotlin {
             implementation(libs.firebase.messaging)
             implementation(libs.kotlin.serialization.protobuf)
             implementation(libs.kotlin.collections.immutable)
+            implementation(libs.material3.adaptive)
+            implementation(libs.material3.adaptive.layout)
+            implementation(libs.material3.adaptive.navigation)
+            implementation(libs.compose.ui.backhandler)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -93,7 +98,7 @@ android {
     defaultConfig {
         applicationId = "io.github.patxibocos.mycyclist"
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        targetSdkPreview = libs.versions.android.targetSdk.get()
         versionCode = 1
         versionName = "1.0"
     }

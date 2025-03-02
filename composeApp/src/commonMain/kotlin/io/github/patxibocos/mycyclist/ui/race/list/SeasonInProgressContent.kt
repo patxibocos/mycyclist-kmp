@@ -21,7 +21,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 
-@OptIn(ExperimentalFoundationApi::class)
 internal fun LazyListScope.seasonInProgress(
     pastRaces: List<Race>,
     todayStages: List<RaceListViewModel.TodayStage>,
@@ -44,7 +43,6 @@ internal fun LazyListScope.seasonInProgress(
     pastRaces(pastRaces, onRaceSelected)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.pastRaces(
     pastRaces: List<Race>,
     onRaceSelected: (Race) -> Unit
@@ -71,7 +69,6 @@ private fun LazyListScope.pastRaces(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.futureRaces(
     futureRaces: List<Race>,
     onRaceSelected: (Race) -> Unit

@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun RaceDetailsScreen(
     uiState: RaceDetailsViewModel.UiState,
+    backEnabled: Boolean,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
@@ -60,8 +61,10 @@ internal fun RaceDetailsScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onBackPressed) {
-                    Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                if (backEnabled) {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                    }
                 }
             }
         )

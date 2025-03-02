@@ -1,7 +1,6 @@
 package io.github.patxibocos.mycyclist.ui.navigation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.getValue
@@ -54,9 +53,7 @@ internal fun NavGraphBuilder.raceListComposableRoute(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 internal fun NavGraphBuilder.riderListComposableRoute(
-    sharedTransitionScope: SharedTransitionScope,
     onRiderClick: (Rider) -> Unit
 ) {
     composable<NavigationRoutes.RiderList>(
@@ -74,7 +71,6 @@ internal fun NavGraphBuilder.riderListComposableRoute(
         val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
         val topBarState by viewModel.topBarState.collectAsStateWithLifecycle()
         RiderListScreen(
-            sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this@composable,
             onRiderClick = onRiderClick,
             uiState = uiState,
@@ -132,6 +128,7 @@ internal fun NavGraphBuilder.raceDetailsComposableRoute(
         val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
         RaceDetailsScreen(
             uiState = uiState,
+            backEnabled = true,
             onBackPressed = onBackPressed,
             onRiderSelected = onRiderSelected,
             onTeamSelected = onTeamSelected,
@@ -143,9 +140,7 @@ internal fun NavGraphBuilder.raceDetailsComposableRoute(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 internal fun NavGraphBuilder.riderDetailsComposableRoute(
-    sharedTransitionScope: SharedTransitionScope,
     onRaceSelected: (Race) -> Unit,
     onTeamSelected: (Team) -> Unit,
     onStageSelected: (Race, Stage) -> Unit,
@@ -168,8 +163,6 @@ internal fun NavGraphBuilder.riderDetailsComposableRoute(
         val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return@composable
         RiderDetailsScreen(
             uiState = uiState,
-            sharedTransitionScope = sharedTransitionScope,
-            animatedVisibilityScope = this@composable,
             onBackPressed = onBackPressed,
             onRaceSelected = onRaceSelected,
             onTeamSelected = onTeamSelected,

@@ -44,4 +44,25 @@ internal sealed interface NavigationRoutes {
             override val path = "teams"
         }
     }
+
+    @Serializable
+    data class Races(val raceId: String?, @SerialName("stage") val stageId: String? = null) {
+        companion object : NavigationRoutes {
+            override val path = "races"
+        }
+    }
+
+    @Serializable
+    data class Riders(val riderId: String?) {
+        companion object : NavigationRoutes {
+            override val path = "riders"
+        }
+    }
+
+    @Serializable
+    data class Teams(@SerialName("team") val teamId: String?) {
+        companion object : NavigationRoutes {
+            override val path = "teams"
+        }
+    }
 }

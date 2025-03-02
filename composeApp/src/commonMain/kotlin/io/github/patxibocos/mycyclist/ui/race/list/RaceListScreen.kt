@@ -71,7 +71,6 @@ internal fun RaceListScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.seasonEnded(pastRaces: List<Race>, onRaceSelected: (Race) -> Unit) {
     item {
         Text(text = "Season has ended")
@@ -84,7 +83,6 @@ private fun LazyListScope.seasonEnded(pastRaces: List<Race>, onRaceSelected: (Ra
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.seasonNotStarted(
     futureRaces: List<Race>,
     onRaceSelected: (Race) -> Unit,

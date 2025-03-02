@@ -1,8 +1,9 @@
 [versions]
+material3-adaptive = "1.1.0-alpha02"
 agp = "8.8.2"
 android-compileSdk = "35"
 android-minSdk = "24"
-android-targetSdk = "35"
+android-targetSdk = "Baklava"
 androidx-activityCompose = "1.10.1"
 androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.2.1"
@@ -16,11 +17,14 @@ compose-plugin = "1.7.3"
 firebase = "2.1.0"
 junit = "4.13.2"
 kotlin = "2.1.10"
-ktor = "3.1.0"
+ktor = "3.1.1"
 coil-network-ktor = "3.0.4"
 detekt = "1.23.7"
 
 [libraries]
+material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "material3-adaptive" }
+material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "material3-adaptive" }
+material3-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "material3-adaptive" }
 firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase" }
 firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
 firebase-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebase" }
@@ -48,6 +52,7 @@ desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5"
 kotlin-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.8" }
 twitter-compose-detekt-rules = { module = "com.twitter.compose.rules:detekt", version = "0.0.26" }
 ktlint-detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version = "1.8.0-alpha03" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

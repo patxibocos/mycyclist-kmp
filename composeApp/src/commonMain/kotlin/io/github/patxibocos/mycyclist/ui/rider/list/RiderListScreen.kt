@@ -1,9 +1,6 @@
 package io.github.patxibocos.mycyclist.ui.rider.list
 
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,10 +32,9 @@ import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RiderListScreen(
-    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     uiState: RiderListViewModel.UiState,
     topBarState: RiderListViewModel.TopBarState,
@@ -62,7 +58,7 @@ internal fun RiderListScreen(
                     lazyListState.scrollToItem(0)
                 },
             )
-            sharedTransitionScope.RiderList(
+            RiderList(
                 lazyListState,
                 uiState,
                 animatedVisibilityScope,
@@ -72,9 +68,8 @@ internal fun RiderListScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SharedTransitionScope.RiderList(
+private fun RiderList(
     lazyListState: LazyListState,
     uiState: RiderListViewModel.UiState,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -94,7 +89,6 @@ private fun SharedTransitionScope.RiderList(
                     items(riders, key = Rider::id) { rider ->
                         RiderRow(
                             rider = rider,
-                            animatedVisibilityScope = animatedVisibilityScope,
                             onRiderSelected = onRiderClick,
                         )
                     }
@@ -109,7 +103,6 @@ private fun SharedTransitionScope.RiderList(
                     items(riders, key = Rider::id) { rider ->
                         RiderRow(
                             rider = rider,
-                            animatedVisibilityScope = animatedVisibilityScope,
                             onRiderSelected = onRiderClick,
                         )
                     }
@@ -120,7 +113,6 @@ private fun SharedTransitionScope.RiderList(
                 items(uiState.riders.riders, key = Rider::id) { rider ->
                     RiderRow(
                         rider = rider,
-                        animatedVisibilityScope = animatedVisibilityScope,
                         onRiderSelected = onRiderClick,
                     )
                 }
@@ -129,11 +121,9 @@ private fun SharedTransitionScope.RiderList(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SharedTransitionScope.RiderRow(
+private fun RiderRow(
     rider: Rider,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     onRiderSelected: (Rider) -> Unit,
 ) {
     Column(modifier = Modifier.clickable { onRiderSelected(rider) }) {
@@ -141,10 +131,6 @@ private fun SharedTransitionScope.RiderRow(
             AsyncImage(
                 model = rider.photo,
                 modifier = Modifier
-                    .sharedElement(
-                        state = rememberSharedContentState(key = rider.id),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
                     .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                     .padding(2.dp)
                     .size(75.dp)
