@@ -5,6 +5,8 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Group
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -34,6 +37,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import io.github.patxibocos.mycyclist.ui.navigation.NavigationRoutes
 import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsScreen
@@ -78,45 +82,62 @@ private fun NavigationSuite(
         item(
             selected = currentDestination?.hasRoute(NavigationRoutes.Races::class) == true,
             onClick = {
-                navController.navigate(NavigationRoutes.Races(raceId = null))
+                if (currentDestination?.hasRoute(NavigationRoutes.Races::class) == false) {
+                    navController.navigate(NavigationRoutes.Races())
+                }
             },
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Flag,
                     contentDescription = null,
                 )
+            },
+            label = {
+                Text(text = "Races")
             }
         )
         item(
             selected = currentDestination?.hasRoute(NavigationRoutes.Riders::class) == true,
             onClick = {
-                navController.navigate(NavigationRoutes.Riders(riderId = null))
+                if (currentDestination?.hasRoute(NavigationRoutes.Riders::class) == false) {
+                    navController.navigate(NavigationRoutes.Riders())
+                }
             },
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Person,
                     contentDescription = null,
                 )
+            },
+            label = {
+                Text(text = "Riders")
             }
         )
         item(
             selected = currentDestination?.hasRoute(NavigationRoutes.Teams::class) == true,
             onClick = {
-                navController.navigate(NavigationRoutes.Teams(teamId = null))
+                if (currentDestination?.hasRoute(NavigationRoutes.Teams::class) == false) {
+                    navController.navigate(NavigationRoutes.Teams())
+                }
             },
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Group,
                     contentDescription = null,
                 )
+            },
+            label = {
+                Text(text = "Teams")
             }
         )
     }) {
         NavHost(
             navController = navController,
-            startDestination = NavigationRoutes.Races(raceId = null),
+            startDestination = NavigationRoutes.Races(),
         ) {
-            composable<NavigationRoutes.Races> {
+            composable<NavigationRoutes.Races>(
+                deepLinks = listOf(navDeepLink<NavigationRoutes.Races>(NavigationRoutes.Races.deepLink())),
+            ) {
                 val races: NavigationRoutes.Races = it.toRoute()
                 val navigator = rememberListDetailPaneScaffoldNavigator(
                     initialDestinationHistory = listOfNotNull(
@@ -143,6 +164,7 @@ private fun NavigationSuite(
                     directive = navigator.scaffoldDirective,
                     value = navigator.scaffoldValue,
                     listPane = {
+                        val listState = rememberLazyListState()
                         AnimatedPane {
                             val viewModel = viewModel { RaceListViewModel() }
                             val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
@@ -150,6 +172,7 @@ private fun NavigationSuite(
                             Surface(modifier = Modifier.fillMaxSize()) {
                                 RaceListScreen(
                                     uiState = uiState,
+                                    listState = listState,
                                     onRaceClick = { race ->
                                         coroutineScope.launch {
                                             navigator.navigateTo(
@@ -206,7 +229,9 @@ private fun NavigationSuite(
                     },
                 )
             }
-            composable<NavigationRoutes.Riders> {
+            composable<NavigationRoutes.Riders>(
+                deepLinks = listOf(navDeepLink<NavigationRoutes.Riders>(NavigationRoutes.Riders.deepLink())),
+            ) {
                 val riders: NavigationRoutes.Riders = it.toRoute()
                 val navigator = rememberListDetailPaneScaffoldNavigator(
                     initialDestinationHistory = listOfNotNull(
@@ -233,6 +258,7 @@ private fun NavigationSuite(
                     directive = navigator.scaffoldDirective,
                     value = navigator.scaffoldValue,
                     listPane = {
+                        val listState = rememberLazyListState()
                         AnimatedPane {
                             val viewModel = viewModel { RiderListViewModel() }
                             val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
@@ -240,7 +266,9 @@ private fun NavigationSuite(
                             val topBarState by viewModel.topBarState.collectAsStateWithLifecycle()
                             Surface(modifier = Modifier.fillMaxSize()) {
                                 RiderListScreen(
-                                    animatedVisibilityScope = this@composable,
+                                    uiState = uiState,
+                                    topBarState = topBarState,
+                                    listState = listState,
                                     onRiderClick = { rider ->
                                         coroutineScope.launch {
                                             navigator.navigateTo(
@@ -249,8 +277,6 @@ private fun NavigationSuite(
                                             )
                                         }
                                     },
-                                    uiState = uiState,
-                                    topBarState = topBarState,
                                     onRiderSearched = viewModel::onSearched,
                                     onToggled = viewModel::onToggled,
                                     onSortingSelected = viewModel::onSorted,
@@ -295,7 +321,9 @@ private fun NavigationSuite(
                     }
                 )
             }
-            composable<NavigationRoutes.Teams> {
+            composable<NavigationRoutes.Teams>(
+                deepLinks = listOf(navDeepLink<NavigationRoutes.Teams>(NavigationRoutes.Teams.deepLink())),
+            ) {
                 val teams: NavigationRoutes.Teams = it.toRoute()
                 val navigator = rememberListDetailPaneScaffoldNavigator(
                     initialDestinationHistory = listOfNotNull(
@@ -322,6 +350,8 @@ private fun NavigationSuite(
                     directive = navigator.scaffoldDirective,
                     value = navigator.scaffoldValue,
                     listPane = {
+                        val worldTeamsLazyGridState = rememberLazyGridState()
+                        val proTeamsLazyGridState = rememberLazyGridState()
                         AnimatedPane {
                             val viewModel = viewModel { TeamListViewModel() }
                             val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
@@ -329,6 +359,8 @@ private fun NavigationSuite(
                             Surface(modifier = Modifier.fillMaxSize()) {
                                 TeamListScreen(
                                     uiState = uiState,
+                                    worldTeamsLazyGridState = worldTeamsLazyGridState,
+                                    proTeamsLazyGridState = proTeamsLazyGridState,
                                     onTeamClick = { team ->
                                         coroutineScope.launch {
                                             navigator.navigateTo(

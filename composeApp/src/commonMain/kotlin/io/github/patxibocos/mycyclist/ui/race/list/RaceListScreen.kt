@@ -1,7 +1,6 @@
 package io.github.patxibocos.mycyclist.ui.race.list
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +36,10 @@ internal fun RaceListScreen(
     onRaceClick: (Race) -> Unit,
     onRaceStageClick: (Race, Stage) -> Unit,
     onRefresh: () -> Unit,
+    listState: LazyListState = rememberLazyListState(),
 ) {
     PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), state = listState) {
             when (val content = uiState.content) {
                 RaceListViewModel.Content.EmptyViewState -> {
                     item { Text(text = "Empty") }

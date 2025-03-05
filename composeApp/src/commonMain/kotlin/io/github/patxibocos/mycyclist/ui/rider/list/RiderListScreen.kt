@@ -1,6 +1,5 @@
 package io.github.patxibocos.mycyclist.ui.rider.list
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +34,6 @@ import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RiderListScreen(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     uiState: RiderListViewModel.UiState,
     topBarState: RiderListViewModel.TopBarState,
     onRiderClick: (Rider) -> Unit,
@@ -43,9 +41,9 @@ internal fun RiderListScreen(
     onToggled: () -> Unit,
     onSortingSelected: (Sorting) -> Unit,
     onRefresh: () -> Unit,
+    listState: LazyListState = rememberLazyListState(),
 ) {
     PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
-        val lazyListState = rememberLazyListState()
         val focusManager = LocalFocusManager.current
         Column {
             TopBar(
@@ -55,13 +53,12 @@ internal fun RiderListScreen(
                 onSearched = onRiderSearched,
                 onToggled = onToggled,
                 onClicked = {
-                    lazyListState.scrollToItem(0)
+                    listState.scrollToItem(0)
                 },
             )
             RiderList(
-                lazyListState,
+                listState,
                 uiState,
-                animatedVisibilityScope,
                 onRiderClick
             )
         }
@@ -70,15 +67,14 @@ internal fun RiderListScreen(
 
 @Composable
 private fun RiderList(
-    lazyListState: LazyListState,
+    listState: LazyListState,
     uiState: RiderListViewModel.UiState,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     onRiderClick: (Rider) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp),
-        state = lazyListState,
+        state = listState,
     ) {
         when (uiState.riders) {
             is RiderListViewModel.UiState.Riders.ByLastName -> {

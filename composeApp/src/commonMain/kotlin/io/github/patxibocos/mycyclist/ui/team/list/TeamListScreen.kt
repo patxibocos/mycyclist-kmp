@@ -44,10 +44,10 @@ internal fun TeamListScreen(
     uiState: TeamListViewModel.UiState,
     onTeamClick: (Team) -> Unit,
     onRefresh: () -> Unit,
+    worldTeamsLazyGridState: LazyGridState = rememberLazyGridState(),
+    proTeamsLazyGridState: LazyGridState = rememberLazyGridState(),
 ) {
     PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
-        val worldTeamsLazyGridState = rememberLazyGridState()
-        val proTeamsLazyGridState = rememberLazyGridState()
         val pagerState = rememberPagerState(pageCount = { 2 })
         val coroutineScope = rememberCoroutineScope()
 
