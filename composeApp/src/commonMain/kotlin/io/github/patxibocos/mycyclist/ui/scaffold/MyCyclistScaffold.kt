@@ -1,7 +1,5 @@
 package io.github.patxibocos.mycyclist.ui.scaffold
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -54,17 +52,15 @@ import io.github.patxibocos.mycyclist.ui.team.list.TeamListScreen
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun MyCyclistScaffold() {
     val navController by rememberUpdatedState(rememberNavController())
 
     Scaffold { paddingValues ->
-        SharedTransitionLayout(
-            modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues)
-        ) {
-            NavigationSuite(navController)
-        }
+        NavigationSuite(
+            navController = navController,
+            modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues),
+        )
     }
 }
 
@@ -75,10 +71,11 @@ internal fun MyCyclistScaffold() {
 @Composable
 private fun NavigationSuite(
     navController: NavHostController,
+    modifier: Modifier,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    NavigationSuiteScaffold(modifier = Modifier.fillMaxSize(), navigationSuiteItems = {
+    NavigationSuiteScaffold(modifier = modifier.fillMaxSize(), navigationSuiteItems = {
         item(
             selected = currentDestination?.hasRoute(NavigationRoutes.Races::class) == true,
             onClick = {
