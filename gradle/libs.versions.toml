@@ -1,6 +1,6 @@
 [versions]
 material3-adaptive = "1.1.0-alpha02"
-agp = "8.8.2"
+agp = "8.9.0"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "Baklava"

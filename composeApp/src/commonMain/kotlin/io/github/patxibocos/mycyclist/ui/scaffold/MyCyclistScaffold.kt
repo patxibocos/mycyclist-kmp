@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
@@ -21,7 +24,9 @@ import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationIt
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -50,6 +55,8 @@ import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsScreen
 import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListScreen
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
 @Composable
@@ -75,58 +82,60 @@ private fun NavigationSuite(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    val routes = remember {
+        listOf(
+            TopLevelRoute(
+                route = NavigationRoutes.Races(),
+                unselectedIcon = Icons.Outlined.Flag,
+                selectedIcon = Icons.Filled.Flag,
+                title = "Races"
+            ),
+            TopLevelRoute(
+                route = NavigationRoutes.Riders(),
+                unselectedIcon = Icons.Outlined.Person,
+                selectedIcon = Icons.Filled.Person,
+                title = "Riders"
+            ),
+            TopLevelRoute(
+                route = NavigationRoutes.Teams(),
+                unselectedIcon = Icons.Outlined.Group,
+                selectedIcon = Icons.Filled.Group,
+                title = "Teams"
+            ),
+        )
+    }
+
+    val tabReselected = remember { MutableSharedFlow<NavigationRoutes>() }
+
+    val coroutineScope = rememberCoroutineScope()
     NavigationSuiteScaffold(modifier = modifier.fillMaxSize(), navigationSuiteItems = {
-        item(
-            selected = currentDestination?.hasRoute(NavigationRoutes.Races::class) == true,
-            onClick = {
-                if (currentDestination?.hasRoute(NavigationRoutes.Races::class) == false) {
-                    navController.navigate(NavigationRoutes.Races())
+        routes.forEach { route ->
+            val isRouteSelected = currentDestination?.hasRoute(route.route::class) == true
+            item(
+                selected = isRouteSelected,
+                onClick = {
+                    if (!isRouteSelected) {
+                        navController.navigate(route.route) {
+                            launchSingleTop = true
+                        }
+                    } else {
+                        coroutineScope.launch {
+                            tabReselected.emit(route.route)
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = if (isRouteSelected) route.selectedIcon else route.unselectedIcon,
+                        contentDescription = null,
+                    )
+                },
+                label = {
+                    Text(text = route.title)
                 }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.Flag,
-                    contentDescription = null,
-                )
-            },
-            label = {
-                Text(text = "Races")
-            }
-        )
-        item(
-            selected = currentDestination?.hasRoute(NavigationRoutes.Riders::class) == true,
-            onClick = {
-                if (currentDestination?.hasRoute(NavigationRoutes.Riders::class) == false) {
-                    navController.navigate(NavigationRoutes.Riders())
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = null,
-                )
-            },
-            label = {
-                Text(text = "Riders")
-            }
-        )
-        item(
-            selected = currentDestination?.hasRoute(NavigationRoutes.Teams::class) == true,
-            onClick = {
-                if (currentDestination?.hasRoute(NavigationRoutes.Teams::class) == false) {
-                    navController.navigate(NavigationRoutes.Teams())
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.Group,
-                    contentDescription = null,
-                )
-            },
-            label = {
-                Text(text = "Teams")
-            }
-        )
+            )
+        }
     }) {
         NavHost(
             navController = navController,
@@ -149,8 +158,13 @@ private fun NavigationSuite(
                         }
                     ),
                 )
-
-                val coroutineScope = rememberCoroutineScope()
+                LaunchedEffect(Unit) {
+                    tabReselected.filterIsInstance<NavigationRoutes.Races>().collect {
+                        if (navigator.canNavigateBack()) {
+                            navigator.navigateBack()
+                        }
+                    }
+                }
                 BackHandler(navigator.canNavigateBack()) {
                     coroutineScope.launch {
                         navigator.navigateBack()
@@ -243,8 +257,13 @@ private fun NavigationSuite(
                         }
                     ),
                 )
-
-                val coroutineScope = rememberCoroutineScope()
+                LaunchedEffect(Unit) {
+                    tabReselected.filterIsInstance<NavigationRoutes.Riders>().collect {
+                        if (navigator.canNavigateBack()) {
+                            navigator.navigateBack()
+                        }
+                    }
+                }
                 BackHandler(navigator.canNavigateBack()) {
                     coroutineScope.launch {
                         navigator.navigateBack()
@@ -335,8 +354,13 @@ private fun NavigationSuite(
                         }
                     ),
                 )
-
-                val coroutineScope = rememberCoroutineScope()
+                LaunchedEffect(Unit) {
+                    tabReselected.filterIsInstance<NavigationRoutes.Teams>().collect {
+                        if (navigator.canNavigateBack()) {
+                            navigator.navigateBack()
+                        }
+                    }
+                }
                 BackHandler(navigator.canNavigateBack()) {
                     coroutineScope.launch {
                         navigator.navigateBack()
