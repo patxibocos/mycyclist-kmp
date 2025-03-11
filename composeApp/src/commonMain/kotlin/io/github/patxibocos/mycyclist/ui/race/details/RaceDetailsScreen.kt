@@ -22,6 +22,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,6 +82,7 @@ internal fun RaceDetailsScreen(
             )
         } else {
             StagesList(
+                race = uiState.race,
                 stages = uiState.race.stages.toImmutableList(),
                 stagesResults = uiState.stagesResults,
                 currentStageIndex = uiState.currentStageIndex,
@@ -109,6 +111,7 @@ private fun ColumnScope.SingleStage(
 
 @Composable
 private fun ColumnScope.StagesList(
+    race: Race,
     stages: ImmutableList<Stage>,
     stagesResults: ImmutableMap<Stage, RaceDetailsViewModel.Results>,
     currentStageIndex: Int,
@@ -120,8 +123,12 @@ private fun ColumnScope.StagesList(
     onClassificationTypeChanged: (RaceDetailsViewModel.ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
 ) {
-    val pagerState =
-        rememberPagerState(initialPage = currentStageIndex, pageCount = { stages.size })
+    val pagerState = key(race) {
+        rememberPagerState(
+            initialPage = currentStageIndex,
+            pageCount = { stages.size }
+        )
+    }
     val coroutineScope = rememberCoroutineScope()
     ScrollableTabRow(
         selectedTabIndex = pagerState.currentPage,

@@ -18,9 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -94,13 +92,12 @@ internal class RaceDetailsViewModel(
             val race = withContext(defaultDispatcher) {
                 races.find { it.id == raceId }!!
             }
+            emitInitialRaceState(race, stageId)
             RaceWithTeamsAndRiders(
                 race = race,
                 teams = teams,
                 riders = riders,
             )
-        }.onEach { raceWithTeamsAndRiders ->
-            emitInitialRaceState(raceWithTeamsAndRiders.race, stageId)
         }
             .combine(_raceState) { raceWithTeamsAndRiders, (stageIndex, resultsMode, classificationType) ->
                 withContext(defaultDispatcher) {
@@ -127,7 +124,7 @@ internal class RaceDetailsViewModel(
                 initialValue = null,
             )
 
-    private suspend fun emitInitialRaceState(race: Race, stageId: String?) {
+    private fun emitInitialRaceState(race: Race, stageId: String?) {
         val stageIndex: Int
         val resultsMode: ResultsMode
         // If stageId is not provided:
@@ -163,15 +160,9 @@ internal class RaceDetailsViewModel(
                 }
             }
         }
-        _stageIndex.emitIfCacheIsEmpty(stageIndex)
-        _resultsMode.emitIfCacheIsEmpty(resultsMode)
-        _classificationType.emitIfCacheIsEmpty(ClassificationType.Time)
-    }
-
-    private suspend fun <T> MutableSharedFlow<T>.emitIfCacheIsEmpty(value: T) {
-        if (replayCache.isEmpty()) {
-            emit(value)
-        }
+        _stageIndex.tryEmit(stageIndex)
+        _resultsMode.tryEmit(resultsMode)
+        _classificationType.tryEmit(ClassificationType.Time)
     }
 
     private fun stageResults(
@@ -337,20 +328,14 @@ internal class RaceDetailsViewModel(
     }
 
     internal fun onStageSelected(stageIndex: Int) {
-        viewModelScope.launch {
-            _stageIndex.emit(stageIndex)
-        }
+        _stageIndex.tryEmit(stageIndex)
     }
 
     internal fun onResultsModeChanged(resultsMode: ResultsMode) {
-        viewModelScope.launch {
-            _resultsMode.emit(resultsMode)
-        }
+        _resultsMode.tryEmit(resultsMode)
     }
 
     internal fun onClassificationTypeChanged(classificationType: ClassificationType) {
-        viewModelScope.launch {
-            _classificationType.emit(classificationType)
-        }
+        _classificationType.tryEmit(classificationType)
     }
 }
