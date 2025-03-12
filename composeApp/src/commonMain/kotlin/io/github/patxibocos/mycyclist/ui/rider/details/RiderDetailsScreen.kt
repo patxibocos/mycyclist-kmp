@@ -27,11 +27,14 @@ import io.github.patxibocos.mycyclist.domain.Race
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.Team
+import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsViewModel.Result
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RiderDetailsScreen(
     uiState: RiderDetailsViewModel.UiState,
+    backEnabled: Boolean,
     onBackPressed: () -> Unit,
     onRaceSelected: (Race) -> Unit,
     onTeamSelected: (Team) -> Unit,
@@ -48,8 +51,10 @@ internal fun RiderDetailsScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onBackPressed) {
-                    Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                if (backEnabled) {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                    }
                 }
             }
         )
@@ -76,22 +81,35 @@ internal fun RiderDetailsScreen(
                 },
             )
         }
-        uiState.results.forEach { lastResult ->
-            when (lastResult) {
-                is RiderDetailsViewModel.Result.RaceResult -> Text(
-                    text = "${lastResult.position} on ${lastResult.race.name}",
-                    modifier = Modifier.clickable {
-                        onRaceSelected(lastResult.race)
-                    },
-                )
+        RiderResults(
+            results = uiState.results,
+            onRaceSelected = onRaceSelected,
+            onStageSelected = onStageSelected,
+        )
+    }
+}
 
-                is RiderDetailsViewModel.Result.StageResult -> Text(
-                    text = "${lastResult.position} on stage ${lastResult.stageNumber} of ${lastResult.race.name}",
-                    modifier = Modifier.clickable {
-                        onStageSelected(lastResult.race, lastResult.stage)
-                    },
-                )
-            }
+@Composable
+private fun RiderResults(
+    results: ImmutableList<Result>,
+    onRaceSelected: (Race) -> Unit,
+    onStageSelected: (Race, Stage) -> Unit
+) {
+    results.forEach { lastResult ->
+        when (lastResult) {
+            is Result.RaceResult -> Text(
+                text = "${lastResult.position} on ${lastResult.race.name}",
+                modifier = Modifier.clickable {
+                    onRaceSelected(lastResult.race)
+                },
+            )
+
+            is Result.StageResult -> Text(
+                text = "${lastResult.position} on stage ${lastResult.stageNumber} of ${lastResult.race.name}",
+                modifier = Modifier.clickable {
+                    onStageSelected(lastResult.race, lastResult.stage)
+                },
+            )
         }
     }
 }

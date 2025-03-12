@@ -58,10 +58,17 @@ internal fun NavGraphBuilder.teamsRoute(
                 }
             ),
         )
+        val worldTeamsLazyGridState = rememberLazyGridState()
+        val proTeamsLazyGridState = rememberLazyGridState()
         LaunchedEffect(Unit) {
             tabReselected.filterIsInstance<NavigationRoutes.Teams>().collect {
                 if (navigator.canNavigateBack()) {
                     navigator.navigateBack()
+                } else {
+                    coroutineScope.launch {
+                        worldTeamsLazyGridState.animateScrollToItem(0)
+                        proTeamsLazyGridState.animateScrollToItem(0)
+                    }
                 }
             }
         }
@@ -70,7 +77,13 @@ internal fun NavGraphBuilder.teamsRoute(
                 navigator.navigateBack()
             }
         }
-        Scaffold(navigator, coroutineScope, navController)
+        Scaffold(
+            navigator = navigator,
+            coroutineScope = coroutineScope,
+            navController = navController,
+            worldTeamsLazyGridState = worldTeamsLazyGridState,
+            proTeamsLazyGridState = proTeamsLazyGridState,
+        )
     }
 }
 
@@ -79,15 +92,15 @@ internal fun NavGraphBuilder.teamsRoute(
 private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<String>,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    worldTeamsLazyGridState: LazyGridState,
+    proTeamsLazyGridState: LazyGridState,
 ) {
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            val worldTeamsLazyGridState = rememberLazyGridState()
-            val proTeamsLazyGridState = rememberLazyGridState()
             AnimatedPane {
                 TeamList(
                     worldTeamsLazyGridState = worldTeamsLazyGridState,
@@ -106,6 +119,7 @@ private fun Scaffold(
         detailPane = {
             AnimatedPane {
                 TeamDetails(
+                    navigator = navigator,
                     teamId = navigator.currentDestination?.contentKey ?: return@AnimatedPane,
                     onBackPressed = {
                         coroutineScope.launch {
@@ -121,8 +135,10 @@ private fun Scaffold(
     )
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun TeamDetails(
+    navigator: ThreePaneScaffoldNavigator<String>,
     teamId: String,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
@@ -133,6 +149,7 @@ private fun TeamDetails(
     Surface(modifier = Modifier.fillMaxSize()) {
         TeamDetailsScreen(
             uiState = uiState,
+            backEnabled = navigator.canNavigateBack(),
             onBackPressed = onBackPressed,
             onRiderSelected = onRiderSelected,
         )

@@ -58,10 +58,15 @@ internal fun NavGraphBuilder.racesRoute(
                 }
             ),
         )
+        val listState = rememberLazyListState()
         LaunchedEffect(Unit) {
             tabReselected.filterIsInstance<NavigationRoutes.Races>().collect {
                 if (navigator.canNavigateBack()) {
                     navigator.navigateBack()
+                } else {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
                 }
             }
         }
@@ -70,7 +75,12 @@ internal fun NavGraphBuilder.racesRoute(
                 navigator.navigateBack()
             }
         }
-        Scaffold(navigator, coroutineScope, navController)
+        Scaffold(
+            navigator = navigator,
+            coroutineScope = coroutineScope,
+            navController = navController,
+            listState = listState,
+        )
     }
 }
 
@@ -79,14 +89,14 @@ internal fun NavGraphBuilder.racesRoute(
 private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<Pair<String, String?>>,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    listState: LazyListState,
 ) {
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            val listState = rememberLazyListState()
             AnimatedPane {
                 RaceList(
                     listState = listState,

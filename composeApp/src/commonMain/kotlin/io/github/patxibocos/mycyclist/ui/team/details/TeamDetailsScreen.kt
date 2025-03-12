@@ -21,6 +21,7 @@ import io.github.patxibocos.mycyclist.domain.Rider
 @Composable
 internal fun TeamDetailsScreen(
     uiState: TeamDetailsViewModel.UiState,
+    backEnabled: Boolean,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
 ) {
@@ -35,8 +36,10 @@ internal fun TeamDetailsScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onBackPressed) {
-                    Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                if (backEnabled) {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                    }
                 }
             }
         )

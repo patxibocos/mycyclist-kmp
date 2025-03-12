@@ -61,10 +61,15 @@ internal fun NavGraphBuilder.ridersRoute(
                 }
             ),
         )
+        val listState = rememberLazyListState()
         LaunchedEffect(Unit) {
             tabReselected.filterIsInstance<NavigationRoutes.Riders>().collect {
                 if (navigator.canNavigateBack()) {
                     navigator.navigateBack()
+                } else {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
                 }
             }
         }
@@ -73,7 +78,12 @@ internal fun NavGraphBuilder.ridersRoute(
                 navigator.navigateBack()
             }
         }
-        Scaffold(navigator, coroutineScope, navController)
+        Scaffold(
+            navigator = navigator,
+            coroutineScope = coroutineScope,
+            navController = navController,
+            listState = listState,
+        )
     }
 }
 
@@ -82,14 +92,14 @@ internal fun NavGraphBuilder.ridersRoute(
 private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<String>,
     coroutineScope: CoroutineScope,
-    navController: NavHostController
+    navController: NavHostController,
+    listState: LazyListState,
 ) {
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            val listState = rememberLazyListState()
             AnimatedPane {
                 RiderList(
                     listState = listState,
@@ -145,12 +155,11 @@ private fun RiderDetails(
     onStageSelected: (Race, Stage) -> Unit,
     viewModel: RiderDetailsViewModel = viewModel(key = riderId) { RiderDetailsViewModel(riderId = riderId) },
 ) {
-    navigator.currentDestination?.contentKey ?: return
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-        ?: return
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return
     Surface(modifier = Modifier.fillMaxSize()) {
         RiderDetailsScreen(
             uiState = uiState,
+            backEnabled = navigator.canNavigateBack(),
             onBackPressed = onBackPressed,
             onRaceSelected = onRaceSelected,
             onTeamSelected = onTeamSelected,

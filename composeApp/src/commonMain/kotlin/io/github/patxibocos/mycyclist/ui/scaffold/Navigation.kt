@@ -75,7 +75,8 @@ private fun NavigationScaffold(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    val tabReselected = remember { MutableSharedFlow<NavigationRoutes>() }
+    val tabReselected =
+        remember { MutableSharedFlow<NavigationRoutes>() }
 
     val coroutineScope = rememberCoroutineScope()
     NavigationSuiteScaffold(modifier = modifier.fillMaxSize(), navigationSuiteItems = {
