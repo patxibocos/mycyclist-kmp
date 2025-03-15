@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.ui.scaffold
+package io.github.patxibocos.mycyclist.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
@@ -28,7 +28,6 @@ import io.github.patxibocos.mycyclist.domain.Race
 import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.ui.navigation.NavigationRoutes
 import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsScreen
 import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListScreen

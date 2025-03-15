@@ -1,13 +1,20 @@
 package io.github.patxibocos.mycyclist
 
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import io.github.patxibocos.mycyclist.domain.firebaseMessaging
-import io.github.patxibocos.mycyclist.ui.scaffold.MyCyclistScaffold
+import io.github.patxibocos.mycyclist.ui.navigation.NavigationSuite
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -19,6 +26,13 @@ internal fun App() {
         }
         firebaseDataRepository.initialize()
         firebaseMessaging.initialize()
-        MyCyclistScaffold()
+
+        val navController by rememberUpdatedState(rememberNavController())
+        Scaffold { paddingValues ->
+            NavigationSuite(
+                navController = navController,
+                modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues),
+            )
+        }
     }
 }

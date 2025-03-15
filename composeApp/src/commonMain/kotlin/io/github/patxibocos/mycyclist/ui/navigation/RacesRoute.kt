@@ -1,8 +1,8 @@
-package io.github.patxibocos.mycyclist.ui.scaffold
+package io.github.patxibocos.mycyclist.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -23,51 +23,48 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import io.github.patxibocos.mycyclist.domain.Rider
-import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.ui.navigation.NavigationRoutes
-import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsScreen
-import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsViewModel
-import io.github.patxibocos.mycyclist.ui.team.list.TeamListScreen
-import io.github.patxibocos.mycyclist.ui.team.list.TeamListViewModel
+import io.github.patxibocos.mycyclist.domain.Race
+import io.github.patxibocos.mycyclist.domain.Stage
+import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsScreen
+import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsViewModel
+import io.github.patxibocos.mycyclist.ui.race.list.RaceListScreen
+import io.github.patxibocos.mycyclist.ui.race.list.RaceListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalComposeUiApi::class)
-internal fun NavGraphBuilder.teamsRoute(
+internal fun NavGraphBuilder.racesRoute(
     tabReselected: MutableSharedFlow<NavigationRoutes>,
     coroutineScope: CoroutineScope,
     navController: NavHostController
 ) {
-    composable<NavigationRoutes.Teams>(
-        deepLinks = listOf(navDeepLink<NavigationRoutes.Teams>(NavigationRoutes.Teams.deepLink())),
+    composable<NavigationRoutes.Races>(
+        deepLinks = listOf(navDeepLink<NavigationRoutes.Races>(NavigationRoutes.Races.deepLink())),
     ) {
-        val teams: NavigationRoutes.Teams = it.toRoute()
+        val races: NavigationRoutes.Races = it.toRoute()
         val navigator = rememberListDetailPaneScaffoldNavigator(
             initialDestinationHistory = listOfNotNull(
                 ThreePaneScaffoldDestinationItem(
                     ListDetailPaneScaffoldRole.List
                 ),
-                teams.teamId?.let { teamId ->
+                races.raceId?.let { raceId ->
                     ThreePaneScaffoldDestinationItem(
                         ListDetailPaneScaffoldRole.Detail,
-                        teamId,
+                        raceId to races.stageId,
                     )
                 }
             ),
         )
-        val worldTeamsLazyGridState = rememberLazyGridState()
-        val proTeamsLazyGridState = rememberLazyGridState()
+        val listState = rememberLazyListState()
         LaunchedEffect(Unit) {
-            tabReselected.filterIsInstance<NavigationRoutes.Teams>().collect {
+            tabReselected.filterIsInstance<NavigationRoutes.Races>().collect {
                 if (navigator.canNavigateBack()) {
                     navigator.navigateBack()
                 } else {
                     coroutineScope.launch {
-                        worldTeamsLazyGridState.animateScrollToItem(0)
-                        proTeamsLazyGridState.animateScrollToItem(0)
+                        listState.animateScrollToItem(0)
                     }
                 }
             }
@@ -81,8 +78,7 @@ internal fun NavGraphBuilder.teamsRoute(
             navigator = navigator,
             coroutineScope = coroutineScope,
             navController = navController,
-            worldTeamsLazyGridState = worldTeamsLazyGridState,
-            proTeamsLazyGridState = proTeamsLazyGridState,
+            listState = listState,
         )
     }
 }
@@ -90,11 +86,10 @@ internal fun NavGraphBuilder.teamsRoute(
 @Composable
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private fun Scaffold(
-    navigator: ThreePaneScaffoldNavigator<String>,
+    navigator: ThreePaneScaffoldNavigator<Pair<String, String?>>,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    worldTeamsLazyGridState: LazyGridState,
-    proTeamsLazyGridState: LazyGridState,
+    listState: LazyListState,
 ) {
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -102,14 +97,21 @@ private fun Scaffold(
         value = navigator.scaffoldValue,
         listPane = {
             AnimatedPane {
-                TeamList(
-                    worldTeamsLazyGridState = worldTeamsLazyGridState,
-                    proTeamsLazyGridState = proTeamsLazyGridState,
-                    onTeamClick = { team ->
+                RaceList(
+                    listState = listState,
+                    onRaceClick = { race ->
                         coroutineScope.launch {
                             navigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
-                                team.id
+                                race.id to null,
+                            )
+                        }
+                    },
+                    onRaceStageClick = { race, stage ->
+                        coroutineScope.launch {
+                            navigator.navigateTo(
+                                ListDetailPaneScaffoldRole.Detail,
+                                race.id to stage.id,
                             )
                         }
                     },
@@ -118,59 +120,70 @@ private fun Scaffold(
         },
         detailPane = {
             AnimatedPane {
-                TeamDetails(
+                RaceDetails(
                     navigator = navigator,
-                    teamId = navigator.currentDestination?.contentKey ?: return@AnimatedPane,
+                    navController = navController,
+                    raceAndStageId = navigator.currentDestination?.contentKey
+                        ?: return@AnimatedPane,
                     onBackPressed = {
                         coroutineScope.launch {
                             navigator.navigateBack()
                         }
                     },
-                    onRiderSelected = { rider ->
-                        navController.navigate(NavigationRoutes.Riders(rider.id))
-                    },
                 )
             }
-        }
+        },
     )
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-private fun TeamDetails(
-    navigator: ThreePaneScaffoldNavigator<String>,
-    teamId: String,
+private fun RaceDetails(
+    navigator: ThreePaneScaffoldNavigator<Pair<String, String?>>,
+    navController: NavHostController,
+    raceAndStageId: Pair<String, String?>,
+    viewModel: RaceDetailsViewModel = viewModel(key = raceAndStageId.first) {
+        RaceDetailsViewModel(
+            raceId = raceAndStageId.first,
+            stageId = raceAndStageId.second,
+        )
+    },
     onBackPressed: () -> Unit,
-    onRiderSelected: (Rider) -> Unit,
-    viewModel: TeamDetailsViewModel = viewModel(key = teamId) { TeamDetailsViewModel(teamId = teamId) },
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-        ?: return
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return
     Surface(modifier = Modifier.fillMaxSize()) {
-        TeamDetailsScreen(
+        RaceDetailsScreen(
             uiState = uiState,
             backEnabled = navigator.canNavigateBack(),
             onBackPressed = onBackPressed,
-            onRiderSelected = onRiderSelected,
+            onRiderSelected = { rider ->
+                navController.navigate(NavigationRoutes.Riders(rider.id))
+            },
+            onTeamSelected = { team ->
+                navController.navigate(NavigationRoutes.Teams(team.id))
+            },
+            onResultsModeChanged = viewModel::onResultsModeChanged,
+            onClassificationTypeChanged = viewModel::onClassificationTypeChanged,
+            onStageSelected = viewModel::onStageSelected,
+            onParticipationsClicked = {},
         )
     }
 }
 
 @Composable
-private fun TeamList(
-    worldTeamsLazyGridState: LazyGridState,
-    proTeamsLazyGridState: LazyGridState,
-    viewModel: TeamListViewModel = viewModel { TeamListViewModel() },
-    onTeamClick: (Team) -> Unit,
+private fun RaceList(
+    listState: LazyListState,
+    onRaceClick: (Race) -> Unit,
+    onRaceStageClick: (Race, Stage) -> Unit,
+    viewModel: RaceListViewModel = viewModel { RaceListViewModel() },
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-        ?: return
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value ?: return
     Surface(modifier = Modifier.fillMaxSize()) {
-        TeamListScreen(
+        RaceListScreen(
             uiState = uiState,
-            worldTeamsLazyGridState = worldTeamsLazyGridState,
-            proTeamsLazyGridState = proTeamsLazyGridState,
-            onTeamClick = onTeamClick,
+            listState = listState,
+            onRaceClick = onRaceClick,
+            onRaceStageClick = onRaceStageClick,
             onRefresh = viewModel::refresh,
         )
     }

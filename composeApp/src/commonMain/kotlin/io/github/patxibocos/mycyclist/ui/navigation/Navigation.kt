@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.ui.scaffold
+package io.github.patxibocos.mycyclist.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -22,7 +22,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import io.github.patxibocos.mycyclist.ui.navigation.NavigationRoutes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
