@@ -1,9 +1,11 @@
 package io.github.patxibocos.mycyclist.ui.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -13,6 +15,7 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
@@ -117,18 +120,28 @@ private fun Scaffold(
         },
         detailPane = {
             AnimatedPane {
-                TeamDetails(
-                    navigator = navigator,
-                    teamId = navigator.currentDestination?.contentKey ?: return@AnimatedPane,
-                    onBackPressed = {
-                        coroutineScope.launch {
-                            navigator.navigateBack()
-                        }
-                    },
-                    onRiderSelected = { rider ->
-                        navController.navigate(NavigationRoutes.Riders(rider.id))
-                    },
-                )
+                val teamId = navigator.currentDestination?.contentKey
+                if (teamId == null) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text("No team selected")
+                    }
+                } else {
+                    TeamDetails(
+                        navigator = navigator,
+                        teamId = teamId,
+                        onBackPressed = {
+                            coroutineScope.launch {
+                                navigator.navigateBack()
+                            }
+                        },
+                        onRiderSelected = { rider ->
+                            navController.navigate(NavigationRoutes.Riders(rider.id))
+                        },
+                    )
+                }
             }
         }
     )

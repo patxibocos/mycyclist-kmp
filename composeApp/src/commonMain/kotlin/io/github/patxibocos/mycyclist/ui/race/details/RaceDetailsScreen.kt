@@ -17,7 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -82,7 +82,6 @@ internal fun RaceDetailsScreen(
             )
         } else {
             StagesList(
-                race = uiState.race,
                 stages = uiState.race.stages.toImmutableList(),
                 stagesResults = uiState.stagesResults,
                 currentStageIndex = uiState.currentStageIndex,
@@ -109,9 +108,9 @@ private fun ColumnScope.SingleStage(
     StageResults(results, onRiderSelected, onTeamSelected)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ColumnScope.StagesList(
-    race: Race,
     stages: ImmutableList<Stage>,
     stagesResults: ImmutableMap<Stage, RaceDetailsViewModel.Results>,
     currentStageIndex: Int,
@@ -123,14 +122,14 @@ private fun ColumnScope.StagesList(
     onClassificationTypeChanged: (RaceDetailsViewModel.ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
 ) {
-    val pagerState = key(race) {
+    val pagerState = key(stages, stagesResults) {
         rememberPagerState(
             initialPage = currentStageIndex,
             pageCount = { stages.size }
         )
     }
     val coroutineScope = rememberCoroutineScope()
-    ScrollableTabRow(
+    PrimaryScrollableTabRow(
         selectedTabIndex = pagerState.currentPage,
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface,
