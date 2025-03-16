@@ -15,7 +15,7 @@ plugins {
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -85,7 +85,7 @@ kotlin {
 
         pod("FirebaseCore")
         pod("FirebaseRemoteConfig")
-        pod("FirebaseMessaging")
+        pod("FirebaseMessaging", linkOnly = true)
 
         podfile = project.file("../iosApp/Podfile")
     }
@@ -116,9 +116,9 @@ android {
         // For AGP 4.1+
         isCoreLibraryDesugaringEnabled = true
 
-        // Sets Java compatibility to Java 8
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        // Sets Java compatibility to Java 11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
