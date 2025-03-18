@@ -124,7 +124,7 @@ private fun ColumnScope.StagesList(
     onClassificationTypeChanged: (RaceDetailsViewModel.ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
 ) {
-    val pagerState = key(stages, stagesResults) {
+    val pagerState = key(stages) {
         rememberPagerState(
             initialPage = currentStageIndex,
             pageCount = { stages.size }
