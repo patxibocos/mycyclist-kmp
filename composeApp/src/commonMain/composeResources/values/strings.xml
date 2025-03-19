@@ -2,4 +2,7 @@
     <string name="notifications_stage_results">%1$s is the winner of the stage #%2$d</string>
     <string name="notifications_race_results">%1$s is the winner</string>
     <string name="notifications_gc_results">%1$s is the leader on the general classification</string>
+    <string name="navigation_item_races">Races</string>
+    <string name="navigation_item_riders">Riders</string>
+    <string name="navigation_item_teams">Teams</string>
 </resources>

@@ -27,6 +27,11 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import mycyclist.composeapp.generated.resources.Res
+import mycyclist.composeapp.generated.resources.navigation_item_races
+import mycyclist.composeapp.generated.resources.navigation_item_riders
+import mycyclist.composeapp.generated.resources.navigation_item_teams
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun NavigationSuite(
@@ -42,19 +47,19 @@ internal fun NavigationSuite(
                 route = NavigationRoutes.Races(),
                 unselectedIcon = Icons.Outlined.Flag,
                 selectedIcon = Icons.Filled.Flag,
-                title = "Races"
+                titleResId = Res.string.navigation_item_races,
             ),
             TopLevelRoute(
                 route = NavigationRoutes.Riders(),
                 unselectedIcon = Icons.Outlined.Person,
                 selectedIcon = Icons.Filled.Person,
-                title = "Riders"
+                titleResId = Res.string.navigation_item_riders,
             ),
             TopLevelRoute(
                 route = NavigationRoutes.Teams(),
                 unselectedIcon = Icons.Outlined.Group,
                 selectedIcon = Icons.Filled.Group,
-                title = "Teams"
+                titleResId = Res.string.navigation_item_teams,
             ),
         ).toImmutableList()
     }
@@ -121,7 +126,7 @@ private fun NavigationSuiteScope.routes(
                 )
             },
             label = {
-                Text(text = route.title)
+                Text(text = stringResource(route.titleResId))
             }
         )
     }
