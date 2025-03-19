@@ -33,13 +33,13 @@ import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.race.list.RaceListScreen
 import io.github.patxibocos.mycyclist.ui.race.list.RaceListViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalComposeUiApi::class)
 internal fun NavGraphBuilder.racesRoute(
-    tabReselected: MutableSharedFlow<NavigationRoutes>,
+    tabReselected: SharedFlow<NavigationRoutes>,
     coroutineScope: CoroutineScope,
     navController: NavHostController
 ) {
