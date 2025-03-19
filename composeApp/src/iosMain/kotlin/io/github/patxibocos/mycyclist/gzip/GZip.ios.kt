@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.expect
+package io.github.patxibocos.mycyclist.gzip
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.UByteVar

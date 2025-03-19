@@ -2,7 +2,6 @@ package io.github.patxibocos.mycyclist.ui.race.details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -100,7 +99,7 @@ internal fun RaceDetailsScreen(
 }
 
 @Composable
-private fun ColumnScope.SingleStage(
+private fun SingleStage(
     stage: Stage,
     results: RaceDetailsViewModel.Results,
     onRiderSelected: (Rider) -> Unit,
@@ -112,7 +111,7 @@ private fun ColumnScope.SingleStage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ColumnScope.StagesList(
+private fun StagesList(
     stages: ImmutableList<Stage>,
     stagesResults: ImmutableMap<Stage, RaceDetailsViewModel.Results>,
     currentStageIndex: Int,

@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.expect
+package io.github.patxibocos.mycyclist.gzip
 
 import android.annotation.SuppressLint
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -26,5 +26,4 @@ internal class MyCyclistFirebaseMessagingService(
         }
         super.onMessageReceived(message)
     }
-
 }

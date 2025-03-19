@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.expect
+package io.github.patxibocos.mycyclist.gzip
 
 import java.io.ByteArrayInputStream
 import java.util.zip.GZIPInputStream

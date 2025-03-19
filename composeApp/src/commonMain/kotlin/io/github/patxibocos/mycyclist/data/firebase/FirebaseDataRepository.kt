@@ -10,7 +10,7 @@ import io.github.patxibocos.mycyclist.data.mapper.TeamMapper.toTeams
 import io.github.patxibocos.mycyclist.data.protobuf.CyclingDataDto
 import io.github.patxibocos.mycyclist.domain.CyclingData
 import io.github.patxibocos.mycyclist.domain.DataRepository
-import io.github.patxibocos.mycyclist.expect.unGZip
+import io.github.patxibocos.mycyclist.gzip.unGZip
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
