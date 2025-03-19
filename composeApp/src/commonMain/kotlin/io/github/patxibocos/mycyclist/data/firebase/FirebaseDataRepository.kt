@@ -11,10 +11,10 @@ import io.github.patxibocos.mycyclist.data.protobuf.CyclingDataDto
 import io.github.patxibocos.mycyclist.domain.CyclingData
 import io.github.patxibocos.mycyclist.domain.DataRepository
 import io.github.patxibocos.mycyclist.gzip.unGZip
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.isActive
@@ -34,13 +34,13 @@ internal class FirebaseDataRepository(
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
     private val refreshInterval: Duration = 1.hours,
+    private val mainScope: CoroutineScope = MainScope(),
 ) :
     DataRepository {
 
-    @OptIn(DelicateCoroutinesApi::class)
     @Suppress("TooGenericExceptionCaught")
     override fun initialize() {
-        GlobalScope.launch {
+        mainScope.launch {
             try {
                 // Emit the cached value if available
                 emitRemoteConfigValue()
