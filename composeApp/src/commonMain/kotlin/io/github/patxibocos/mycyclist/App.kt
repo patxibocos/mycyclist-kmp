@@ -15,10 +15,8 @@ import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
 import io.github.patxibocos.mycyclist.domain.firebaseMessaging
 import io.github.patxibocos.mycyclist.ui.navigation.NavigationSuite
 import io.github.patxibocos.mycyclist.ui.theme.AppTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 internal fun App(
     darkTheme: Boolean,
     dynamicColor: Boolean,
