@@ -32,7 +32,7 @@ internal fun StageInfo(stage: Stage) {
 
 @Composable
 internal fun StageResults(
-    results: RaceDetailsViewModel.Results,
+    stageResults: RaceDetailsViewModel.StageResults,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
 ) {
@@ -41,24 +41,24 @@ internal fun StageResults(
             .fillMaxHeight()
             .verticalScroll(rememberScrollState()),
     ) {
-        when (results) {
-            is RaceDetailsViewModel.Results.RidersPointResult -> RidersPointResult(
-                results,
+        when (stageResults) {
+            is RaceDetailsViewModel.StageResults.RidersPointResult -> RidersPointResult(
+                stageResults,
                 onRiderSelected
             )
 
-            is RaceDetailsViewModel.Results.RidersPointsPerPlaceResult -> RidersPointsPerPlaceResult(
-                results,
+            is RaceDetailsViewModel.StageResults.RidersPointsPerPlaceResult -> RidersPointsPerPlaceResult(
+                stageResults,
                 onRiderSelected,
             )
 
-            is RaceDetailsViewModel.Results.RidersTimeResult -> RidersTimeResult(
-                results,
+            is RaceDetailsViewModel.StageResults.RidersTimeResult -> RidersTimeResult(
+                stageResults,
                 onRiderSelected
             )
 
-            is RaceDetailsViewModel.Results.TeamsTimeResult -> TeamsTimeResult(
-                results,
+            is RaceDetailsViewModel.StageResults.TeamsTimeResult -> TeamsTimeResult(
+                stageResults,
                 onTeamSelected
             )
         }
@@ -67,10 +67,10 @@ internal fun StageResults(
 
 @Composable
 private fun RidersPointResult(
-    results: RaceDetailsViewModel.Results.RidersPointResult,
+    stageResults: RaceDetailsViewModel.StageResults.RidersPointResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
-    results.riders.forEach { (rider, position, points) ->
+    stageResults.riders.forEach { (rider, position, points) ->
         Text(
             text = "$position. ${rider.fullName()} - $points",
             modifier = Modifier
@@ -82,10 +82,10 @@ private fun RidersPointResult(
 
 @Composable
 private fun RidersPointsPerPlaceResult(
-    results: RaceDetailsViewModel.Results.RidersPointsPerPlaceResult,
+    stageResults: RaceDetailsViewModel.StageResults.RidersPointsPerPlaceResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
-    results.perPlaceResult.forEach { (place, riders) ->
+    stageResults.perPlaceResult.forEach { (place, riders) ->
         Text(text = "${place.name} - ${place.distance}")
         riders.forEach { (rider, position, points) ->
             Text(
@@ -101,14 +101,14 @@ private fun RidersPointsPerPlaceResult(
 
 @Composable
 private fun RidersTimeResult(
-    results: RaceDetailsViewModel.Results.RidersTimeResult,
+    stageResults: RaceDetailsViewModel.StageResults.RidersTimeResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
-    results.riders.forEachIndexed { i, (rider, position, time) ->
+    stageResults.riders.forEachIndexed { i, (rider, position, time) ->
         val duration = if (i == 0) {
             time.seconds.toString()
         } else {
-            "+${(time - results.riders.first().time).seconds}"
+            "+${(time - stageResults.riders.first().time).seconds}"
         }
         Text(
             text = "$position. ${rider.fullName()} - $duration",
@@ -121,14 +121,14 @@ private fun RidersTimeResult(
 
 @Composable
 private fun TeamsTimeResult(
-    results: RaceDetailsViewModel.Results.TeamsTimeResult,
+    stageResults: RaceDetailsViewModel.StageResults.TeamsTimeResult,
     onTeamSelected: (Team) -> Unit,
 ) {
-    results.teams.forEachIndexed { i, (team, position, time) ->
+    stageResults.teams.forEachIndexed { i, (team, position, time) ->
         val duration = if (i == 0) {
             time.seconds.toString()
         } else {
-            "+${(time - results.teams.first().time).seconds}"
+            "+${(time - stageResults.teams.first().time).seconds}"
         }
         Text(
             text = "$position. ${team.name} - $duration",

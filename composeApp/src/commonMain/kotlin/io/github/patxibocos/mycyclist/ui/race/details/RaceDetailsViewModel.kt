@@ -10,8 +10,6 @@ import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.StageType
 import io.github.patxibocos.mycyclist.domain.Team
 import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
-import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -35,20 +34,12 @@ internal class RaceDetailsViewModel(
         val currentStageIndex: Int,
         val resultsMode: ResultsMode,
         val classificationType: ClassificationType,
-        val stagesResults: ImmutableMap<Stage, Results>,
+        val stageResults: StageResults,
     )
 
     private val _stageIndex = MutableSharedFlow<Int>(replay = 1)
     private val _resultsMode = MutableSharedFlow<ResultsMode>(replay = 1)
     private val _classificationType = MutableSharedFlow<ClassificationType>(replay = 1)
-
-    private val _raceState = combine(
-        _stageIndex,
-        _resultsMode,
-        _classificationType,
-    ) { stageIndex, resultsMode, classificationType ->
-        Triple(stageIndex, resultsMode, classificationType)
-    }
 
     internal enum class ResultsMode {
         Stage,
@@ -63,12 +54,12 @@ internal class RaceDetailsViewModel(
         Teams,
     }
 
-    internal sealed interface Results {
-        data class TeamsTimeResult(val teams: List<TeamTimeResult>) : Results
-        data class RidersTimeResult(val riders: List<RiderTimeResult>) : Results
-        data class RidersPointResult(val riders: List<RiderPointsResult>) : Results
+    internal sealed interface StageResults {
+        data class TeamsTimeResult(val teams: List<TeamTimeResult>) : StageResults
+        data class RidersTimeResult(val riders: List<RiderTimeResult>) : StageResults
+        data class RidersPointResult(val riders: List<RiderPointsResult>) : StageResults
         data class RidersPointsPerPlaceResult(val perPlaceResult: Map<Place, List<RiderPointsResult>>) :
-            Results
+            StageResults
     }
 
     internal data class RiderTimeResult(val rider: Rider, val position: Int, val time: Long)
@@ -87,42 +78,47 @@ internal class RaceDetailsViewModel(
         val riders: List<Rider>,
     )
 
-    internal val uiState: StateFlow<UiState?> =
-        dataRepository.cyclingData.map { (races, teams, riders) ->
-            val race = withContext(defaultDispatcher) {
-                races.find { it.id == raceId }!!
-            }
-            emitInitialRaceState(race, stageId)
-            RaceWithTeamsAndRiders(
-                race = race,
-                teams = teams,
-                riders = riders,
-            )
+    private val raceFlow = dataRepository.cyclingData.map { (races, teams, riders) ->
+        val race = withContext(defaultDispatcher) {
+            races.find { it.id == raceId }!!
         }
-            .combine(_raceState) { raceWithTeamsAndRiders, (stageIndex, resultsMode, classificationType) ->
-                withContext(defaultDispatcher) {
-                    val stagesResults = raceWithTeamsAndRiders.race.stages.associateWith { stage ->
-                        stageResults(
-                            stage = stage,
-                            resultsMode = resultsMode,
-                            classificationType = classificationType,
-                            riders = raceWithTeamsAndRiders.riders,
-                            teams = raceWithTeamsAndRiders.teams,
-                        )
-                    }.toImmutableMap()
-                    UiState(
-                        race = raceWithTeamsAndRiders.race,
-                        currentStageIndex = stageIndex,
-                        resultsMode = resultsMode,
-                        classificationType = classificationType,
-                        stagesResults = stagesResults,
-                    )
-                }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = null,
-            )
+        emitInitialRaceState(race, stageId)
+        RaceWithTeamsAndRiders(
+            race = race,
+            teams = teams,
+            riders = riders,
+        )
+    }.take(1)
+
+    internal val uiState: StateFlow<UiState?> =
+        combine(
+            raceFlow,
+            _stageIndex,
+            _resultsMode,
+            _classificationType,
+        ) { raceWithTeamsAndRiders, stageIndex, resultsMode, classificationType ->
+            withContext(defaultDispatcher) {
+                val stage = raceWithTeamsAndRiders.race.stages[stageIndex]
+                val stageResults = stageResults(
+                    stage = stage,
+                    resultsMode = resultsMode,
+                    classificationType = classificationType,
+                    riders = raceWithTeamsAndRiders.riders,
+                    teams = raceWithTeamsAndRiders.teams,
+                )
+                UiState(
+                    race = raceWithTeamsAndRiders.race,
+                    currentStageIndex = stageIndex,
+                    resultsMode = resultsMode,
+                    classificationType = classificationType,
+                    stageResults = stageResults,
+                )
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null,
+        )
 
     private fun emitInitialRaceState(race: Race, stageId: String?) {
         val stageIndex: Int
@@ -171,7 +167,7 @@ internal class RaceDetailsViewModel(
         classificationType: ClassificationType,
         riders: List<Rider>,
         teams: List<Team>,
-    ): Results =
+    ): StageResults =
         when (classificationType) {
             ClassificationType.Time -> timeResults(resultsMode, stage, teams, riders)
             ClassificationType.Points -> pointsResults(resultsMode, stage, riders)
@@ -184,8 +180,8 @@ internal class RaceDetailsViewModel(
         resultsMode: ResultsMode,
         stage: Stage,
         teams: List<Team>
-    ): Results.TeamsTimeResult = when (resultsMode) {
-        ResultsMode.Stage -> Results.TeamsTimeResult(
+    ): StageResults.TeamsTimeResult = when (resultsMode) {
+        ResultsMode.Stage -> StageResults.TeamsTimeResult(
             stage.stageResults.teams.map { participantResult ->
                 TeamTimeResult(
                     teams.find { it.id == participantResult.participantId }!!,
@@ -195,7 +191,7 @@ internal class RaceDetailsViewModel(
             },
         )
 
-        ResultsMode.General -> Results.TeamsTimeResult(
+        ResultsMode.General -> StageResults.TeamsTimeResult(
             stage.generalResults.teams.map { participantResult ->
                 TeamTimeResult(
                     teams.find { it.id == participantResult.participantId }!!,
@@ -210,8 +206,8 @@ internal class RaceDetailsViewModel(
         resultsMode: ResultsMode,
         stage: Stage,
         riders: List<Rider>
-    ): Results.RidersTimeResult = when (resultsMode) {
-        ResultsMode.Stage -> Results.RidersTimeResult(
+    ): StageResults.RidersTimeResult = when (resultsMode) {
+        ResultsMode.Stage -> StageResults.RidersTimeResult(
             stage.stageResults.youth.map { participantResult ->
                 RiderTimeResult(
                     riders.find { it.id == participantResult.participantId }!!,
@@ -221,7 +217,7 @@ internal class RaceDetailsViewModel(
             },
         )
 
-        ResultsMode.General -> Results.RidersTimeResult(
+        ResultsMode.General -> StageResults.RidersTimeResult(
             stage.generalResults.youth.map { participantResult ->
                 RiderTimeResult(
                     riders.find { it.id == participantResult.participantId }!!,
@@ -236,8 +232,8 @@ internal class RaceDetailsViewModel(
         resultsMode: ResultsMode,
         stage: Stage,
         riders: List<Rider>
-    ): Results = when (resultsMode) {
-        ResultsMode.Stage -> Results.RidersPointsPerPlaceResult(
+    ): StageResults = when (resultsMode) {
+        ResultsMode.Stage -> StageResults.RidersPointsPerPlaceResult(
             stage.stageResults.kom.associate {
                 it.place to it.points.map { riderResult ->
                     RiderPointsResult(
@@ -249,7 +245,7 @@ internal class RaceDetailsViewModel(
             },
         )
 
-        ResultsMode.General -> Results.RidersPointResult(
+        ResultsMode.General -> StageResults.RidersPointResult(
             stage.generalResults.kom.map { participantResult ->
                 RiderPointsResult(
                     riders.find { it.id == participantResult.participant }!!,
@@ -265,9 +261,9 @@ internal class RaceDetailsViewModel(
         stage: Stage,
         teams: List<Team>,
         riders: List<Rider>
-    ): Results = when (resultsMode) {
+    ): StageResults = when (resultsMode) {
         ResultsMode.Stage -> when (stage.stageType) {
-            StageType.TEAM_TIME_TRIAL -> Results.TeamsTimeResult(
+            StageType.TEAM_TIME_TRIAL -> StageResults.TeamsTimeResult(
                 stage.stageResults.time.map { participantResult ->
                     TeamTimeResult(
                         teams.find { it.id == participantResult.participantId }!!,
@@ -277,7 +273,7 @@ internal class RaceDetailsViewModel(
                 },
             )
 
-            else -> Results.RidersTimeResult(
+            else -> StageResults.RidersTimeResult(
                 stage.stageResults.time.map { participantResult ->
                     RiderTimeResult(
                         riders.find { it.id == participantResult.participantId }!!,
@@ -288,7 +284,7 @@ internal class RaceDetailsViewModel(
             )
         }
 
-        ResultsMode.General -> Results.RidersTimeResult(
+        ResultsMode.General -> StageResults.RidersTimeResult(
             stage.generalResults.time.map { participantResult ->
                 RiderTimeResult(
                     riders.find { it.id == participantResult.participantId }!!,
@@ -303,8 +299,8 @@ internal class RaceDetailsViewModel(
         resultsMode: ResultsMode,
         stage: Stage,
         riders: List<Rider>
-    ): Results = when (resultsMode) {
-        ResultsMode.Stage -> Results.RidersPointsPerPlaceResult(
+    ): StageResults = when (resultsMode) {
+        ResultsMode.Stage -> StageResults.RidersPointsPerPlaceResult(
             stage.stageResults.points.associate {
                 it.place to it.points.map { riderResult ->
                     RiderPointsResult(
@@ -316,7 +312,7 @@ internal class RaceDetailsViewModel(
             },
         )
 
-        ResultsMode.General -> Results.RidersPointResult(
+        ResultsMode.General -> StageResults.RidersPointResult(
             stage.generalResults.points.map { participantResult ->
                 RiderPointsResult(
                     riders.find { it.id == participantResult.participant }!!,

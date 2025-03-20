@@ -35,7 +35,6 @@ import io.github.patxibocos.mycyclist.domain.Rider
 import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.Team
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
@@ -77,14 +76,14 @@ internal fun RaceDetailsScreen(
             val stage = uiState.race.stages.first()
             SingleStage(
                 stage,
-                uiState.stagesResults[stage]!!,
+                uiState.stageResults,
                 onRiderSelected,
                 onTeamSelected,
             )
         } else {
             StagesList(
                 stages = uiState.race.stages.toImmutableList(),
-                stagesResults = uiState.stagesResults,
+                stageResults = uiState.stageResults,
                 currentStageIndex = uiState.currentStageIndex,
                 resultsMode = uiState.resultsMode,
                 classificationType = uiState.classificationType,
@@ -101,19 +100,19 @@ internal fun RaceDetailsScreen(
 @Composable
 private fun SingleStage(
     stage: Stage,
-    results: RaceDetailsViewModel.Results,
+    stageResults: RaceDetailsViewModel.StageResults,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
 ) {
     StageInfo(stage)
-    StageResults(results, onRiderSelected, onTeamSelected)
+    StageResults(stageResults, onRiderSelected, onTeamSelected)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StagesList(
     stages: ImmutableList<Stage>,
-    stagesResults: ImmutableMap<Stage, RaceDetailsViewModel.Results>,
+    stageResults: RaceDetailsViewModel.StageResults,
     currentStageIndex: Int,
     resultsMode: RaceDetailsViewModel.ResultsMode,
     classificationType: RaceDetailsViewModel.ClassificationType,
@@ -159,7 +158,7 @@ private fun StagesList(
         val stage = stages[page]
         Stage(
             stage = stage,
-            stageResults = stagesResults[stage]!!,
+            stageResults = stageResults,
             resultsMode = resultsMode,
             classificationType = classificationType,
             onResultsModeChanged = onResultsModeChanged,
@@ -173,7 +172,7 @@ private fun StagesList(
 @Composable
 private fun Stage(
     stage: Stage,
-    stageResults: RaceDetailsViewModel.Results,
+    stageResults: RaceDetailsViewModel.StageResults,
     resultsMode: RaceDetailsViewModel.ResultsMode,
     classificationType: RaceDetailsViewModel.ClassificationType,
     onResultsModeChanged: (RaceDetailsViewModel.ResultsMode) -> Unit,
