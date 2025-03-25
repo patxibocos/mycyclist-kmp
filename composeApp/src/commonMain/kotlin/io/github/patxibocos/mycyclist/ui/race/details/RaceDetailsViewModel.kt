@@ -34,7 +34,7 @@ internal class RaceDetailsViewModel(
         val currentStageIndex: Int,
         val resultsMode: ResultsMode,
         val classificationType: ClassificationType,
-        val stageResults: StageResults,
+        val stagesResults: StagesResults,
     )
 
     private val _stageIndex = MutableSharedFlow<Int>(replay = 1)
@@ -53,6 +53,8 @@ internal class RaceDetailsViewModel(
         Youth,
         Teams,
     }
+
+    data class StagesResults(val results: List<Pair<Stage, StageResults>>)
 
     internal sealed interface StageResults {
         data class TeamsTimeResult(val teams: List<TeamTimeResult>) : StageResults
@@ -98,9 +100,8 @@ internal class RaceDetailsViewModel(
             _classificationType,
         ) { raceWithTeamsAndRiders, stageIndex, resultsMode, classificationType ->
             withContext(defaultDispatcher) {
-                val stage = raceWithTeamsAndRiders.race.stages[stageIndex]
-                val stageResults = stageResults(
-                    stage = stage,
+                val stagesResults = stagesResults(
+                    stages = raceWithTeamsAndRiders.race.stages,
                     resultsMode = resultsMode,
                     classificationType = classificationType,
                     riders = raceWithTeamsAndRiders.riders,
@@ -111,7 +112,7 @@ internal class RaceDetailsViewModel(
                     currentStageIndex = stageIndex,
                     resultsMode = resultsMode,
                     classificationType = classificationType,
-                    stageResults = stageResults,
+                    stagesResults = stagesResults,
                 )
             }
         }.stateIn(
@@ -161,20 +162,24 @@ internal class RaceDetailsViewModel(
         _classificationType.tryEmit(ClassificationType.Time)
     }
 
-    private fun stageResults(
-        stage: Stage,
+    private fun stagesResults(
+        stages: List<Stage>,
         resultsMode: ResultsMode,
         classificationType: ClassificationType,
         riders: List<Rider>,
         teams: List<Team>,
-    ): StageResults =
-        when (classificationType) {
-            ClassificationType.Time -> timeResults(resultsMode, stage, teams, riders)
-            ClassificationType.Points -> pointsResults(resultsMode, stage, riders)
-            ClassificationType.Kom -> komResults(resultsMode, stage, riders)
-            ClassificationType.Youth -> youthResults(resultsMode, stage, riders)
-            ClassificationType.Teams -> teamsResults(resultsMode, stage, teams)
-        }
+    ): StagesResults =
+        StagesResults(
+            results = stages.map { stage ->
+                stage to when (classificationType) {
+                    ClassificationType.Time -> timeResults(resultsMode, stage, teams, riders)
+                    ClassificationType.Points -> pointsResults(resultsMode, stage, riders)
+                    ClassificationType.Kom -> komResults(resultsMode, stage, riders)
+                    ClassificationType.Youth -> youthResults(resultsMode, stage, riders)
+                    ClassificationType.Teams -> teamsResults(resultsMode, stage, teams)
+                }
+            }
+        )
 
     private fun teamsResults(
         resultsMode: ResultsMode,

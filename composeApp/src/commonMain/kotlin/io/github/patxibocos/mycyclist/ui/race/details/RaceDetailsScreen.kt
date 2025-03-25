@@ -76,14 +76,14 @@ internal fun RaceDetailsScreen(
             val stage = uiState.race.stages.first()
             SingleStage(
                 stage,
-                uiState.stageResults,
+                uiState.stagesResults.results.first().second,
                 onRiderSelected,
                 onTeamSelected,
             )
         } else {
             StagesList(
                 stages = uiState.race.stages.toImmutableList(),
-                stageResults = uiState.stageResults,
+                stagesResults = uiState.stagesResults,
                 currentStageIndex = uiState.currentStageIndex,
                 resultsMode = uiState.resultsMode,
                 classificationType = uiState.classificationType,
@@ -112,7 +112,7 @@ private fun SingleStage(
 @Composable
 private fun StagesList(
     stages: ImmutableList<Stage>,
-    stageResults: RaceDetailsViewModel.StageResults,
+    stagesResults: RaceDetailsViewModel.StagesResults,
     currentStageIndex: Int,
     resultsMode: RaceDetailsViewModel.ResultsMode,
     classificationType: RaceDetailsViewModel.ClassificationType,
@@ -158,7 +158,7 @@ private fun StagesList(
         val stage = stages[page]
         Stage(
             stage = stage,
-            stageResults = stageResults,
+            stageResults = stagesResults.results[page].second,
             resultsMode = resultsMode,
             classificationType = classificationType,
             onResultsModeChanged = onResultsModeChanged,
