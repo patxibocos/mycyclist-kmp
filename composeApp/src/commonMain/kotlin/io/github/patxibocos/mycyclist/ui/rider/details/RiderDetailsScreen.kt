@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.Race
 import io.github.patxibocos.mycyclist.domain.Rider
+import io.github.patxibocos.mycyclist.domain.RiderResult
 import io.github.patxibocos.mycyclist.domain.Stage
 import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.ui.rider.details.RiderDetailsViewModel.Result
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,20 +91,20 @@ internal fun RiderDetailsScreen(
 
 @Composable
 private fun RiderResults(
-    results: ImmutableList<Result>,
+    results: ImmutableList<RiderResult>,
     onRaceSelected: (Race) -> Unit,
     onStageSelected: (Race, Stage) -> Unit
 ) {
     results.forEach { lastResult ->
         when (lastResult) {
-            is Result.RaceResult -> Text(
+            is RiderResult.RaceResult -> Text(
                 text = "${lastResult.position} on ${lastResult.race.name}",
                 modifier = Modifier.clickable {
                     onRaceSelected(lastResult.race)
                 },
             )
 
-            is Result.StageResult -> Text(
+            is RiderResult.StageResult -> Text(
                 text = "${lastResult.position} on stage ${lastResult.stageNumber} of ${lastResult.race.name}",
                 modifier = Modifier.clickable {
                     onStageSelected(lastResult.race, lastResult.stage)
