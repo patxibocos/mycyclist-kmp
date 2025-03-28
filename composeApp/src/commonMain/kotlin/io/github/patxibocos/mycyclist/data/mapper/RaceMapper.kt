@@ -8,18 +8,18 @@ import io.github.patxibocos.mycyclist.data.protobuf.RaceDto
 import io.github.patxibocos.mycyclist.data.protobuf.RiderParticipationDto
 import io.github.patxibocos.mycyclist.data.protobuf.StageDto
 import io.github.patxibocos.mycyclist.data.protobuf.TeamParticipationDto
-import io.github.patxibocos.mycyclist.domain.GeneralResults
-import io.github.patxibocos.mycyclist.domain.ParticipantResultPoints
-import io.github.patxibocos.mycyclist.domain.ParticipantResultTime
-import io.github.patxibocos.mycyclist.domain.Place
-import io.github.patxibocos.mycyclist.domain.PlaceResult
-import io.github.patxibocos.mycyclist.domain.ProfileType
-import io.github.patxibocos.mycyclist.domain.Race
-import io.github.patxibocos.mycyclist.domain.RiderParticipation
-import io.github.patxibocos.mycyclist.domain.Stage
-import io.github.patxibocos.mycyclist.domain.StageResults
-import io.github.patxibocos.mycyclist.domain.StageType
-import io.github.patxibocos.mycyclist.domain.TeamParticipation
+import io.github.patxibocos.mycyclist.domain.entity.GeneralResults
+import io.github.patxibocos.mycyclist.domain.entity.ParticipantResultPoints
+import io.github.patxibocos.mycyclist.domain.entity.ParticipantResultTime
+import io.github.patxibocos.mycyclist.domain.entity.Place
+import io.github.patxibocos.mycyclist.domain.entity.PlaceResult
+import io.github.patxibocos.mycyclist.domain.entity.ProfileType
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import io.github.patxibocos.mycyclist.domain.entity.RiderParticipation
+import io.github.patxibocos.mycyclist.domain.entity.Stage
+import io.github.patxibocos.mycyclist.domain.entity.StageResults
+import io.github.patxibocos.mycyclist.domain.entity.StageType
+import io.github.patxibocos.mycyclist.domain.entity.TeamParticipation
 import kotlinx.datetime.Instant
 
 internal object RaceMapper {

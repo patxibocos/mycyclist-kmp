@@ -1,5 +1,7 @@
-package io.github.patxibocos.mycyclist.domain
+package io.github.patxibocos.mycyclist.domain.usecase
 
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -7,6 +9,14 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.coroutines.CoroutineContext
+
+internal data class RiderParticipations(
+    val pastParticipations: ImmutableList<Participation>,
+    val currentParticipation: Participation?,
+    val futureParticipations: ImmutableList<Participation>,
+)
+
+internal data class Participation(val race: Race, val number: Int)
 
 internal class ListRiderParticipations(
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,

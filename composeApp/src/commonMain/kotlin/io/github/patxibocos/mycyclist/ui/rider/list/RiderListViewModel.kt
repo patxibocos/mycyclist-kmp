@@ -2,10 +2,10 @@ package io.github.patxibocos.mycyclist.ui.rider.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.patxibocos.mycyclist.domain.DataRepository
-import io.github.patxibocos.mycyclist.domain.Rider
-import io.github.patxibocos.mycyclist.domain.SearchRiders
-import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.entity.Rider
+import io.github.patxibocos.mycyclist.domain.repository.DataRepository
+import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.usecase.SearchRiders
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.UiState.Riders
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap

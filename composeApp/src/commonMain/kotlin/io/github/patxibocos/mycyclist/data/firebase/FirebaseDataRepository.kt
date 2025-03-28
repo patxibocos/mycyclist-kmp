@@ -9,8 +9,8 @@ import io.github.patxibocos.mycyclist.data.mapper.RaceMapper.toRaces
 import io.github.patxibocos.mycyclist.data.mapper.RiderMapper.toRiders
 import io.github.patxibocos.mycyclist.data.mapper.TeamMapper.toTeams
 import io.github.patxibocos.mycyclist.data.protobuf.CyclingDataDto
-import io.github.patxibocos.mycyclist.domain.CyclingData
-import io.github.patxibocos.mycyclist.domain.DataRepository
+import io.github.patxibocos.mycyclist.domain.entity.CyclingData
+import io.github.patxibocos.mycyclist.domain.repository.DataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

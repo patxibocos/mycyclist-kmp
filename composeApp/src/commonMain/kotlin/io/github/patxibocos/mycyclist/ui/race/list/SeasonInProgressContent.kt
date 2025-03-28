@@ -12,8 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.patxibocos.mycyclist.domain.Race
-import io.github.patxibocos.mycyclist.domain.Stage
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import io.github.patxibocos.mycyclist.domain.entity.Stage
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone

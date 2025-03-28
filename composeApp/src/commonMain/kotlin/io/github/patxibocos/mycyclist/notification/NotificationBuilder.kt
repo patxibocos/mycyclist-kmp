@@ -1,10 +1,10 @@
 package io.github.patxibocos.mycyclist.notification
 
-import io.github.patxibocos.mycyclist.domain.DataRepository
-import io.github.patxibocos.mycyclist.domain.Race
-import io.github.patxibocos.mycyclist.domain.Stage
-import io.github.patxibocos.mycyclist.domain.StageType
-import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import io.github.patxibocos.mycyclist.domain.entity.Stage
+import io.github.patxibocos.mycyclist.domain.entity.StageType
+import io.github.patxibocos.mycyclist.domain.repository.DataRepository
+import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
 import kotlinx.coroutines.flow.first
 import mycyclist.composeapp.generated.resources.Res
 import mycyclist.composeapp.generated.resources.notifications_gc_results

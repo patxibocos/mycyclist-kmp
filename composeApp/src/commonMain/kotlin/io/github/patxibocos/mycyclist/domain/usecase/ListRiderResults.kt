@@ -1,10 +1,25 @@
-package io.github.patxibocos.mycyclist.domain
+package io.github.patxibocos.mycyclist.domain.usecase
 
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import io.github.patxibocos.mycyclist.domain.entity.Stage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
+
+internal sealed class RiderResult(open val race: Race, open val position: Int) {
+
+    data class RaceResult(override val race: Race, override val position: Int) :
+        RiderResult(race, position)
+
+    data class StageResult(
+        override val race: Race,
+        val stage: Stage,
+        val stageNumber: Int,
+        override val position: Int,
+    ) : RiderResult(race, position)
+}
 
 internal class ListRiderResults(
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,

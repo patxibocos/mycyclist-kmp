@@ -23,11 +23,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.github.patxibocos.mycyclist.domain.Race
-import io.github.patxibocos.mycyclist.domain.Rider
-import io.github.patxibocos.mycyclist.domain.RiderResult
-import io.github.patxibocos.mycyclist.domain.Stage
-import io.github.patxibocos.mycyclist.domain.Team
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import io.github.patxibocos.mycyclist.domain.entity.Rider
+import io.github.patxibocos.mycyclist.domain.entity.Stage
+import io.github.patxibocos.mycyclist.domain.entity.Team
+import io.github.patxibocos.mycyclist.domain.usecase.RiderResult
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)

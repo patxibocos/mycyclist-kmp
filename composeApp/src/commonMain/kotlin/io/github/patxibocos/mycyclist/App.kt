@@ -11,8 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
-import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
-import io.github.patxibocos.mycyclist.domain.firebaseMessaging
+import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.firebaseMessaging
 import io.github.patxibocos.mycyclist.ui.navigation.NavigationSuite
 import io.github.patxibocos.mycyclist.ui.theme.AppTheme
 

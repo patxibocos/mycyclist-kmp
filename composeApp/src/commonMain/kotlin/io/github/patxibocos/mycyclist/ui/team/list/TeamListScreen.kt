@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.github.patxibocos.mycyclist.domain.Team
+import io.github.patxibocos.mycyclist.domain.entity.Team
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch

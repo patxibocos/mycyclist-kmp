@@ -2,13 +2,13 @@ package io.github.patxibocos.mycyclist.ui.race.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.patxibocos.mycyclist.domain.DataRepository
-import io.github.patxibocos.mycyclist.domain.Race
-import io.github.patxibocos.mycyclist.domain.Rider
-import io.github.patxibocos.mycyclist.domain.Stage
-import io.github.patxibocos.mycyclist.domain.StageType
-import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.domain.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.entity.Race
+import io.github.patxibocos.mycyclist.domain.entity.Rider
+import io.github.patxibocos.mycyclist.domain.entity.Stage
+import io.github.patxibocos.mycyclist.domain.entity.StageType
+import io.github.patxibocos.mycyclist.domain.entity.Team
+import io.github.patxibocos.mycyclist.domain.repository.DataRepository
+import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers

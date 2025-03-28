@@ -26,8 +26,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import io.github.patxibocos.mycyclist.domain.Rider
-import io.github.patxibocos.mycyclist.domain.Team
+import io.github.patxibocos.mycyclist.domain.entity.Rider
+import io.github.patxibocos.mycyclist.domain.entity.Team
 import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsScreen
 import io.github.patxibocos.mycyclist.ui.team.details.TeamDetailsViewModel
 import io.github.patxibocos.mycyclist.ui.team.list.TeamListScreen

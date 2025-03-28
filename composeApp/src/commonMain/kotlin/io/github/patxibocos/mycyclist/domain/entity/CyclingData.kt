@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.domain
+package io.github.patxibocos.mycyclist.domain.entity
 
 internal data class CyclingData(
     val races: List<Race>,

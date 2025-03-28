@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.github.patxibocos.mycyclist.domain.Rider
+import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 

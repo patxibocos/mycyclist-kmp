@@ -1,5 +1,6 @@
-package io.github.patxibocos.mycyclist.domain
+package io.github.patxibocos.mycyclist.domain.usecase
 
+import io.github.patxibocos.mycyclist.domain.entity.Rider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext

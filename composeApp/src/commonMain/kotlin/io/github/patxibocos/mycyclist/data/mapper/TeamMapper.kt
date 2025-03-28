@@ -1,8 +1,8 @@
 package io.github.patxibocos.mycyclist.data.mapper
 
 import io.github.patxibocos.mycyclist.data.protobuf.TeamDto
-import io.github.patxibocos.mycyclist.domain.Team
-import io.github.patxibocos.mycyclist.domain.TeamStatus
+import io.github.patxibocos.mycyclist.domain.entity.Team
+import io.github.patxibocos.mycyclist.domain.entity.TeamStatus
 
 internal object TeamMapper {
 

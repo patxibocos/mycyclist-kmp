@@ -1,7 +1,8 @@
-package io.github.patxibocos.mycyclist.domain
+package io.github.patxibocos.mycyclist.domain.repository
 
 import io.github.patxibocos.mycyclist.data.firebase.FirebaseDataRepository
 import io.github.patxibocos.mycyclist.data.firebase.FirebaseMessaging
+import io.github.patxibocos.mycyclist.domain.entity.CyclingData
 import kotlinx.coroutines.flow.Flow
 
 internal interface DataRepository {

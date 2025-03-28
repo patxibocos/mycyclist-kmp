@@ -1,7 +1,7 @@
 package io.github.patxibocos.mycyclist.data.mapper
 
 import io.github.patxibocos.mycyclist.data.protobuf.RiderDto
-import io.github.patxibocos.mycyclist.domain.Rider
+import io.github.patxibocos.mycyclist.domain.entity.Rider
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
