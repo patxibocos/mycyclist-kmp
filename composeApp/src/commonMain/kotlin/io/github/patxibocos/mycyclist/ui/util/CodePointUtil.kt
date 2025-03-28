@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.util
+package io.github.patxibocos.mycyclist.ui.util
 
 internal object CodePointUtil {
 

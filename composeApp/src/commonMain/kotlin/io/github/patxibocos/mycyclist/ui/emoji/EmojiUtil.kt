@@ -1,6 +1,6 @@
 package io.github.patxibocos.mycyclist.ui.emoji
 
-import io.github.patxibocos.mycyclist.util.CodePointUtil
+import io.github.patxibocos.mycyclist.ui.util.CodePointUtil
 
 internal object EmojiUtil {
 

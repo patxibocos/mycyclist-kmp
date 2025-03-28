@@ -5,7 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.github.patxibocos.mycyclist.domain.repository.DataRepository
 import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
-import io.github.patxibocos.mycyclist.notification.NotificationBuilder
+import io.github.patxibocos.mycyclist.ui.notification.NotificationBuilder
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

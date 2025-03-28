@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.notification
+package io.github.patxibocos.mycyclist.ui.notification
 
 import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Stage
