@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.gzip
+package io.github.patxibocos.mycyclist.data.gzip
 
 import java.io.ByteArrayInputStream
 import java.util.zip.GZIPInputStream

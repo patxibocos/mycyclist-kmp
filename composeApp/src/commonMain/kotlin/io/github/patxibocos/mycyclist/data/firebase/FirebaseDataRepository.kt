@@ -4,13 +4,13 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.remoteconfig.FirebaseRemoteConfig
 import dev.gitlive.firebase.remoteconfig.FirebaseRemoteConfigException
 import dev.gitlive.firebase.remoteconfig.remoteConfig
+import io.github.patxibocos.mycyclist.data.gzip.unGZip
 import io.github.patxibocos.mycyclist.data.mapper.RaceMapper.toRaces
 import io.github.patxibocos.mycyclist.data.mapper.RiderMapper.toRiders
 import io.github.patxibocos.mycyclist.data.mapper.TeamMapper.toTeams
 import io.github.patxibocos.mycyclist.data.protobuf.CyclingDataDto
 import io.github.patxibocos.mycyclist.domain.CyclingData
 import io.github.patxibocos.mycyclist.domain.DataRepository
-import io.github.patxibocos.mycyclist.gzip.unGZip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

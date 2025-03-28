@@ -1,4 +1,4 @@
-package io.github.patxibocos.mycyclist.gzip
+package io.github.patxibocos.mycyclist.data.gzip
 
 import android.annotation.SuppressLint
 import com.google.firebase.messaging.FirebaseMessagingService
