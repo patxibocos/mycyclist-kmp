@@ -34,6 +34,10 @@ import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.Team
+import io.github.patxibocos.mycyclist.domain.usecase.ClassificationType
+import io.github.patxibocos.mycyclist.domain.usecase.ResultsMode
+import io.github.patxibocos.mycyclist.domain.usecase.StageResult
+import io.github.patxibocos.mycyclist.domain.usecase.StageResults
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -46,8 +50,8 @@ internal fun RaceDetailsScreen(
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
-    onResultsModeChanged: (RaceDetailsViewModel.ResultsMode) -> Unit,
-    onClassificationTypeChanged: (RaceDetailsViewModel.ClassificationType) -> Unit,
+    onResultsModeChanged: (ResultsMode) -> Unit,
+    onClassificationTypeChanged: (ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
     onParticipationsClicked: (Race) -> Unit,
 ) {
@@ -75,10 +79,10 @@ internal fun RaceDetailsScreen(
         if (uiState.race.stages.size == 1) {
             val stage = uiState.race.stages.first()
             SingleStage(
-                stage,
-                uiState.stagesResults.results.first().second,
-                onRiderSelected,
-                onTeamSelected,
+                stage = stage,
+                stageResults = uiState.stagesResults.first().second,
+                onRiderSelected = onRiderSelected,
+                onTeamSelected = onTeamSelected,
             )
         } else {
             StagesList(
@@ -100,7 +104,7 @@ internal fun RaceDetailsScreen(
 @Composable
 private fun SingleStage(
     stage: Stage,
-    stageResults: RaceDetailsViewModel.StageResults,
+    stageResults: StageResults,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
 ) {
@@ -112,14 +116,14 @@ private fun SingleStage(
 @Composable
 private fun StagesList(
     stages: ImmutableList<Stage>,
-    stagesResults: RaceDetailsViewModel.StagesResults,
+    stagesResults: ImmutableList<StageResult>,
     currentStageIndex: Int,
-    resultsMode: RaceDetailsViewModel.ResultsMode,
-    classificationType: RaceDetailsViewModel.ClassificationType,
+    resultsMode: ResultsMode,
+    classificationType: ClassificationType,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
-    onResultsModeChanged: (RaceDetailsViewModel.ResultsMode) -> Unit,
-    onClassificationTypeChanged: (RaceDetailsViewModel.ClassificationType) -> Unit,
+    onResultsModeChanged: (ResultsMode) -> Unit,
+    onClassificationTypeChanged: (ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
 ) {
     val pagerState = key(stages) {
@@ -158,7 +162,7 @@ private fun StagesList(
         val stage = stages[page]
         Stage(
             stage = stage,
-            stageResults = stagesResults.results[page].second,
+            stageResults = stagesResults[page].second,
             resultsMode = resultsMode,
             classificationType = classificationType,
             onResultsModeChanged = onResultsModeChanged,
@@ -172,11 +176,11 @@ private fun StagesList(
 @Composable
 private fun Stage(
     stage: Stage,
-    stageResults: RaceDetailsViewModel.StageResults,
-    resultsMode: RaceDetailsViewModel.ResultsMode,
-    classificationType: RaceDetailsViewModel.ClassificationType,
-    onResultsModeChanged: (RaceDetailsViewModel.ResultsMode) -> Unit,
-    onClassificationTypeChanged: (RaceDetailsViewModel.ClassificationType) -> Unit,
+    stageResults: StageResults,
+    resultsMode: ResultsMode,
+    classificationType: ClassificationType,
+    onResultsModeChanged: (ResultsMode) -> Unit,
+    onClassificationTypeChanged: (ClassificationType) -> Unit,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
 ) {
@@ -184,22 +188,22 @@ private fun Stage(
         StageInfo(stage)
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             ElevatedFilterChip(
-                selected = resultsMode == RaceDetailsViewModel.ResultsMode.Stage,
-                onClick = { onResultsModeChanged(RaceDetailsViewModel.ResultsMode.Stage) },
+                selected = resultsMode == ResultsMode.Stage,
+                onClick = { onResultsModeChanged(ResultsMode.Stage) },
                 label = {
-                    Text(text = RaceDetailsViewModel.ResultsMode.Stage.toString())
+                    Text(text = ResultsMode.Stage.toString())
                 },
             )
             ElevatedFilterChip(
-                selected = resultsMode == RaceDetailsViewModel.ResultsMode.General,
-                onClick = { onResultsModeChanged(RaceDetailsViewModel.ResultsMode.General) },
+                selected = resultsMode == ResultsMode.General,
+                onClick = { onResultsModeChanged(ResultsMode.General) },
                 label = {
-                    Text(text = RaceDetailsViewModel.ResultsMode.General.toString())
+                    Text(text = ResultsMode.General.toString())
                 },
             )
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            RaceDetailsViewModel.ClassificationType.entries.forEach {
+            ClassificationType.entries.forEach {
                 ElevatedFilterChip(
                     selected = classificationType == it,
                     onClick = { onClassificationTypeChanged(it) },

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.Team
+import io.github.patxibocos.mycyclist.domain.usecase.StageResults
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -32,7 +33,7 @@ internal fun StageInfo(stage: Stage) {
 
 @Composable
 internal fun StageResults(
-    stageResults: RaceDetailsViewModel.StageResults,
+    stageResults: StageResults,
     onRiderSelected: (Rider) -> Unit,
     onTeamSelected: (Team) -> Unit,
 ) {
@@ -42,22 +43,22 @@ internal fun StageResults(
             .verticalScroll(rememberScrollState()),
     ) {
         when (stageResults) {
-            is RaceDetailsViewModel.StageResults.RidersPointResult -> RidersPointResult(
+            is StageResults.RidersPointResult -> RidersPointResult(
                 stageResults,
                 onRiderSelected
             )
 
-            is RaceDetailsViewModel.StageResults.RidersPointsPerPlaceResult -> RidersPointsPerPlaceResult(
+            is StageResults.RidersPointsPerPlaceResult -> RidersPointsPerPlaceResult(
                 stageResults,
                 onRiderSelected,
             )
 
-            is RaceDetailsViewModel.StageResults.RidersTimeResult -> RidersTimeResult(
+            is StageResults.RidersTimeResult -> RidersTimeResult(
                 stageResults,
                 onRiderSelected
             )
 
-            is RaceDetailsViewModel.StageResults.TeamsTimeResult -> TeamsTimeResult(
+            is StageResults.TeamsTimeResult -> TeamsTimeResult(
                 stageResults,
                 onTeamSelected
             )
@@ -67,7 +68,7 @@ internal fun StageResults(
 
 @Composable
 private fun RidersPointResult(
-    stageResults: RaceDetailsViewModel.StageResults.RidersPointResult,
+    stageResults: StageResults.RidersPointResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
     stageResults.riders.forEach { (rider, position, points) ->
@@ -82,7 +83,7 @@ private fun RidersPointResult(
 
 @Composable
 private fun RidersPointsPerPlaceResult(
-    stageResults: RaceDetailsViewModel.StageResults.RidersPointsPerPlaceResult,
+    stageResults: StageResults.RidersPointsPerPlaceResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
     stageResults.perPlaceResult.forEach { (place, riders) ->
@@ -101,7 +102,7 @@ private fun RidersPointsPerPlaceResult(
 
 @Composable
 private fun RidersTimeResult(
-    stageResults: RaceDetailsViewModel.StageResults.RidersTimeResult,
+    stageResults: StageResults.RidersTimeResult,
     onRiderSelected: (Rider) -> Unit,
 ) {
     stageResults.riders.forEachIndexed { i, (rider, position, time) ->
@@ -121,7 +122,7 @@ private fun RidersTimeResult(
 
 @Composable
 private fun TeamsTimeResult(
-    stageResults: RaceDetailsViewModel.StageResults.TeamsTimeResult,
+    stageResults: StageResults.TeamsTimeResult,
     onTeamSelected: (Team) -> Unit,
 ) {
     stageResults.teams.forEachIndexed { i, (team, position, time) ->
