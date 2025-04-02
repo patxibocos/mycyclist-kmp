@@ -6,7 +6,6 @@ import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.StageType
 import io.github.patxibocos.mycyclist.domain.entity.Team
-import io.github.patxibocos.mycyclist.ui.race.details.RaceDetailsViewModel.RiderPointsResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +25,12 @@ internal sealed interface StageResults {
 internal data class RiderTimeResult(val rider: Rider, val position: Int, val time: Long)
 
 internal data class TeamTimeResult(val team: Team, val position: Int, val time: Long)
+
+internal data class RiderPointsResult(
+    val rider: Rider,
+    val position: Int,
+    val points: Int,
+)
 
 internal enum class ClassificationType {
     Time,

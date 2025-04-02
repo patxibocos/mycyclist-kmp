@@ -44,12 +44,6 @@ internal class RaceDetailsViewModel(
     private val _resultsMode = MutableSharedFlow<ResultsMode>(replay = 1)
     private val _classificationType = MutableSharedFlow<ClassificationType>(replay = 1)
 
-    internal data class RiderPointsResult(
-        val rider: Rider,
-        val position: Int,
-        val points: Int,
-    )
-
     internal data class RaceWithTeamsAndRiders(
         val race: Race,
         val teams: List<Team>,

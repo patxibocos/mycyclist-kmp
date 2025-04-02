@@ -98,7 +98,7 @@ android {
     defaultConfig {
         applicationId = "io.github.patxibocos.mycyclist"
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdkPreview = libs.versions.android.targetSdk.get()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
     }
