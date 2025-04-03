@@ -41,7 +41,7 @@ internal fun NavigationSuite(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val routes = remember {
+    val topLevelRoutes = remember {
         listOf(
             TopLevelRoute(
                 route = NavigationRoutes.Races(),
@@ -67,7 +67,7 @@ internal fun NavigationSuite(
     NavigationScaffold(
         modifier = modifier.fillMaxSize(),
         navController = navController,
-        routes = routes,
+        topLevelRoutes = topLevelRoutes,
         currentDestination = currentDestination,
     )
 }
@@ -75,17 +75,25 @@ internal fun NavigationSuite(
 @Composable
 private fun NavigationScaffold(
     navController: NavHostController,
-    routes: ImmutableList<TopLevelRoute>,
+    topLevelRoutes: ImmutableList<TopLevelRoute>,
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    val tabReselected =
-        remember { MutableSharedFlow<NavigationRoutes>() }
+    val tabReselected = remember { MutableSharedFlow<NavigationRoutes>() }
 
     val coroutineScope = rememberCoroutineScope()
-    NavigationSuiteScaffold(modifier = modifier.fillMaxSize(), navigationSuiteItems = {
-        routes(routes, currentDestination, navController, coroutineScope, tabReselected)
-    }) {
+    NavigationSuiteScaffold(
+        modifier = modifier.fillMaxSize(),
+        navigationSuiteItems = {
+            routes(
+                topLevelRoutes = topLevelRoutes,
+                currentDestination = currentDestination,
+                navController = navController,
+                coroutineScope = coroutineScope,
+                tabReselected = tabReselected,
+            )
+        }
+    ) {
         NavHost(
             navController = navController,
             startDestination = NavigationRoutes.Races(),
@@ -98,13 +106,13 @@ private fun NavigationScaffold(
 }
 
 private fun NavigationSuiteScope.routes(
-    routes: List<TopLevelRoute>,
+    topLevelRoutes: List<TopLevelRoute>,
     currentDestination: NavDestination?,
     navController: NavHostController,
     coroutineScope: CoroutineScope,
     tabReselected: MutableSharedFlow<NavigationRoutes>
 ) {
-    routes.forEach { route ->
+    topLevelRoutes.forEach { route ->
         val isRouteSelected = currentDestination?.hasRoute(route.route::class) == true
         item(
             selected = isRouteSelected,
@@ -112,6 +120,11 @@ private fun NavigationSuiteScope.routes(
                 if (!isRouteSelected) {
                     navController.navigate(route.route) {
                         launchSingleTop = true
+                        restoreState = true
+                        popUpTo(currentDestination?.route.toString()) {
+                            saveState = true
+                            inclusive = true
+                        }
                     }
                 } else {
                     coroutineScope.launch {
