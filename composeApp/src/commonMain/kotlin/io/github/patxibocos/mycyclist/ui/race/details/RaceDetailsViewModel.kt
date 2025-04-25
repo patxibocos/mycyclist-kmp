@@ -13,7 +13,7 @@ import io.github.patxibocos.mycyclist.domain.usecase.ResultsMode
 import io.github.patxibocos.mycyclist.domain.usecase.StageResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -40,9 +40,9 @@ internal class RaceDetailsViewModel(
         val stagesResults: ImmutableList<StageResult>,
     )
 
-    private val _stageIndex = MutableSharedFlow<Int>(replay = 1)
-    private val _resultsMode = MutableSharedFlow<ResultsMode>(replay = 1)
-    private val _classificationType = MutableSharedFlow<ClassificationType>(replay = 1)
+    private val _stageIndex = MutableStateFlow(0)
+    private val _resultsMode = MutableStateFlow(ResultsMode.Stage)
+    private val _classificationType = MutableStateFlow(ClassificationType.Time)
 
     internal data class RaceWithTeamsAndRiders(
         val race: Race,
@@ -127,20 +127,19 @@ internal class RaceDetailsViewModel(
                 }
             }
         }
-        _stageIndex.tryEmit(stageIndex)
-        _resultsMode.tryEmit(resultsMode)
-        _classificationType.tryEmit(ClassificationType.Time)
+        _stageIndex.value = stageIndex
+        _resultsMode.value = resultsMode
     }
 
     internal fun onStageSelected(stageIndex: Int) {
-        _stageIndex.tryEmit(stageIndex)
+        _stageIndex.value = stageIndex
     }
 
     internal fun onResultsModeChanged(resultsMode: ResultsMode) {
-        _resultsMode.tryEmit(resultsMode)
+        _resultsMode.value = resultsMode
     }
 
     internal fun onClassificationTypeChanged(classificationType: ClassificationType) {
-        _classificationType.tryEmit(classificationType)
+        _classificationType.value = classificationType
     }
 }
