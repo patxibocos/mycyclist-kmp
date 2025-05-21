@@ -81,7 +81,7 @@ kotlin {
             isStatic = false
         }
 
-        ios.deploymentTarget = "18.0"
+        ios.deploymentTarget = "17.0"
 
         pod("FirebaseCore", linkOnly = true)
         pod("FirebaseRemoteConfig", linkOnly = true)
