@@ -15,5 +15,8 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - name: Pod install
+        run: ./gradlew podInstall
+
       - name: Build iOS app
         run: xcodebuild -workspace iosApp/iosApp.xcworkspace -scheme iosApp -configuration Debug -sdk iphonesimulator
