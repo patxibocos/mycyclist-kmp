@@ -9,7 +9,6 @@ Pod::Spec.new do |spec|
     spec.vendored_frameworks      = 'build/cocoapods/framework/composeApp.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '18.0'
-    spec.dependency 'FirebaseCore'
     spec.dependency 'FirebaseMessaging'
     spec.dependency 'FirebaseRemoteConfig'
                 

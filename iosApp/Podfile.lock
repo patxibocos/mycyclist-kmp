@@ -1,6 +1,5 @@
 PODS:
   - composeApp (1.0):
-    - FirebaseCore
     - FirebaseMessaging
     - FirebaseRemoteConfig
   - FirebaseABTesting (11.4.0):
@@ -92,7 +91,7 @@ EXTERNAL SOURCES:
     :path: "../composeApp"
 
 SPEC CHECKSUMS:
-  composeApp: 719d20f61cc4832b27b1cb2252e1d24290c675e5
+  composeApp: 1778a37a738cb947d627fb4992615332ca59e50c
   FirebaseABTesting: aef1719704fade00b200827e7973f352efc4caee
   FirebaseCore: 6b32c57269bd999aab34354c3923d92a6e5f3f84
   FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238

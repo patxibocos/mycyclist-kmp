@@ -14,7 +14,7 @@ desugar-jdk = "2.1.5"
 detekt = "1.23.8"
 firebase = "2.1.0"
 google-services = "4.4.2"
-kotlin = "2.1.21"
+kotlin = "2.2.0-RC"
 kotlinx-collections-immutable = "0.4.0"
 kotlinx-serialization-protobuf = "1.8.1"
 ktor = "3.1.3"
@@ -31,7 +31,6 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil-network-ktor" }
 compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "compose-ui-backhandler" }
 desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk" }
-firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase" }
 firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
 firebase-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebase" }
 kotlin-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
