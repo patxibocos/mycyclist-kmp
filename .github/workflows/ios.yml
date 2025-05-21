@@ -15,8 +15,20 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Pod install
-        run: ./gradlew podInstall
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod repo update
+
+      - name: Install Pods
+        working-directory: iosApp
+        run: pod install
 
       - name: Build iOS app
-        run: xcodebuild -workspace iosApp/iosApp.xcworkspace -scheme iosApp -configuration Debug -sdk iphonesimulator
+        run: |
+          xcodebuild \
+            -workspace iosApp/iosApp.xcworkspace \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
+            clean build
