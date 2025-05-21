@@ -53,6 +53,7 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
+            implementation(libs.firebase.common)
             implementation(libs.firebase.config)
             implementation(libs.firebase.messaging)
             implementation(libs.kotlin.serialization.protobuf)
@@ -82,6 +83,7 @@ kotlin {
 
         ios.deploymentTarget = "18.0"
 
+        pod("FirebaseCore", linkOnly = true)
         pod("FirebaseRemoteConfig", linkOnly = true)
         pod("FirebaseMessaging", linkOnly = true)
 
