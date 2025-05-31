@@ -129,6 +129,7 @@ internal class RaceDetailsViewModel(
         }
         _stageIndex.value = stageIndex
         _resultsMode.value = resultsMode
+        _classificationType.value = ClassificationType.Time
     }
 
     internal fun onStageSelected(stageIndex: Int) {
