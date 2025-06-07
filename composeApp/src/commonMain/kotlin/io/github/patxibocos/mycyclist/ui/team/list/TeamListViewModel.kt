@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.patxibocos.mycyclist.domain.entity.Team
 import io.github.patxibocos.mycyclist.domain.entity.TeamStatus
-import io.github.patxibocos.mycyclist.domain.repository.DataRepository
-import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.CyclingDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.cyclingDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
 internal class TeamListViewModel(
-    private val dataRepository: DataRepository = firebaseDataRepository,
+    private val dataRepository: CyclingDataRepository = cyclingDataRepository,
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default
 ) : ViewModel() {
 

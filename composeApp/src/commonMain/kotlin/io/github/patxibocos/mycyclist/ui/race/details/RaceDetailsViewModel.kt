@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Team
-import io.github.patxibocos.mycyclist.domain.repository.DataRepository
-import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.CyclingDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.cyclingDataRepository
 import io.github.patxibocos.mycyclist.domain.usecase.ClassificationType
 import io.github.patxibocos.mycyclist.domain.usecase.RaceResults
 import io.github.patxibocos.mycyclist.domain.usecase.ResultsMode
@@ -26,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 internal class RaceDetailsViewModel(
     private val raceId: String,
     private val stageId: String?,
-    dataRepository: DataRepository = firebaseDataRepository,
+    dataRepository: CyclingDataRepository = cyclingDataRepository,
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
     private val raceResults: RaceResults = RaceResults(),
 ) :

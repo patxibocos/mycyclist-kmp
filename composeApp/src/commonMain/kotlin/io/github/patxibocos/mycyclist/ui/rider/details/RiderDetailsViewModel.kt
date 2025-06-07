@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Team
-import io.github.patxibocos.mycyclist.domain.repository.DataRepository
-import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.CyclingDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.cyclingDataRepository
 import io.github.patxibocos.mycyclist.domain.usecase.ListRiderParticipations
 import io.github.patxibocos.mycyclist.domain.usecase.ListRiderResults
 import io.github.patxibocos.mycyclist.domain.usecase.Participation
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 internal class RiderDetailsViewModel(
-    dataRepository: DataRepository = firebaseDataRepository,
+    dataRepository: CyclingDataRepository = cyclingDataRepository,
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
     listRiderParticipations: ListRiderParticipations = ListRiderParticipations(),
     listRiderResults: ListRiderResults = ListRiderResults(),
