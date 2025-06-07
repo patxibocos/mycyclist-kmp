@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.jetbrains.compose.hot.reload)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -30,7 +32,17 @@ kotlin {
         }
     }
 
+    jvm("desktop")
+
+    composeCompiler {
+        // Note: This optimization is not required, but will lead to a better user experience.
+        // It is expected that the feature will be enabled by default in future versions of the compiler.
+        // https://github.com/JetBrains/compose-hot-reload?tab=readme-ov-file#optimization-enable-optimizenonskippinggroups-not-required
+        featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
+    }
+
     sourceSets {
+        val desktopMain by getting
 
         androidMain.dependencies {
             implementation(compose.preview)
@@ -65,6 +77,11 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlin.coroutines.swing)
+            implementation(libs.ktor.client.java)
         }
     }
 

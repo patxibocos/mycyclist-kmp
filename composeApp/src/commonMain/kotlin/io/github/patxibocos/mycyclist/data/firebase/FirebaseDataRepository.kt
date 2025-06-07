@@ -10,7 +10,7 @@ import io.github.patxibocos.mycyclist.data.mapper.RiderMapper.toRiders
 import io.github.patxibocos.mycyclist.data.mapper.TeamMapper.toTeams
 import io.github.patxibocos.mycyclist.data.protobuf.CyclingDataDto
 import io.github.patxibocos.mycyclist.domain.entity.CyclingData
-import io.github.patxibocos.mycyclist.domain.repository.DataRepository
+import io.github.patxibocos.mycyclist.domain.repository.CyclingDataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -36,7 +36,7 @@ internal class FirebaseDataRepository(
     private val refreshInterval: Duration = 1.hours,
     private val mainScope: CoroutineScope = MainScope(),
 ) :
-    DataRepository {
+    CyclingDataRepository {
 
     @Suppress("TooGenericExceptionCaught")
     override fun initialize() {

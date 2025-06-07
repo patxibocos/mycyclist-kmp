@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -126,11 +126,16 @@ private fun StagesList(
     onClassificationTypeChanged: (ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
 ) {
-    val pagerState = key(stages) {
-        rememberPagerState(
-            initialPage = currentStageIndex,
+    val pagerState = remember(stages) {
+        PagerState(
+            currentPage = currentStageIndex,
             pageCount = { stages.size }
         )
+    }
+    LaunchedEffect(currentStageIndex) {
+        if (pagerState.currentPage != currentStageIndex) {
+            pagerState.scrollToPage(currentStageIndex)
+        }
     }
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->

@@ -7,8 +7,8 @@ import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.StageType
 import io.github.patxibocos.mycyclist.domain.entity.Team
-import io.github.patxibocos.mycyclist.domain.repository.DataRepository
-import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.CyclingDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.cyclingDataRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +28,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
 internal class RaceListViewModel(
-    private val dataRepository: DataRepository = firebaseDataRepository,
+    private val dataRepository: CyclingDataRepository = cyclingDataRepository,
     private val defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
     ViewModel() {
@@ -85,7 +85,10 @@ internal class RaceListViewModel(
     }
 
     internal val uiState: StateFlow<UiState?> =
-        combine(dataRepository.cyclingData, _refreshing) { (races, teams, riders), refreshing ->
+        combine(
+            this@RaceListViewModel.dataRepository.cyclingData,
+            _refreshing
+        ) { (races, teams, riders), refreshing ->
             withContext(defaultDispatcher) {
                 val minStartDate = races.first().startDate()
                 val maxEndDate = races.last().endDate()
@@ -142,7 +145,7 @@ internal class RaceListViewModel(
         viewModelScope.launch {
             _refreshing.value = true
             val refreshTime = measureTime {
-                dataRepository.refresh()
+                this@RaceListViewModel.dataRepository.refresh()
             }
             // Show loading at least for a second
             delay(1.seconds.minus(refreshTime))

@@ -3,8 +3,8 @@ package io.github.patxibocos.mycyclist.ui.rider.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.patxibocos.mycyclist.domain.entity.Rider
-import io.github.patxibocos.mycyclist.domain.repository.DataRepository
-import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.CyclingDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.cyclingDataRepository
 import io.github.patxibocos.mycyclist.domain.usecase.SearchRiders
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.UiState.Riders
 import kotlinx.collections.immutable.ImmutableList
@@ -25,7 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
 internal class RiderListViewModel(
-    private val dataRepository: DataRepository = firebaseDataRepository,
+    private val dataRepository: CyclingDataRepository = cyclingDataRepository,
     searchRiders: SearchRiders = SearchRiders(),
     defaultDispatcher: CoroutineContext = Dispatchers.Default,
 ) :
@@ -59,7 +59,7 @@ internal class RiderListViewModel(
 
     internal val uiState =
         combine(
-            dataRepository.cyclingData,
+            this@RiderListViewModel.dataRepository.cyclingData,
             _search,
             _sorting,
             _refreshing,
@@ -101,7 +101,7 @@ internal class RiderListViewModel(
         viewModelScope.launch {
             _refreshing.value = true
             val refreshTime = measureTime {
-                dataRepository.refresh()
+                this@RiderListViewModel.dataRepository.refresh()
             }
             // Show loading at least for a second
             delay(1.seconds.minus(refreshTime))

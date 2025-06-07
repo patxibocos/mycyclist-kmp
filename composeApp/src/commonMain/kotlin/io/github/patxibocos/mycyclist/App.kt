@@ -11,8 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
-import io.github.patxibocos.mycyclist.domain.repository.firebaseDataRepository
-import io.github.patxibocos.mycyclist.domain.repository.firebaseMessaging
+import io.github.patxibocos.mycyclist.domain.repository.cyclingDataRepository
+import io.github.patxibocos.mycyclist.domain.repository.messagingRepository
 import io.github.patxibocos.mycyclist.ui.navigation.NavigationSuite
 import io.github.patxibocos.mycyclist.ui.theme.AppTheme
 
@@ -28,8 +28,8 @@ internal fun App(
         setSingletonImageLoaderFactory { context ->
             ImageLoader.Builder(context).crossfade(true).build()
         }
-        firebaseDataRepository.initialize()
-        firebaseMessaging.initialize()
+        cyclingDataRepository.initialize()
+        messagingRepository.initialize()
 
         val navController by rememberUpdatedState(rememberNavController())
         Scaffold { paddingValues ->
