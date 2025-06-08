@@ -11,7 +11,7 @@ internal interface CyclingDataRepository {
 }
 
 internal interface MessagingRepository {
-    fun initialize()
+    fun initialize() {}
 }
 
 internal expect val cyclingDataRepository: CyclingDataRepository
