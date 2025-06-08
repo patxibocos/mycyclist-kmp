@@ -14,6 +14,7 @@ compose-ui-backhandler = "1.8.1"
 desugar-jdk = "2.1.5"
 detekt = "1.23.8"
 firebase = "2.1.0"
+google-auth = "1.37.0"
 google-services = "4.4.2"
 kotlin = "2.2.0-RC2"
 kotlinx-collections-immutable = "0.4.0"
@@ -37,14 +38,17 @@ desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "de
 firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase" }
 firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
 firebase-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebase" }
+google-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-auth" }
 kotlin-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlin-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization-protobuf" }
 ktlint-detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "material3-adaptive" }
 material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "material3-adaptive" }
 material3-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "material3-adaptive" }

@@ -80,8 +80,11 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.google.oauth2.http)
             implementation(libs.kotlin.coroutines.swing)
+            implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.java)
+            implementation(libs.ktor.serialization.json)
         }
     }
 
