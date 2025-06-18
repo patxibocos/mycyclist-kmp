@@ -64,7 +64,6 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            implementation(libs.ktor.client.core)
             implementation(libs.firebase.common)
             implementation(libs.firebase.config)
             implementation(libs.firebase.messaging)

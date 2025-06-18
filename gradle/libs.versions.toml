@@ -44,7 +44,6 @@ kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-s
 kotlin-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization-protobuf" }
 ktlint-detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
