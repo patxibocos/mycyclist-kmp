@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.jetbrains.compose) apply false
+    alias(libs.plugins.jetbrains.compose.hot.reload) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.serialization) apply false
 }
