@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,6 +46,7 @@ import kotlinx.coroutines.launch
 internal fun TopBar(
     topBarState: RiderListViewModel.TopBarState,
     focusManager: FocusManager,
+    scrollBehavior: TopAppBarScrollBehavior,
     onSortingSelected: (Sorting) -> Unit,
     onSearched: (String) -> Unit,
     onToggled: () -> Unit,
@@ -102,6 +104,7 @@ internal fun TopBar(
                 )
             }
         },
+        scrollBehavior = scrollBehavior,
     )
 }
 
