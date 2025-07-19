@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,7 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -41,6 +40,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -53,14 +53,14 @@ import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 internal fun RiderListScreen(
     uiState: RiderListViewModel.UiState,
     topBarState: RiderListViewModel.TopBarState,
+    listState: LazyListState,
+    scrollBehavior: TopAppBarScrollBehavior,
     onRiderClick: (Rider) -> Unit,
     onRiderSearched: (String) -> Unit,
     onToggled: () -> Unit,
     onSortingSelected: (Sorting) -> Unit,
     onRefresh: () -> Unit,
-    listState: LazyListState = rememberLazyListState(),
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     PullToRefreshBox(
         isRefreshing = uiState.refreshing,
         onRefresh = onRefresh,
@@ -159,13 +159,18 @@ private fun RiderRow(
             )
             Spacer(modifier = Modifier.size(10.dp))
             Column(
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier.fillMaxHeight().weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Text(
+                        text = EmojiUtil.getCountryEmoji(rider.country),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                     Text(
                         text = "${rider.lastName.uppercase()} ${rider.firstName}",
                         style = MaterialTheme.typography.bodyLarge,
@@ -174,14 +179,7 @@ private fun RiderRow(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    rider.uciRankingPosition?.let { position ->
-                        UciRankingBadge(position = position)
-                    }
                 }
-                RiderDemographics(
-                    country = rider.country,
-                    birthPlace = rider.birthPlace,
-                )
                 val age = remember(rider) { rider.age() }
                 if (rider.height != null || rider.weight != null || age != null) {
                     RiderPersonalInfo(
@@ -190,6 +188,9 @@ private fun RiderRow(
                         weight = rider.weight,
                     )
                 }
+            }
+            rider.uciRankingPosition?.let { position ->
+                UciRankingBadge(position = position)
             }
         }
     }
@@ -202,7 +203,7 @@ private fun UciRankingBadge(
 ) {
     Text(
         text = "#$position",
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.inverseOnSurface,
         fontWeight = FontWeight.Bold,
         modifier = modifier.background(
@@ -213,76 +214,79 @@ private fun UciRankingBadge(
 }
 
 @Composable
-private fun RiderDemographics(
-    country: String,
-    birthPlace: String?,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = EmojiUtil.getCountryEmoji(country),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            modifier = Modifier.clip(RoundedCornerShape(5.dp))
-                .background(MaterialTheme.colorScheme.background, RoundedCornerShape(5.dp))
-                .padding(horizontal = 5.dp),
-            text = country,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        birthPlace?.let {
-            Text(
-                text = birthPlace,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+private fun RiderPersonalInfo(age: Int?, height: Int?, weight: Int?) {
+    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        if (age != null) {
+            RiderAge(age = age)
+        }
+        if (height != null) {
+            RiderHeight(height = height)
+        }
+        if (weight != null) {
+            RiderWeight(weight = weight)
         }
     }
 }
 
 @Composable
-private fun RiderPersonalInfo(
-    age: Int?,
-    height: Int?,
-    weight: Int?,
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        age?.let {
-            Icon(
-                Icons.Default.Cake,
-                contentDescription = null,
-                modifier = Modifier.size(15.dp)
-            )
-            Spacer(modifier = Modifier.size(5.dp))
-            Text(
-                text = "$it years",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
-        height?.let { height ->
-            Spacer(modifier = Modifier.size(10.dp))
-            Icon(
-                Icons.Default.Straighten,
-                contentDescription = null,
-                modifier = Modifier.size(15.dp).rotate(degrees = 90f)
-            )
-            Spacer(modifier = Modifier.size(5.dp))
-            Text(text = "$height cm")
-        }
-        weight?.let { weight ->
-            Spacer(modifier = Modifier.size(10.dp))
-            Icon(
-                Icons.Default.Scale,
-                contentDescription = null,
-                modifier = Modifier.size(15.dp)
-            )
-            Spacer(modifier = Modifier.size(5.dp))
-            Text(text = "$weight kg")
-        }
+private fun RiderAge(age: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.Bottom) {
+        Icon(
+            Icons.Default.Cake,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "${age}y",
+            style = MaterialTheme.typography.labelLarge.copy(
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.Both
+                ),
+            ),
+            color = MaterialTheme.colorScheme.secondary,
+        )
+    }
+}
+
+@Composable
+private fun RiderHeight(height: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.Bottom) {
+        Icon(
+            Icons.Default.Straighten,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp).rotate(degrees = 90f)
+        )
+        Text(
+            text = "${height}cm",
+            style = MaterialTheme.typography.labelLarge.copy(
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.Both
+                ),
+            ),
+            color = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
+
+@Composable
+private fun RiderWeight(weight: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.Bottom) {
+        Icon(
+            Icons.Default.Scale,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "${weight}kg",
+            style = MaterialTheme.typography.labelLarge.copy(
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.Both
+                ),
+            ),
+            color = MaterialTheme.colorScheme.secondary
+        )
     }
 }

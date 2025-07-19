@@ -1,11 +1,16 @@
 package io.github.patxibocos.mycyclist.ui.navigation
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -40,7 +45,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalComposeUiApi::class,
+    ExperimentalMaterial3Api::class
+)
 internal fun NavGraphBuilder.ridersRoute(
     tabReselected: SharedFlow<NavigationRoutes>,
     coroutineScope: CoroutineScope,
@@ -64,6 +73,7 @@ internal fun NavGraphBuilder.ridersRoute(
             ),
         )
         val listState = rememberLazyListState()
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         LaunchedEffect(Unit) {
             tabReselected.filterIsInstance<NavigationRoutes.Riders>().collect {
                 if (navigator.canNavigateBack()) {
@@ -71,6 +81,13 @@ internal fun NavGraphBuilder.ridersRoute(
                 } else {
                     coroutineScope.launch {
                         listState.animateScrollToItem(0)
+                        val animatable = Animatable(scrollBehavior.state.heightOffset)
+                        animatable.animateTo(
+                            targetValue = 0f,
+                            animationSpec = tween(durationMillis = 300)
+                        ) {
+                            scrollBehavior.state.heightOffset = value
+                        }
                     }
                 }
             }
@@ -85,17 +102,19 @@ internal fun NavGraphBuilder.ridersRoute(
             coroutineScope = coroutineScope,
             navController = navController,
             listState = listState,
+            scrollBehavior = scrollBehavior,
         )
     }
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<String>,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
     listState: LazyListState,
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -105,6 +124,7 @@ private fun Scaffold(
             AnimatedPane {
                 RiderList(
                     listState = listState,
+                    scrollBehavior = scrollBehavior,
                     onRiderClick = { rider ->
                         coroutineScope.launch {
                             navigator.navigateTo(
@@ -123,9 +143,7 @@ private fun Scaffold(
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
-                    ) {
-                        Text("No rider selected")
-                    }
+                    ) { Text("No rider selected") }
                 } else {
                     RiderDetails(
                         navigator = navigator,
@@ -180,9 +198,11 @@ private fun RiderDetails(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RiderList(
     listState: LazyListState,
+    scrollBehavior: TopAppBarScrollBehavior,
     onRiderClick: (Rider) -> Unit,
     viewModel: RiderListViewModel = viewModel { RiderListViewModel() },
 ) {
@@ -194,6 +214,7 @@ private fun RiderList(
             uiState = uiState,
             topBarState = topBarState,
             listState = listState,
+            scrollBehavior = scrollBehavior,
             onRiderClick = onRiderClick,
             onRiderSearched = viewModel::onSearched,
             onToggled = viewModel::onToggled,
