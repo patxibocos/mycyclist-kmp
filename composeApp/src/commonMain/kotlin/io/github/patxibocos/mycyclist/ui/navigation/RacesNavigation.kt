@@ -15,6 +15,10 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -94,6 +98,7 @@ private fun Scaffold(
     navController: NavHostController,
     listState: LazyListState,
 ) {
+    var lastValidRaceId by remember { mutableStateOf<Pair<String, String?>?>(null) }
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
         directive = navigator.scaffoldDirective,
@@ -123,7 +128,13 @@ private fun Scaffold(
         },
         detailPane = {
             AnimatedPane {
-                val raceId = navigator.currentDestination?.contentKey
+                val currentRaceId = navigator.currentDestination?.contentKey
+                LaunchedEffect(currentRaceId) {
+                    if (currentRaceId != null) {
+                        lastValidRaceId = currentRaceId
+                    }
+                }
+                val raceId = currentRaceId ?: lastValidRaceId
                 if (raceId == null) {
                     Box(
                         modifier = Modifier.fillMaxSize(),

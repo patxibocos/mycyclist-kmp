@@ -1,5 +1,4 @@
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -34,13 +33,6 @@ kotlin {
 
     jvm("desktop")
 
-    composeCompiler {
-        // Note: This optimization is not required, but will lead to a better user experience.
-        // It is expected that the feature will be enabled by default in future versions of the compiler.
-        // https://github.com/JetBrains/compose-hot-reload?tab=readme-ov-file#optimization-enable-optimizenonskippinggroups-not-required
-        featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
-    }
-
     sourceSets {
         val desktopMain by getting
 
@@ -50,6 +42,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
+            implementation(compose.components.uiToolingPreview)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3AdaptiveNavigationSuite)

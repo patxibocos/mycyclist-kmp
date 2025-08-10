@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,7 +40,11 @@ internal fun RaceListScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), state = listState) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            state = listState
+        ) {
             when (val content = uiState.content) {
                 RaceListViewModel.Content.EmptyViewState -> {
                     item { Text(text = "Empty") }
