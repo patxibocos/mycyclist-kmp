@@ -15,6 +15,10 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -98,6 +102,7 @@ private fun Scaffold(
     worldTeamsLazyGridState: LazyGridState,
     proTeamsLazyGridState: LazyGridState,
 ) {
+    var lastValidTeamId by remember { mutableStateOf<String?>(null) }
     ListDetailPaneScaffold(
         modifier = Modifier.fillMaxSize(),
         directive = navigator.scaffoldDirective,
@@ -120,7 +125,13 @@ private fun Scaffold(
         },
         detailPane = {
             AnimatedPane {
-                val teamId = navigator.currentDestination?.contentKey
+                val currentTeamId = navigator.currentDestination?.contentKey
+                LaunchedEffect(currentTeamId) {
+                    if (currentTeamId != null) {
+                        lastValidTeamId = currentTeamId
+                    }
+                }
+                val teamId = currentTeamId ?: lastValidTeamId
                 if (teamId == null) {
                     Box(
                         modifier = Modifier.fillMaxSize(),

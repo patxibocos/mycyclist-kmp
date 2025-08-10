@@ -1,7 +1,12 @@
 package io.github.patxibocos.mycyclist
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +37,11 @@ internal fun App(
         messagingRepository.initialize()
 
         val navController by rememberUpdatedState(rememberNavController())
-        Scaffold { paddingValues ->
+        Scaffold(
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                .windowInsetsPadding(WindowInsets.statusBars),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ) { paddingValues ->
             NavigationSuite(
                 navController = navController,
                 modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues),

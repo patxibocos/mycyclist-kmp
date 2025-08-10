@@ -95,7 +95,7 @@ private fun RiderList(
     onRiderClick: (Rider) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         state = listState,
     ) {
@@ -145,8 +145,11 @@ private fun RiderRow(
     rider: Rider,
     onRiderSelected: (Rider) -> Unit,
 ) {
-    Card(modifier = Modifier.clickable { onRiderSelected(rider) }) {
-        Row(modifier = Modifier.fillMaxWidth().padding(10.dp).height(IntrinsicSize.Min)) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.clickable { onRiderSelected(rider) }.padding(10.dp)
+                .height(IntrinsicSize.Min)
+        ) {
             AsyncImage(
                 model = rider.photo,
                 modifier = Modifier
