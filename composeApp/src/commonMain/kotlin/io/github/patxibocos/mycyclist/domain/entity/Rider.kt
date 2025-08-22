@@ -1,9 +1,9 @@
 package io.github.patxibocos.mycyclist.domain.entity
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 internal data class Rider(
     val id: String,
@@ -29,8 +29,8 @@ internal data class Rider(
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val baseAge = today.year - birthDate.year
 
-        val birthdayPassedThisYear = today.monthNumber > birthDate.monthNumber ||
-            (today.monthNumber == birthDate.monthNumber && today.dayOfMonth >= birthDate.dayOfMonth)
+        val birthdayPassedThisYear = today.month > birthDate.month ||
+            (today.month == birthDate.month && today.day >= birthDate.day)
 
         return if (birthdayPassedThisYear) baseAge else baseAge - 1
     }

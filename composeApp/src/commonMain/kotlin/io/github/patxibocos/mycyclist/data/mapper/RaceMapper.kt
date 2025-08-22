@@ -20,7 +20,7 @@ import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.StageResults
 import io.github.patxibocos.mycyclist.domain.entity.StageType
 import io.github.patxibocos.mycyclist.domain.entity.TeamParticipation
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 internal object RaceMapper {
 
@@ -56,7 +56,7 @@ internal object RaceMapper {
         return Stage(
             id = this.id,
             distance = this.distance,
-            startDateTime = Instant.Companion.fromEpochSeconds(this.startDateTime?.seconds ?: 0),
+            startDateTime = Instant.fromEpochSeconds(this.startDateTime?.seconds ?: 0),
             departure = this.departure,
             arrival = this.arrival,
             profileType = when (this.profileType) {

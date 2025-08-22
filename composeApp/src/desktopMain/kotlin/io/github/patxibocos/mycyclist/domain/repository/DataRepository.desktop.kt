@@ -34,7 +34,6 @@ internal actual val cyclingDataRepository: CyclingDataRepository = object : Cycl
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     override suspend fun refresh(): Boolean {
         val projectId = "pcs-scraper"
         val serviceAccountFile =

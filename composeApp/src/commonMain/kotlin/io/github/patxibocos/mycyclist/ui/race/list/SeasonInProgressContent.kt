@@ -7,75 +7,70 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import io.github.patxibocos.mycyclist.ui.preview.aRace
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.datetime.Instant
+import io.github.patxibocos.mycyclist.ui.util.humanDatesDiff
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Clock
 
 internal fun LazyListScope.seasonInProgress(
-    pastRaces: List<Race>,
+    pastRaces: List<RaceListViewModel.PastRace>,
     todayStages: List<RaceListViewModel.TodayStage>,
     futureRaces: List<Race>,
     onRaceSelected: (Race) -> Unit,
     onStageSelected: (Race, Stage) -> Unit,
 ) {
-    item {
-        Text(
-            text = "Today",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(10.dp)
-                .fillMaxWidth(),
-        )
-    }
     todayStages(todayStages, onStageSelected, onRaceSelected)
     futureRaces(futureRaces, onRaceSelected)
     pastRaces(pastRaces, onRaceSelected)
 }
 
 private fun LazyListScope.pastRaces(
-    pastRaces: List<Race>,
+    pastRaces: List<RaceListViewModel.PastRace>,
     onRaceSelected: (Race) -> Unit
 ) {
     if (pastRaces.isEmpty()) {
         return
     }
-    stickyHeader {
+    item {
         Text(
-            text = "Past races",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(10.dp)
-                .fillMaxWidth(),
+            text = "PAST",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary,
         )
     }
     items(
         items = pastRaces,
-        key = Race::id,
-        itemContent = { race ->
-            RaceRow(race, onRaceSelected)
+        key = { it.race.id },
+        itemContent = { pastRace ->
+            PastRace(pastRace, onRaceSelected)
         },
     )
 }
@@ -87,89 +82,31 @@ private fun LazyListScope.futureRaces(
     if (futureRaces.isEmpty()) {
         return
     }
-    stickyHeader {
+    item {
         Text(
-            text = "Future races",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(10.dp)
-                .fillMaxWidth(),
+            text = "UPCOMING",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary,
         )
     }
     items(
         items = futureRaces,
         key = Race::id,
         itemContent = { race ->
-            RaceRow(race, onRaceSelected)
+            UpcomingRace(race, onRaceSelected)
         },
     )
 }
 
-private fun LazyListScope.todayStages(
-    todayStages: List<RaceListViewModel.TodayStage>,
-    onStageSelected: (Race, Stage) -> Unit,
-    onRaceSelected: (Race) -> Unit
-) {
-    if (todayStages.isEmpty()) {
-        item {
-            Text("No races today, see next races below")
-        }
-    } else {
-        items(todayStages, key = { it.race.id }) { todayStage ->
-            when (todayStage) {
-                is RaceListViewModel.TodayStage.MultiStageRace -> TodayRaceStage(
-                    todayStage.race,
-                    todayStage.stage,
-                    todayStage.results,
-                    onStageSelected,
-                )
-
-                is RaceListViewModel.TodayStage.SingleDayRace -> TodayRaceStage(
-                    todayStage.race,
-                    todayStage.stage,
-                    todayStage.results,
-                    onStageSelected,
-                )
-
-                is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
-                    todayStage.race,
-                    onRaceSelected
-                )
-            }
-        }
-    }
-}
-
-@Preview
 @Composable
-fun TodayMultiStageRaceStagePreview() {
-    val race = aRace()
-    val stage = race.stages.first()
-    TodayRaceStage(
-        race = race,
-        stage = stage,
-        results = RaceListViewModel.TodayResults.Riders(persistentListOf()),
-        onStageSelected = { _, _ -> },
-    )
-}
-
-@Composable
-private fun TodayRaceStage(
+private fun UpcomingRace(
     race: Race,
-    stage: Stage,
-    results: RaceListViewModel.TodayResults,
-    onStageSelected: (Race, Stage) -> Unit,
+    onRaceSelected: (Race) -> Unit,
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onStageSelected(race, stage)
-            },
-    ) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.clickable { onRaceSelected(race) }.padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
@@ -191,7 +128,179 @@ private fun TodayRaceStage(
                         LocalDate.Format {
                             monthName(MonthNames.ENGLISH_ABBREVIATED)
                             char(' ')
-                            dayOfMonth()
+                            day()
+                        }
+                    }
+                    val raceDateString = if (race.isSingleDay()) {
+                        dateFormat.format(race.startDate())
+                    } else {
+                        "${dateFormat.format(race.startDate())} — ${dateFormat.format(race.endDate())}"
+                    }
+                    Text(
+                        text = raceDateString,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                Text(
+                    text = humanDatesDiff(today, race.startDate()),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.inverseOnSurface,
+                    modifier = Modifier.background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        shape = RoundedCornerShape(15.dp)
+                    ).padding(horizontal = 8.dp, vertical = 2.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PastRace(
+    pastRace: RaceListViewModel.PastRace,
+    onRaceSelected: (Race) -> Unit,
+) {
+    val (race, winner) = pastRace
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.clickable { onRaceSelected(race) }.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = EmojiUtil.getCountryEmoji(race.country),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = race.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    val dateFormat = remember {
+                        LocalDate.Format {
+                            monthName(MonthNames.ENGLISH_ABBREVIATED)
+                            char(' ')
+                            day()
+                        }
+                    }
+                    val raceDateString = if (race.isSingleDay()) {
+                        dateFormat.format(race.startDate())
+                    } else {
+                        "${dateFormat.format(race.startDate())} — ${dateFormat.format(race.endDate())}"
+                    }
+                    Text(
+                        text = raceDateString,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                    AsyncImage(
+                        model = winner.photo,
+                        modifier = Modifier
+                            .shadow(5.dp, CircleShape)
+                            .size(50.dp)
+                            .clip(CircleShape),
+                        alignment = Alignment.TopCenter,
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                    )
+                    Text(text = winner.lastName)
+                }
+            }
+        }
+    }
+}
+
+private fun LazyListScope.todayStages(
+    todayStages: List<RaceListViewModel.TodayStage>,
+    onStageSelected: (Race, Stage) -> Unit,
+    onRaceSelected: (Race) -> Unit
+) {
+    if (todayStages.isEmpty()) {
+        item {
+            Text("No races today, see next races below")
+        }
+    } else {
+        item {
+            Text(
+                text = "TODAY",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
+        items(todayStages, key = { it.race.id }) { todayStage ->
+            when (todayStage) {
+                is RaceListViewModel.TodayStage.MultiStageRace -> TodayRaceStage(
+                    todayStage.race,
+                    todayStage.stage,
+                    onStageSelected,
+                )
+
+                is RaceListViewModel.TodayStage.SingleDayRace -> TodayRaceStage(
+                    todayStage.race,
+                    todayStage.stage,
+                    onStageSelected,
+                )
+
+                is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
+                    todayStage.race,
+                    onRaceSelected
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TodayMultiStageRaceStagePreview() {
+    val race = aRace()
+    val stage = race.stages.first()
+    TodayRaceStage(
+        race = race,
+        stage = stage,
+        onStageSelected = { _, _ -> },
+    )
+}
+
+@Composable
+private fun TodayRaceStage(
+    race: Race,
+    stage: Stage,
+    onStageSelected: (Race, Stage) -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.clickable { onStageSelected(race, stage) }.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = EmojiUtil.getCountryEmoji(race.country),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = race.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    val dateFormat = remember {
+                        LocalDate.Format {
+                            monthName(MonthNames.ENGLISH_ABBREVIATED)
+                            char(' ')
+                            day()
                         }
                     }
                     val raceDateString = if (race.isSingleDay()) {
@@ -222,31 +331,6 @@ private fun TodayRaceStage(
                 )
             }
             stage.profileType.let { profileType ->
-            }
-        }
-    }
-}
-
-private fun formatTime(instant: Instant): String {
-    return LocalDateTime.Format {
-        hour()
-        char(':')
-        minute()
-    }.format(instant.toLocalDateTime(TimeZone.currentSystemDefault()))
-}
-
-@Composable
-private fun Results(results: RaceListViewModel.TodayResults) {
-    when (results) {
-        is RaceListViewModel.TodayResults.Riders -> {
-            results.riders.forEachIndexed { index, rider ->
-                Text("${index + 1}. ${rider.rider.fullName()}")
-            }
-        }
-
-        is RaceListViewModel.TodayResults.Teams -> {
-            results.teams.forEachIndexed { index, team ->
-                Text("${index + 1}. ${team.team.name}")
             }
         }
     }

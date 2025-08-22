@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -25,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,11 +45,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
-@OptIn(
-    ExperimentalMaterial3AdaptiveApi::class,
-    ExperimentalComposeUiApi::class,
-    ExperimentalMaterial3Api::class
-)
 internal fun NavGraphBuilder.ridersRoute(
     tabReselected: SharedFlow<NavigationRoutes>,
     coroutineScope: CoroutineScope,
@@ -111,7 +103,6 @@ internal fun NavGraphBuilder.ridersRoute(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<String>,
     coroutineScope: CoroutineScope,
@@ -184,7 +175,6 @@ private fun Scaffold(
     )
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun RiderDetails(
     navigator: ThreePaneScaffoldNavigator<String>,
@@ -208,7 +198,6 @@ private fun RiderDetails(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RiderList(
     listState: LazyListState,

@@ -20,12 +20,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import kotlin.coroutines.CoroutineContext
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
@@ -57,7 +55,6 @@ internal class FirebaseDataRepository(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class, ExperimentalSerializationApi::class)
     private suspend fun emitRemoteConfigValue() = withContext(defaultDispatcher) {
         val remoteConfigValue = firebaseRemoteConfig.getValue(REMOTE_CONFIG_KEY).asString()
         if (remoteConfigValue.isEmpty()) {

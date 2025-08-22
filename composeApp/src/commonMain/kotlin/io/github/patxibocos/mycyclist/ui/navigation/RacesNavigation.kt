@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -20,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,7 +39,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalComposeUiApi::class)
 internal fun NavGraphBuilder.racesRoute(
     tabReselected: SharedFlow<NavigationRoutes>,
     coroutineScope: CoroutineScope,
@@ -91,7 +88,6 @@ internal fun NavGraphBuilder.racesRoute(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<Pair<String, String?>>,
     coroutineScope: CoroutineScope,
@@ -159,7 +155,6 @@ private fun Scaffold(
     )
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun RaceDetails(
     navigator: ThreePaneScaffoldNavigator<Pair<String, String?>>,
