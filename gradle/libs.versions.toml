@@ -23,7 +23,7 @@ ktor = "3.2.3"
 material3-adaptive = "1.1.2"
 twitter-compose-rules-detekt = "0.0.26"
 kotlinx-coroutines = "1.10.2"
-kotlinx-datetime = "0.7.1"
+kotlinx-datetime = "0.7.1-0.6.x-compat"
 gradle-toolchains = "1.0.0"
 
 [libraries]
