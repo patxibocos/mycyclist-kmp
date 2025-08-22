@@ -20,10 +20,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
@@ -64,6 +64,11 @@ internal class RaceListViewModel(
         ) : TodayStage(race)
     }
 
+    internal data class PastRace(
+        val race: Race,
+        val winner: Rider,
+    )
+
     internal data class UiState(val refreshing: Boolean, val content: Content)
 
     internal sealed interface Content {
@@ -72,7 +77,7 @@ internal class RaceListViewModel(
         ) : Content
 
         data class SeasonInProgressViewState(
-            val pastRaces: ImmutableList<Race>,
+            val pastRaces: ImmutableList<PastRace>,
             val todayStages: ImmutableList<TodayStage>,
             val futureRaces: ImmutableList<Race>,
         ) : Content
@@ -124,7 +129,12 @@ internal class RaceListViewModel(
                                 else -> TodayStage.RestDay(race)
                             }
                         }.toImmutableList()
-                        val pastRaces = races.filter(Race::isPast).reversed().toImmutableList()
+                        val pastRaces = races.filter(Race::isPast).reversed().mapNotNull { race ->
+                            val result = race.result() ?: return@mapNotNull null
+                            val winner = riders.find { it.id == result.first().participantId }
+                                ?: return@mapNotNull null
+                            PastRace(race = race, winner = winner)
+                        }.toImmutableList()
                         val futureRaces = races.filter(Race::isFuture).toImmutableList()
                         Content.SeasonInProgressViewState(
                             todayStages = todayStages,

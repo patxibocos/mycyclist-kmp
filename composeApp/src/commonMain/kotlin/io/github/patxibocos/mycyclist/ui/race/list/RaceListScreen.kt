@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -28,9 +27,7 @@ import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
-import kotlinx.datetime.format.Padding
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RaceListScreen(
     uiState: RaceListViewModel.UiState,
@@ -115,7 +112,7 @@ internal fun RaceRow(
         monthName(MonthNames.ENGLISH_ABBREVIATED)
     }.format(raceStartDate)
     val day = LocalDate.Format {
-        dayOfMonth(padding = Padding.ZERO)
+        day()
     }.format(raceStartDate)
     Column(
         modifier = Modifier

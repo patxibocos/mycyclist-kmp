@@ -5,10 +5,10 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
 
 internal data class RiderParticipations(
     val pastParticipations: ImmutableList<Participation>,

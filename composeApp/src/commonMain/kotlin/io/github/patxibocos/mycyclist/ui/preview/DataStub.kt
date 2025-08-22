@@ -7,7 +7,7 @@ import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.StageResults
 import io.github.patxibocos.mycyclist.domain.entity.StageType
 import io.github.patxibocos.mycyclist.domain.entity.TeamParticipation
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 internal fun aRace(
     id: String = "tour-de-france",

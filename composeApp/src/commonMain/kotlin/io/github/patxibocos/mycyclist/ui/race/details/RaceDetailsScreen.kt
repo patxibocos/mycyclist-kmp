@@ -1,6 +1,7 @@
 package io.github.patxibocos.mycyclist.ui.race.details
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedFilterChip
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,11 +38,11 @@ import io.github.patxibocos.mycyclist.domain.usecase.ClassificationType
 import io.github.patxibocos.mycyclist.domain.usecase.ResultsMode
 import io.github.patxibocos.mycyclist.domain.usecase.StageResult
 import io.github.patxibocos.mycyclist.domain.usecase.StageResults
+import io.github.patxibocos.mycyclist.ui.util.rememberWithSize
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RaceDetailsScreen(
     uiState: RaceDetailsViewModel.UiState,
@@ -55,48 +55,51 @@ internal fun RaceDetailsScreen(
     onStageSelected: (Int) -> Unit,
     onParticipationsClicked: (Race) -> Unit,
 ) {
-    Column {
-        TopAppBar(
-            title = {
-                Text(
-                    text = uiState.race.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(end = 8.dp),
-                )
-            },
-            navigationIcon = {
-                if (backEnabled) {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+    BoxWithConstraints {
+        val backEnabled = rememberWithSize(backEnabled)
+        Column {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = uiState.race.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                },
+                navigationIcon = {
+                    if (backEnabled) {
+                        IconButton(onClick = onBackPressed) {
+                            Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                        }
                     }
                 }
+            )
+            Button(onClick = { onParticipationsClicked(uiState.race) }) {
+                Text(text = "Participants")
             }
-        )
-        Button(onClick = { onParticipationsClicked(uiState.race) }) {
-            Text(text = "Participants")
-        }
-        if (uiState.race.stages.size == 1) {
-            val stage = uiState.race.stages.first()
-            SingleStage(
-                stage = stage,
-                stageResults = uiState.stagesResults.first().second,
-                onRiderSelected = onRiderSelected,
-                onTeamSelected = onTeamSelected,
-            )
-        } else {
-            StagesList(
-                stages = uiState.race.stages.toImmutableList(),
-                stagesResults = uiState.stagesResults,
-                currentStageIndex = uiState.currentStageIndex,
-                resultsMode = uiState.resultsMode,
-                classificationType = uiState.classificationType,
-                onRiderSelected = onRiderSelected,
-                onTeamSelected = onTeamSelected,
-                onResultsModeChanged = onResultsModeChanged,
-                onClassificationTypeChanged = onClassificationTypeChanged,
-                onStageSelected = onStageSelected,
-            )
+            if (uiState.race.stages.size == 1) {
+                val stage = uiState.race.stages.first()
+                SingleStage(
+                    stage = stage,
+                    stageResults = uiState.stagesResults.first().second,
+                    onRiderSelected = onRiderSelected,
+                    onTeamSelected = onTeamSelected,
+                )
+            } else {
+                StagesList(
+                    stages = uiState.race.stages.toImmutableList(),
+                    stagesResults = uiState.stagesResults,
+                    currentStageIndex = uiState.currentStageIndex,
+                    resultsMode = uiState.resultsMode,
+                    classificationType = uiState.classificationType,
+                    onRiderSelected = onRiderSelected,
+                    onTeamSelected = onTeamSelected,
+                    onResultsModeChanged = onResultsModeChanged,
+                    onClassificationTypeChanged = onClassificationTypeChanged,
+                    onStageSelected = onStageSelected,
+                )
+            }
         }
     }
 }
@@ -112,7 +115,6 @@ private fun SingleStage(
     StageResults(stageResults, onRiderSelected, onTeamSelected)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StagesList(
     stages: ImmutableList<Stage>,

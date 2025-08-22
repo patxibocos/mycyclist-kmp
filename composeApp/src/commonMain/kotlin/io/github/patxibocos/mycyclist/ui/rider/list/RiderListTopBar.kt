@@ -13,7 +13,6 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -41,7 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import io.github.patxibocos.mycyclist.ui.rider.list.RiderListViewModel.Sorting
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TopBar(
     topBarState: RiderListViewModel.TopBarState,

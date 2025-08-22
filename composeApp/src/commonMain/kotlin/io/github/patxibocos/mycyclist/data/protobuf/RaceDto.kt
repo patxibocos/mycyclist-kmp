@@ -1,10 +1,8 @@
 package io.github.patxibocos.mycyclist.data.protobuf
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class RaceDto(
     @ProtoNumber(1)
@@ -21,7 +19,6 @@ data class RaceDto(
     val website: String?,
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class StageDto(
     @ProtoNumber(1)
@@ -78,7 +75,6 @@ data class StageDto(
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class TeamParticipationDto(
     @ProtoNumber(1)
@@ -87,7 +83,6 @@ data class TeamParticipationDto(
     val riderParticipations: List<RiderParticipationDto> = emptyList(),
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class RiderParticipationDto(
     @ProtoNumber(1)
@@ -96,7 +91,6 @@ data class RiderParticipationDto(
     val number: Int? = null,
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class StageResultsDto(
     @ProtoNumber(1)
@@ -111,7 +105,6 @@ data class StageResultsDto(
     val points: List<PlacePointsDto> = emptyList(),
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class GeneralResultsDto(
     @ProtoNumber(1)
@@ -126,7 +119,6 @@ data class GeneralResultsDto(
     val points: List<ParticipantResultPointsDto> = emptyList(),
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class ParticipantResultTimeDto(
     @ProtoNumber(1)
@@ -137,7 +129,6 @@ data class ParticipantResultTimeDto(
     val time: Int,
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class ParticipantResultPointsDto(
     @ProtoNumber(1)
@@ -148,7 +139,6 @@ data class ParticipantResultPointsDto(
     val points: Int,
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class PlacePointsDto(
     @ProtoNumber(1)
@@ -157,7 +147,6 @@ data class PlacePointsDto(
     val points: List<ParticipantResultPointsDto> = emptyList(),
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class PlaceDto(
     @ProtoNumber(1)

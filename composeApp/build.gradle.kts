@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -63,6 +64,7 @@ kotlin {
             implementation(libs.firebase.messaging)
             implementation(libs.kotlin.serialization.protobuf)
             implementation(libs.kotlin.collections.immutable)
+            implementation(libs.kotlin.datetime)
             implementation(libs.material3.adaptive)
             implementation(libs.material3.adaptive.layout)
             implementation(libs.material3.adaptive.navigation)
@@ -101,6 +103,18 @@ kotlin {
         pod("FirebaseMessaging", linkOnly = true)
 
         podfile = project.file("../iosApp/Podfile")
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlin.time.ExperimentalTime",
+            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+            "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
+        )
     }
 }
 
