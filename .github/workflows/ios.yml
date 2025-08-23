@@ -30,4 +30,5 @@ jobs:
             -workspace iosApp/iosApp.xcworkspace \
             -scheme iosApp \
             -configuration Debug \
-            -sdk iphonesimulator
+            -sdk iphonesimulator \
+            ARCHS=arm64
