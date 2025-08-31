@@ -1,18 +1,25 @@
 package io.github.patxibocos.mycyclist.ui.race.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.entity.Race
@@ -121,8 +127,6 @@ private fun UpcomingRace(
                     Text(
                         text = race.name,
                         style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
                     val dateFormat = remember {
                         LocalDate.Format {
@@ -179,8 +183,6 @@ private fun PastRace(
                     Text(
                         text = race.name,
                         style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
                     val dateFormat = remember {
                         LocalDate.Format {
@@ -199,18 +201,39 @@ private fun PastRace(
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
-                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                Icons.Default.EmojiEvents
+                Box(
+                    modifier = Modifier.size(50.dp)
+                ) {
                     AsyncImage(
                         model = winner.photo,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.TopCenter,
                         modifier = Modifier
                             .shadow(5.dp, CircleShape)
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        alignment = Alignment.TopCenter,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
+                            .fillMaxSize()
+                            .clip(CircleShape)
                     )
-                    Text(text = winner.lastName)
+                    Icon(
+                        imageVector = Icons.Default.EmojiEvents,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(20.dp)
+                            .offset(x = 2.dp, y = 2.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                shape = CircleShape
+                            )
+                            .padding(3.dp)
+                    )
                 }
             }
         }
@@ -293,8 +316,6 @@ private fun TodayRaceStage(
                     Text(
                         text = race.name,
                         style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
                     val dateFormat = remember {
                         LocalDate.Format {
