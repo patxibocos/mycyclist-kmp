@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.Scale
@@ -40,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.entity.Rider
@@ -101,7 +102,14 @@ private fun RiderList(
             is RiderListViewModel.UiState.Riders.ByLastName -> {
                 uiState.riders.riders.forEach { (letter, riders) ->
                     stickyHeader {
-                        Text(text = letter.toString())
+                        Text(
+                            text = "// $letter",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(horizontal = 5.dp)
+                        )
                     }
                     items(riders, key = Rider::id) { rider ->
                         RiderRow(
@@ -115,7 +123,14 @@ private fun RiderList(
             is RiderListViewModel.UiState.Riders.ByCountry -> {
                 uiState.riders.riders.forEach { (country, riders) ->
                     stickyHeader {
-                        Text(text = country)
+                        Text(
+                            text = EmojiUtil.getCountryEmoji(country),
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(horizontal = 5.dp)
+                        )
                     }
                     items(riders, key = Rider::id) { rider ->
                         RiderRow(
@@ -172,13 +187,11 @@ private fun RiderRow(
                         text = EmojiUtil.getCountryEmoji(rider.country),
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    Text(
+                    BasicText(
                         text = "${rider.lastName.uppercase()} ${rider.firstName}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
+                        style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
                 }
                 val age = remember(rider) { rider.age() }
@@ -190,6 +203,7 @@ private fun RiderRow(
                     )
                 }
             }
+            Spacer(modifier = Modifier.size(10.dp))
             rider.uciRankingPosition?.let { position ->
                 UciRankingBadge(position = position)
             }
@@ -237,15 +251,18 @@ private fun RiderAge(age: Int) {
             contentDescription = null,
             modifier = Modifier.size(20.dp)
         )
-        Text(
+        val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
+        BasicText(
             text = "${age}y",
+            maxLines = 1,
             style = MaterialTheme.typography.labelLarge.copy(
                 lineHeightStyle = LineHeightStyle(
                     alignment = LineHeightStyle.Alignment.Center,
                     trim = LineHeightStyle.Trim.Both
                 ),
             ),
-            color = MaterialTheme.colorScheme.secondary,
+            color = { onSurfaceVariantColor },
+            autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.labelLarge.fontSize),
         )
     }
 }
@@ -258,7 +275,8 @@ private fun RiderHeight(height: Int) {
             contentDescription = null,
             modifier = Modifier.size(20.dp).rotate(degrees = 90f)
         )
-        Text(
+        val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
+        BasicText(
             text = "${height}cm",
             style = MaterialTheme.typography.labelLarge.copy(
                 lineHeightStyle = LineHeightStyle(
@@ -266,7 +284,9 @@ private fun RiderHeight(height: Int) {
                     trim = LineHeightStyle.Trim.Both
                 ),
             ),
-            color = MaterialTheme.colorScheme.secondary
+            color = { onSurfaceVariantColor },
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.labelLarge.fontSize),
         )
     }
 }
@@ -279,7 +299,8 @@ private fun RiderWeight(weight: Int) {
             contentDescription = null,
             modifier = Modifier.size(20.dp)
         )
-        Text(
+        val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
+        BasicText(
             text = "${weight}kg",
             style = MaterialTheme.typography.labelLarge.copy(
                 lineHeightStyle = LineHeightStyle(
@@ -287,7 +308,9 @@ private fun RiderWeight(weight: Int) {
                     trim = LineHeightStyle.Trim.Both
                 ),
             ),
-            color = MaterialTheme.colorScheme.secondary
+            color = { onSurfaceVariantColor },
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.labelLarge.fontSize),
         )
     }
 }

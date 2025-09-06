@@ -1,8 +1,15 @@
 package io.github.patxibocos.mycyclist.ui.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import mycyclist.composeapp.generated.resources.Res
+import mycyclist.composeapp.generated.resources.roboto_condensed
+import org.jetbrains.compose.resources.Font
 
 val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -79,6 +86,33 @@ val darkScheme = darkColorScheme(
     surfaceContainerHigh = surfaceContainerHighDark,
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
+
+@Composable
+internal fun typography(): Typography {
+    val robotoCondensedFont = FontFamily(
+        Font(Res.font.roboto_condensed, FontWeight.Normal)
+    )
+    val systemUiFont = FontFamily.Default
+    return with(MaterialTheme.typography) {
+        copy(
+            displayLarge = displayLarge.copy(fontFamily = robotoCondensedFont),
+            displayMedium = displayMedium.copy(fontFamily = robotoCondensedFont),
+            displaySmall = displaySmall.copy(fontFamily = robotoCondensedFont),
+            headlineLarge = headlineLarge.copy(fontFamily = robotoCondensedFont),
+            headlineMedium = headlineMedium.copy(fontFamily = robotoCondensedFont),
+            headlineSmall = headlineSmall.copy(fontFamily = robotoCondensedFont),
+            bodyLarge = bodyLarge.copy(fontFamily = systemUiFont),
+            bodyMedium = bodyMedium.copy(fontFamily = systemUiFont),
+            bodySmall = bodySmall.copy(fontFamily = systemUiFont),
+            titleLarge = titleLarge.copy(fontFamily = systemUiFont),
+            titleMedium = titleMedium.copy(fontFamily = systemUiFont),
+            titleSmall = titleSmall.copy(fontFamily = systemUiFont),
+            labelLarge = labelLarge.copy(fontFamily = systemUiFont),
+            labelMedium = labelMedium.copy(fontFamily = systemUiFont),
+            labelSmall = labelSmall.copy(fontFamily = systemUiFont),
+        )
+    }
+}
 
 @Composable
 internal expect fun AppTheme(
