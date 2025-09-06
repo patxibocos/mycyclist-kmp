@@ -119,12 +119,12 @@ kotlin {
 
 android {
     namespace = "io.github.patxibocos.mycyclist"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "io.github.patxibocos.mycyclist"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = 24
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
@@ -135,7 +135,9 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
     compileOptions {
@@ -150,9 +152,9 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    coreLibraryDesugaring(libs.desugar.jdk.get())
-    detektPlugins(libs.ktlint.detekt.rules.get())
-    detektPlugins(libs.twitter.compose.detekt.rules.get())
+    coreLibraryDesugaring(libs.desugar.jdk)
+    detektPlugins(libs.ktlint.detekt.rules)
+    detektPlugins(libs.twitter.compose.detekt.rules)
 }
 
 detekt {

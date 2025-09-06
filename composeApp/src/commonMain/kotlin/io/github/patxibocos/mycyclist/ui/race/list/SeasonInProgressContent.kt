@@ -6,9 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,7 +19,11 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -29,8 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Stage
@@ -68,7 +76,6 @@ private fun LazyListScope.pastRaces(
         Text(
             text = "PAST",
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,
         )
     }
@@ -92,7 +99,6 @@ private fun LazyListScope.futureRaces(
         Text(
             text = "UPCOMING",
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,
         )
     }
@@ -121,12 +127,14 @@ private fun UpcomingRace(
             ) {
                 Text(
                     text = EmojiUtil.getCountryEmoji(race.country),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleLarge,
                 )
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    BasicText(
+                        autoSize = TextAutoSize.StepBased(maxFontSize = 20.sp),
                         text = race.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
+                        maxLines = 1,
                     )
                     val dateFormat = remember {
                         LocalDate.Format {
@@ -142,7 +150,7 @@ private fun UpcomingRace(
                     }
                     Text(
                         text = raceDateString,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
                 val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -172,17 +180,22 @@ private fun PastRace(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
                     text = EmojiUtil.getCountryEmoji(race.country),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleLarge,
                 )
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                Column(
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    BasicText(
+                        autoSize = TextAutoSize.StepBased(maxFontSize = 20.sp),
                         text = race.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
+                        maxLines = 1,
                     )
                     val dateFormat = remember {
                         LocalDate.Format {
@@ -198,10 +211,9 @@ private fun PastRace(
                     }
                     Text(
                         text = raceDateString,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge
                     )
                 }
-                Icons.Default.EmojiEvents
                 Box(
                     modifier = Modifier.size(50.dp)
                 ) {
@@ -254,7 +266,6 @@ private fun LazyListScope.todayStages(
             Text(
                 text = "TODAY",
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.secondary,
             )
         }
@@ -310,12 +321,18 @@ private fun TodayRaceStage(
             ) {
                 Text(
                     text = EmojiUtil.getCountryEmoji(race.country),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleLarge,
                 )
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+//                    Text(
+//                        text = race.name,
+//                        style = MaterialTheme.typography.headlineSmall,
+//                    )
+                    BasicText(
+                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.headlineSmall.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.headlineSmall,
+                        maxLines = 1,
                     )
                     val dateFormat = remember {
                         LocalDate.Format {
@@ -331,7 +348,7 @@ private fun TodayRaceStage(
                     }
                     Text(
                         text = raceDateString,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge
                     )
                 }
                 Text(
@@ -344,14 +361,34 @@ private fun TodayRaceStage(
                     ).padding(horizontal = 8.dp, vertical = 2.dp)
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(text = "${stage.distance} km", style = MaterialTheme.typography.bodySmall)
-                Text(
-                    text = "${stage.departure} — ${stage.arrival}",
-                    style = MaterialTheme.typography.bodySmall,
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.DirectionsBike,
+                    modifier = Modifier.size(20.5.dp),
+                    contentDescription = null,
                 )
-            }
-            stage.profileType.let { profileType ->
+                Text(text = "${stage.distance} km", style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stage.departure.toString(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = stage.arrival.toString(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }

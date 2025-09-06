@@ -26,5 +26,6 @@ internal actual fun AppTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         content = content,
+        typography = typography(),
     )
 }
