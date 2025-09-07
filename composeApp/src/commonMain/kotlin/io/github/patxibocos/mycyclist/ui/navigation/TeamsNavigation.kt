@@ -2,8 +2,8 @@ package io.github.patxibocos.mycyclist.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -61,16 +61,16 @@ internal fun NavGraphBuilder.teamsRoute(
                 }
             ),
         )
-        val worldTeamsLazyGridState = rememberLazyGridState()
-        val proTeamsLazyGridState = rememberLazyGridState()
+        val worldTeamsLazyListState = rememberLazyListState()
+        val proTeamsLazyListState = rememberLazyListState()
         LaunchedEffect(Unit) {
             tabReselected.filterIsInstance<NavigationRoutes.Teams>().collect {
                 if (navigator.canNavigateBack()) {
                     navigator.navigateBack()
                 } else {
                     coroutineScope.launch {
-                        worldTeamsLazyGridState.animateScrollToItem(0)
-                        proTeamsLazyGridState.animateScrollToItem(0)
+                        worldTeamsLazyListState.animateScrollToItem(0)
+                        proTeamsLazyListState.animateScrollToItem(0)
                     }
                 }
             }
@@ -84,8 +84,8 @@ internal fun NavGraphBuilder.teamsRoute(
             navigator = navigator,
             coroutineScope = coroutineScope,
             navController = navController,
-            worldTeamsLazyGridState = worldTeamsLazyGridState,
-            proTeamsLazyGridState = proTeamsLazyGridState,
+            worldTeamsLazyListState = worldTeamsLazyListState,
+            proTeamsLazyListState = proTeamsLazyListState,
         )
     }
 }
@@ -95,8 +95,8 @@ private fun Scaffold(
     navigator: ThreePaneScaffoldNavigator<String>,
     coroutineScope: CoroutineScope,
     navController: NavHostController,
-    worldTeamsLazyGridState: LazyGridState,
-    proTeamsLazyGridState: LazyGridState,
+    worldTeamsLazyListState: LazyListState,
+    proTeamsLazyListState: LazyListState,
 ) {
     var lastValidTeamId by remember { mutableStateOf<String?>(null) }
     ListDetailPaneScaffold(
@@ -106,8 +106,8 @@ private fun Scaffold(
         listPane = {
             AnimatedPane {
                 TeamList(
-                    worldTeamsLazyGridState = worldTeamsLazyGridState,
-                    proTeamsLazyGridState = proTeamsLazyGridState,
+                    worldTeamsLazyListState = worldTeamsLazyListState,
+                    proTeamsLazyListState = proTeamsLazyListState,
                     onTeamClick = { team ->
                         coroutineScope.launch {
                             navigator.navigateTo(
@@ -176,8 +176,8 @@ private fun TeamDetails(
 
 @Composable
 private fun TeamList(
-    worldTeamsLazyGridState: LazyGridState,
-    proTeamsLazyGridState: LazyGridState,
+    worldTeamsLazyListState: LazyListState,
+    proTeamsLazyListState: LazyListState,
     viewModel: TeamListViewModel = viewModel { TeamListViewModel() },
     onTeamClick: (Team) -> Unit,
 ) {
@@ -186,8 +186,8 @@ private fun TeamList(
     Surface(modifier = Modifier.fillMaxSize()) {
         TeamListScreen(
             uiState = uiState,
-            worldTeamsLazyGridState = worldTeamsLazyGridState,
-            proTeamsLazyGridState = proTeamsLazyGridState,
+            worldTeamsLazyListState = worldTeamsLazyListState,
+            proTeamsLazyListState = proTeamsLazyListState,
             onTeamClick = onTeamClick,
             onRefresh = viewModel::refresh,
         )
