@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,11 +73,13 @@ private fun LazyListScope.pastRaces(
     if (pastRaces.isEmpty()) {
         return
     }
-    item {
+    stickyHeader {
         Text(
             text = "PAST",
             style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)
         )
     }
     items(
@@ -95,11 +98,13 @@ private fun LazyListScope.futureRaces(
     if (futureRaces.isEmpty()) {
         return
     }
-    item {
+    stickyHeader {
         Text(
             text = "UPCOMING",
             style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)
         )
     }
     items(
@@ -262,11 +267,13 @@ private fun LazyListScope.todayStages(
             Text("No races today, see next races below")
         }
     } else {
-        item {
+        stickyHeader {
             Text(
                 text = "TODAY",
                 style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)
             )
         }
         items(todayStages, key = { it.race.id }) { todayStage ->

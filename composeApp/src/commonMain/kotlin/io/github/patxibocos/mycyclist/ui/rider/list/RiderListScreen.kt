@@ -103,9 +103,10 @@ private fun RiderList(
                 uiState.riders.riders.forEach { (letter, riders) ->
                     stickyHeader {
                         Text(
-                            text = "// $letter",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
+                            text = "$letter",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(horizontal = 5.dp)
@@ -124,9 +125,10 @@ private fun RiderList(
                 uiState.riders.riders.forEach { (country, riders) ->
                     stickyHeader {
                         Text(
-                            text = EmojiUtil.getCountryEmoji(country),
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
+                            text = "$country ${EmojiUtil.getCountryEmoji(country)}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(horizontal = 5.dp)
