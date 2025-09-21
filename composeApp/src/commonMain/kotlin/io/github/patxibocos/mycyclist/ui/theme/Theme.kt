@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import mycyclist.composeapp.generated.resources.Res
-import mycyclist.composeapp.generated.resources.roboto_condensed
+import mycyclist.composeapp.generated.resources.inter
 import org.jetbrains.compose.resources.Font
 
 val lightScheme = lightColorScheme(
@@ -89,27 +89,26 @@ val darkScheme = darkColorScheme(
 
 @Composable
 internal fun typography(): Typography {
-    val robotoCondensedFont = FontFamily(
-        Font(Res.font.roboto_condensed, FontWeight.Normal)
+    val interFont = FontFamily(
+        Font(Res.font.inter, FontWeight.Normal)
     )
-    val systemUiFont = FontFamily.Default
     return with(MaterialTheme.typography) {
         copy(
-            displayLarge = displayLarge.copy(fontFamily = robotoCondensedFont),
-            displayMedium = displayMedium.copy(fontFamily = robotoCondensedFont),
-            displaySmall = displaySmall.copy(fontFamily = robotoCondensedFont),
-            headlineLarge = headlineLarge.copy(fontFamily = robotoCondensedFont),
-            headlineMedium = headlineMedium.copy(fontFamily = robotoCondensedFont),
-            headlineSmall = headlineSmall.copy(fontFamily = robotoCondensedFont),
-            bodyLarge = bodyLarge.copy(fontFamily = systemUiFont),
-            bodyMedium = bodyMedium.copy(fontFamily = systemUiFont),
-            bodySmall = bodySmall.copy(fontFamily = systemUiFont),
-            titleLarge = titleLarge.copy(fontFamily = systemUiFont),
-            titleMedium = titleMedium.copy(fontFamily = systemUiFont),
-            titleSmall = titleSmall.copy(fontFamily = systemUiFont),
-            labelLarge = labelLarge.copy(fontFamily = systemUiFont),
-            labelMedium = labelMedium.copy(fontFamily = systemUiFont),
-            labelSmall = labelSmall.copy(fontFamily = systemUiFont),
+            displayLarge = displayLarge.copy(fontFamily = interFont),
+            displayMedium = displayMedium.copy(fontFamily = interFont),
+            displaySmall = displaySmall.copy(fontFamily = interFont),
+            headlineLarge = headlineLarge.copy(fontFamily = interFont),
+            headlineMedium = headlineMedium.copy(fontFamily = interFont),
+            headlineSmall = headlineSmall.copy(fontFamily = interFont),
+            bodyLarge = bodyLarge.copy(fontFamily = interFont),
+            bodyMedium = bodyMedium.copy(fontFamily = interFont),
+            bodySmall = bodySmall.copy(fontFamily = interFont),
+            titleLarge = titleLarge.copy(fontFamily = interFont),
+            titleMedium = titleMedium.copy(fontFamily = interFont),
+            titleSmall = titleSmall.copy(fontFamily = interFont),
+            labelLarge = labelLarge.copy(fontFamily = interFont),
+            labelMedium = labelMedium.copy(fontFamily = interFont),
+            labelSmall = labelSmall.copy(fontFamily = interFont),
         )
     }
 }
