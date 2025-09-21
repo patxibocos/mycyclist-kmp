@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
@@ -32,6 +33,7 @@ import mycyclist.composeapp.generated.resources.navigation_item_races
 import mycyclist.composeapp.generated.resources.navigation_item_riders
 import mycyclist.composeapp.generated.resources.navigation_item_teams
 import org.jetbrains.compose.resources.stringResource
+import kotlin.reflect.KClass
 
 @Composable
 internal fun NavigationSuite(
@@ -143,4 +145,9 @@ private fun NavigationSuiteScope.routes(
             }
         )
     }
+}
+
+internal fun NavController.previousIsNot(route: KClass<out NavigationRoutes>): Boolean {
+    val dest = previousBackStackEntry?.destination ?: return false
+    return !dest.hasRoute(route)
 }
