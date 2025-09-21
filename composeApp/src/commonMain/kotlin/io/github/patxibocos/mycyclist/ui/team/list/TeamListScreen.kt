@@ -150,15 +150,24 @@ private fun TeamRow(
                 contentDescription = null,
             )
             Column(
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.weight(1f).fillMaxHeight()
             ) {
-                BasicText(
-                    text = team.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = EmojiUtil.getCountryEmoji(team.country),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    BasicText(
+                        text = team.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
+                    )
+                }
                 team.abbreviation?.let {
                     Text(team.abbreviation, style = MaterialTheme.typography.labelLarge)
                 }
@@ -168,7 +177,6 @@ private fun TeamRow(
                     Text(team.bike, style = MaterialTheme.typography.bodyMedium)
                 }
             }
-            Text(text = EmojiUtil.getCountryEmoji(team.country))
         }
     }
 }

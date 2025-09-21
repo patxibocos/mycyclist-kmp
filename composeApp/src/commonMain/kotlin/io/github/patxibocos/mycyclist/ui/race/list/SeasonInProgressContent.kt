@@ -39,7 +39,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Stage
@@ -136,9 +135,9 @@ private fun UpcomingRace(
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     BasicText(
-                        autoSize = TextAutoSize.StepBased(maxFontSize = 20.sp),
+                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
+                        style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                     )
                     val dateFormat = remember {
@@ -197,9 +196,9 @@ private fun PastRace(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     BasicText(
-                        autoSize = TextAutoSize.StepBased(maxFontSize = 20.sp),
+                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
+                        style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                     )
                     val dateFormat = remember {
@@ -331,14 +330,10 @@ private fun TodayRaceStage(
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Column(modifier = Modifier.weight(1f)) {
-//                    Text(
-//                        text = race.name,
-//                        style = MaterialTheme.typography.headlineSmall,
-//                    )
                     BasicText(
-                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.headlineSmall.fontSize),
+                        autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                     )
                     val dateFormat = remember {
