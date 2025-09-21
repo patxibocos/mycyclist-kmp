@@ -140,8 +140,10 @@ private fun Scaffold(
                         navigator = navigator,
                         teamId = teamId,
                         onBackPressed = {
-                            coroutineScope.launch {
-                                navigator.navigateBack()
+                            if (navController.previousIsNot(NavigationRoutes.Teams::class)) {
+                                navController.popBackStack()
+                            } else {
+                                coroutineScope.launch { navigator.navigateBack() }
                             }
                         },
                         onRiderSelected = { rider ->

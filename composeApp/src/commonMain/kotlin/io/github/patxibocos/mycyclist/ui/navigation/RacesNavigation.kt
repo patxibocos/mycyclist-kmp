@@ -144,8 +144,10 @@ private fun Scaffold(
                         navController = navController,
                         raceAndStageId = raceId,
                         onBackPressed = {
-                            coroutineScope.launch {
-                                navigator.navigateBack()
+                            if (navController.previousIsNot(NavigationRoutes.Races::class)) {
+                                navController.popBackStack()
+                            } else {
+                                coroutineScope.launch { navigator.navigateBack() }
                             }
                         },
                     )
