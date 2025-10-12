@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -137,7 +138,7 @@ private fun UpcomingRace(
                     BasicText(
                         autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(color = LocalContentColor.current),
                         maxLines = 1,
                     )
                     val dateFormat = remember {
@@ -198,7 +199,7 @@ private fun PastRace(
                     BasicText(
                         autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(color = LocalContentColor.current),
                         maxLines = 1,
                     )
                     val dateFormat = remember {
@@ -262,38 +263,35 @@ private fun LazyListScope.todayStages(
     onRaceSelected: (Race) -> Unit
 ) {
     if (todayStages.isEmpty()) {
-        item {
-            Text("No races today, see next races below")
-        }
-    } else {
-        stickyHeader {
-            Text(
-                text = "TODAY",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)
+        return
+    }
+    stickyHeader {
+        Text(
+            text = "TODAY",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)
+        )
+    }
+    items(todayStages, key = { it.race.id }) { todayStage ->
+        when (todayStage) {
+            is RaceListViewModel.TodayStage.MultiStageRace -> TodayRaceStage(
+                todayStage.race,
+                todayStage.stage,
+                onStageSelected,
             )
-        }
-        items(todayStages, key = { it.race.id }) { todayStage ->
-            when (todayStage) {
-                is RaceListViewModel.TodayStage.MultiStageRace -> TodayRaceStage(
-                    todayStage.race,
-                    todayStage.stage,
-                    onStageSelected,
-                )
 
-                is RaceListViewModel.TodayStage.SingleDayRace -> TodayRaceStage(
-                    todayStage.race,
-                    todayStage.stage,
-                    onStageSelected,
-                )
+            is RaceListViewModel.TodayStage.SingleDayRace -> TodayRaceStage(
+                todayStage.race,
+                todayStage.stage,
+                onStageSelected,
+            )
 
-                is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
-                    todayStage.race,
-                    onRaceSelected
-                )
-            }
+            is RaceListViewModel.TodayStage.RestDay -> TodayRestDayStage(
+                todayStage.race,
+                onRaceSelected
+            )
         }
     }
 }
@@ -333,7 +331,7 @@ private fun TodayRaceStage(
                     BasicText(
                         autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
                         text = race.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(color = LocalContentColor.current),
                         maxLines = 1,
                     )
                     val dateFormat = remember {

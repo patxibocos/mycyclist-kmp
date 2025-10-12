@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Scale
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -192,7 +193,7 @@ private fun RiderRow(
                     BasicText(
                         text = "${rider.lastName.uppercase()} ${rider.firstName}",
                         autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(color = LocalContentColor.current),
                         maxLines = 1,
                     )
                 }
@@ -262,6 +263,7 @@ private fun RiderAge(age: Int) {
                     alignment = LineHeightStyle.Alignment.Center,
                     trim = LineHeightStyle.Trim.Both
                 ),
+                color = LocalContentColor.current,
             ),
             color = { onSurfaceVariantColor },
             autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.labelLarge.fontSize),
@@ -285,6 +287,7 @@ private fun RiderHeight(height: Int) {
                     alignment = LineHeightStyle.Alignment.Center,
                     trim = LineHeightStyle.Trim.Both
                 ),
+                color = LocalContentColor.current
             ),
             color = { onSurfaceVariantColor },
             maxLines = 1,
@@ -309,6 +312,7 @@ private fun RiderWeight(weight: Int) {
                     alignment = LineHeightStyle.Alignment.Center,
                     trim = LineHeightStyle.Trim.Both
                 ),
+                color = LocalContentColor.current
             ),
             color = { onSurfaceVariantColor },
             maxLines = 1,
