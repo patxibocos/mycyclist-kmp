@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -111,9 +112,13 @@ internal fun TeamDetailsScreen(
                                 )
                                 BasicText(
                                     text = uiState.team.name,
-                                    style = MaterialTheme.typography.titleMedium,
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        color = LocalContentColor.current
+                                    ),
                                     maxLines = 1,
-                                    autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.titleMedium.fontSize),
+                                    autoSize = TextAutoSize.StepBased(
+                                        maxFontSize = MaterialTheme.typography.titleMedium.fontSize
+                                    ),
                                 )
                             }
                             uiState.team.abbreviation?.let {

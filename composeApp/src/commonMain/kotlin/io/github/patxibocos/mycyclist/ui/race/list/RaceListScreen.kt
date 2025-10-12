@@ -37,7 +37,7 @@ internal fun RaceListScreen(
 ) {
     PullToRefreshBox(isRefreshing = uiState.refreshing, onRefresh = onRefresh) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
+            modifier = Modifier.fillMaxSize().padding(start = 10.dp, end = 10.dp, top = 5.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
             state = listState
         ) {
