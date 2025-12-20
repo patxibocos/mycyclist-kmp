@@ -68,6 +68,8 @@ kotlin {
             implementation(libs.material3.adaptive.layout)
             implementation(libs.material3.adaptive.navigation)
             implementation(libs.compose.ui.backhandler)
+            implementation(libs.androidx.navigation3.ui)
+            implementation(libs.androidx.navigation3.material3.adaptive)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

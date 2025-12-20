@@ -16,7 +16,7 @@ data class TeamDto(
     @ProtoNumber(5)
     val country: String,
     @ProtoNumber(6)
-    val bike: String,
+    val bike: String = "",
     @ProtoNumber(7)
     val jersey: String,
     @ProtoNumber(8)

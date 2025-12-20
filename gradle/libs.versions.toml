@@ -21,6 +21,8 @@ material3-adaptive = "1.2.0"
 twitter-compose-rules-detekt = "0.0.26"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1-0.6.x-compat"
+androidx-navigation3-ui = "1.0.0-alpha06"
+androidx-navigation3-material = "1.3.0-alpha02"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -51,6 +53,8 @@ material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adapti
 material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "material3-adaptive" }
 material3-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "material3-adaptive" }
 twitter-compose-detekt-rules = { module = "com.twitter.compose.rules:detekt", version.ref = "twitter-compose-rules-detekt" }
+androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3-ui" }
+androidx-navigation3-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "androidx-navigation3-material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
