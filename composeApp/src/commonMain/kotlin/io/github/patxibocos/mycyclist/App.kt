@@ -1,18 +1,6 @@
 package io.github.patxibocos.mycyclist
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
@@ -36,16 +24,6 @@ internal fun App(
         cyclingDataRepository.initialize()
         messagingRepository.initialize()
 
-        val navController by rememberUpdatedState(rememberNavController())
-        Scaffold(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-                .windowInsetsPadding(WindowInsets.statusBars),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ) { paddingValues ->
-            NavigationSuite(
-                navController = navController,
-                modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues),
-            )
-        }
+        NavigationSuite()
     }
 }

@@ -47,19 +47,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.github.patxibocos.mycyclist.LocalBackButtonVisibility
 import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.ui.emoji.EmojiUtil
-import io.github.patxibocos.mycyclist.ui.util.rememberWithSize
 
 @Composable
 internal fun TeamDetailsScreen(
     uiState: TeamDetailsViewModel.UiState,
-    backEnabled: Boolean,
     onBackPressed: () -> Unit,
     onRiderSelected: (Rider) -> Unit,
 ) {
     BoxWithConstraints {
-        val backEnabled = rememberWithSize(backEnabled)
         Column {
             TopAppBar(
                 title = {
@@ -71,7 +69,7 @@ internal fun TeamDetailsScreen(
                     )
                 },
                 navigationIcon = {
-                    if (backEnabled) {
+                    if (LocalBackButtonVisibility.current) {
                         IconButton(onClick = onBackPressed) {
                             Icon(Icons.AutoMirrored.Default.ArrowBack, null)
                         }

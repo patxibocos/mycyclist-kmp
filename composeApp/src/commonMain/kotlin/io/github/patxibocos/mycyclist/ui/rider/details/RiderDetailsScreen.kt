@@ -23,25 +23,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.github.patxibocos.mycyclist.LocalBackButtonVisibility
 import io.github.patxibocos.mycyclist.domain.entity.Race
 import io.github.patxibocos.mycyclist.domain.entity.Rider
 import io.github.patxibocos.mycyclist.domain.entity.Stage
 import io.github.patxibocos.mycyclist.domain.entity.Team
 import io.github.patxibocos.mycyclist.domain.usecase.RiderResult
-import io.github.patxibocos.mycyclist.ui.util.rememberWithSize
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun RiderDetailsScreen(
     uiState: RiderDetailsViewModel.UiState,
-    backEnabled: Boolean,
     onBackPressed: () -> Unit,
     onRaceSelected: (Race) -> Unit,
     onTeamSelected: (Team) -> Unit,
     onStageSelected: (Race, Stage) -> Unit,
 ) {
     BoxWithConstraints {
-        val backEnabled = rememberWithSize(backEnabled)
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
                 title = {
@@ -53,7 +51,7 @@ internal fun RiderDetailsScreen(
                     )
                 },
                 navigationIcon = {
-                    if (backEnabled) {
+                    if (LocalBackButtonVisibility.current) {
                         IconButton(onClick = onBackPressed) {
                             Icon(Icons.AutoMirrored.Default.ArrowBack, null)
                         }
