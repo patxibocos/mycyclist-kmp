@@ -20,7 +20,6 @@ import io.github.patxibocos.mycyclist.ListDetailScene
 import io.github.patxibocos.mycyclist.rememberListDetailSceneStrategy
 import org.jetbrains.compose.resources.stringResource
 
-
 @Composable
 internal fun NavigationSuite() {
     val backStack: MutableList<Route> =

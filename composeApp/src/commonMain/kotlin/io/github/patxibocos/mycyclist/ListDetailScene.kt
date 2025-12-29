@@ -65,7 +65,7 @@ class ListDetailScene<T : Any>(
                             slideInHorizontally(
                                 initialOffsetX = { it }
                             ) togetherWith
-                                    slideOutHorizontally(targetOffsetX = { -it })
+                                slideOutHorizontally(targetOffsetX = { -it })
                         }
                     ) { entry ->
                         entry.Content()
@@ -109,7 +109,6 @@ fun <T : Any> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
     }
 }
 
-
 /**
  * A [SceneStrategy] that returns a [ListDetailScene] if:
  *
@@ -123,7 +122,6 @@ fun <T : Any> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
 class ListDetailSceneStrategy<T : Any>(val windowSizeClass: WindowSizeClass) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-
         if (!windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)) {
             return null
         }

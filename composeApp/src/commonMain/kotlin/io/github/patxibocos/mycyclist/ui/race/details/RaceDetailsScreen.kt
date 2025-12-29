@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -40,6 +39,7 @@ import io.github.patxibocos.mycyclist.domain.usecase.StageResult
 import io.github.patxibocos.mycyclist.domain.usecase.StageResults
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @Composable
@@ -123,21 +123,21 @@ private fun StagesList(
     onClassificationTypeChanged: (ClassificationType) -> Unit,
     onStageSelected: (Int) -> Unit,
 ) {
-    val pagerState = remember(stages) {
-        PagerState(
-            currentPage = currentStageIndex,
-            pageCount = { stages.size }
-        )
-    }
+    val pagerState = rememberPagerState(
+        initialPage = currentStageIndex,
+        pageCount = { stages.size }
+    )
     LaunchedEffect(currentStageIndex) {
         if (pagerState.currentPage != currentStageIndex) {
             pagerState.scrollToPage(currentStageIndex)
         }
     }
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            onStageSelected(page)
-        }
+        snapshotFlow { pagerState.currentPage to pagerState.isScrollInProgress }
+            .distinctUntilChanged()
+            .collect { (page, isScrolling) ->
+                if (!isScrolling) onStageSelected(page)
+            }
     }
     val coroutineScope = rememberCoroutineScope()
     PrimaryScrollableTabRow(
