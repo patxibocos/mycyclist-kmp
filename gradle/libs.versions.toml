@@ -22,7 +22,7 @@ twitter-compose-rules-detekt = "0.0.26"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1-0.6.x-compat"
 androidx-navigation3-ui = "1.0.0-alpha06"
-androidx-navigation3-material = "1.3.0-alpha03"
+androidx-navigation3-material = "1.3.0-alpha04"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
