@@ -10,7 +10,7 @@ import io.github.patxibocos.mycyclist.ui.navigation.NavigationSuite
 import io.github.patxibocos.mycyclist.ui.theme.AppTheme
 
 @Composable
-internal fun App(
+fun App(
     darkTheme: Boolean,
     dynamicColor: Boolean,
 ) {

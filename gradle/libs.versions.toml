@@ -1,22 +1,23 @@
 [versions]
-agp = "8.13.2"
+agp = "9.1.0"
 androidx-activityCompose = "1.12.4"
 androidx-lifecycle = "2.9.6"
 androidx-navigation-compose = "2.9.2"
 coil = "3.4.0"
 coil-network-ktor = "3.4.0"
-compose-plugin = "1.10.1"
+compose-plugin = "1.10.2"
 compose-hot-reload-plugin = "1.0.0"
-compose-ui-backhandler = "1.10.1"
+compose-ui-backhandler = "1.10.2"
 desugar-jdk = "2.1.5"
 detekt = "1.23.8"
 firebase = "2.4.0"
+firebase-bom = "34.10.0"
 google-auth = "1.43.0"
 google-services = "4.4.4"
 kotlin = "2.3.10"
 kotlinx-collections-immutable = "0.4.0"
 kotlinx-serialization-protobuf = "1.10.0"
-ktor = "3.4.0"
+ktor = "3.4.1"
 material3-adaptive = "1.2.0"
 twitter-compose-rules-detekt = "0.0.26"
 kotlinx-coroutines = "1.10.2"
@@ -34,6 +35,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil-network-ktor" }
 compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "compose-ui-backhandler" }
 desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase" }
 firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
 firebase-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebase" }
@@ -58,6 +60,7 @@ androidx-navigation3-material3-adaptive = { module = "org.jetbrains.compose.mate
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
