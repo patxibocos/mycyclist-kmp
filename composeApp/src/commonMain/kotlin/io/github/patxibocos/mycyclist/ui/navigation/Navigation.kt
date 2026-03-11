@@ -36,7 +36,7 @@ internal fun NavigationSuite() {
             modifier = Modifier.padding(paddingValues).consumeWindowInsets(paddingValues),
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
-            sceneStrategy = listDetailStrategy,
+            sceneStrategies = listOf(listDetailStrategy),
             entryProvider = entryProvider {
                 entry<RaceList>(metadata = ListDetailScene.listPane()) {
                     RaceList(onRaceClick = { race ->
