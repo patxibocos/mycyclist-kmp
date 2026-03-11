@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION_ERROR")
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -39,9 +37,9 @@ android {
 
 dependencies {
     implementation(projects.composeApp)
-    implementation(compose.preview)
-    implementation(compose.foundation)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.foundation)
     implementation(libs.androidx.activity.compose)
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.ui.tooling)
     coreLibraryDesugaring(libs.desugar.jdk)
 }

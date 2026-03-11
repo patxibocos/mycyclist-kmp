@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION_ERROR")
-
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -16,7 +14,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "io.github.patxibocos.mycyclist.composeapp"
         compileSdk = 36
         minSdk = 24
@@ -47,15 +45,14 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
-            implementation(compose.components.uiToolingPreview)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3AdaptiveNavigationSuite)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.components.ui.tooling.preview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3.adaptive.navigation.suite)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.material.icons.extended)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
