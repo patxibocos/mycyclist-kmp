@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "io.github.patxibocos.mycyclist"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "io.github.patxibocos.mycyclist"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }

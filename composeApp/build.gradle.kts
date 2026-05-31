@@ -16,7 +16,7 @@ plugins {
 kotlin {
     android {
         namespace = "io.github.patxibocos.mycyclist.composeapp"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 24
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -123,7 +123,6 @@ kotlin {
 
 dependencies {
     "androidCompileClasspath"(platform(libs.firebase.bom))
-    "androidRuntimeClasspath"(platform(libs.firebase.bom))
     detektPlugins(libs.ktlint.detekt.rules)
     detektPlugins(libs.twitter.compose.detekt.rules)
 }
